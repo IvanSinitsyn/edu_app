@@ -1,39 +1,52 @@
-package ru.hoff.service;
+package ru.hoff.edu.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.hoff.domain.Truck;
-import ru.hoff.enums.Mode;
-import ru.hoff.util.TxtParser;
+import ru.hoff.edu.domain.Truck;
+import ru.hoff.edu.enums.Mode;
+import ru.hoff.edu.util.InputFileParser;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
+@RequiredArgsConstructor
 public class PackageLoaderService {
 
-    private final TxtParser txtParser;
+    private final InputFileParser inputFileParser;
 
-    public PackageLoaderService(TxtParser txtParser) {
-        this.txtParser = txtParser;
+    public void packageProcessingFromFile(String inputFile, boolean isEasyMode) {
+        Mode mode = isEasyMode ? Mode.EASY : Mode.HARD;
+        List<char[][]> packages = inputFileParser.parsePackageFromFile(inputFile);
+        List<Truck> trucks = loadPackagesInTrucks(packages, mode);
+        makeLoadingReport(trucks);
     }
 
-    public List<Truck> loadPackages(String inputFile, Mode mode) {
-        List<char[][]> packages = txtParser.parsePackageFromFile(inputFile);
-
+    public List<Truck> loadPackagesInTrucks(List<char[][]> packages, Mode mode) {
         if (packages.isEmpty()) {
             log.info("No packages found");
             return new ArrayList<>();
         }
 
-        List<Truck> trucks = new ArrayList<>();
+        List<Truck> trucks;
         if (mode == Mode.EASY) {
-            return loadWithEasyMode(trucks, packages);
+            trucks = loadWithEasyMode(packages);
         } else {
-            return loadWithHardMode(trucks, packages);
+            trucks = loadWithHardMode(packages);
+        }
+
+        return trucks;
+    }
+
+    private void makeLoadingReport(List<Truck> trucks) {
+        for (int i = 0; i < trucks.size(); i++) {
+            System.out.println("Truck " + (i + 1) + ":");
+            trucks.get(i).showLoadingResult();
         }
     }
 
-    private List<Truck> loadWithEasyMode(List<Truck> trucks, List<char[][]> packages) {
+    private List<Truck> loadWithEasyMode(List<char[][]> packages) {
+        List<Truck> trucks = new ArrayList<>();
         log.info("Start loading trucks with easy mode");
         for (char[][] packageShape : packages) {
             Truck newTruck = new Truck();
@@ -46,11 +59,10 @@ public class PackageLoaderService {
         return trucks;
     }
 
-    private List<Truck> loadWithHardMode(List<Truck> trucks, List<char[][]> packages) {
+    private List<Truck> loadWithHardMode(List<char[][]> packages) {
         log.info("Start loading trucks with hard mode");
-        if (trucks.isEmpty()) {
-            trucks.add(new Truck());
-        }
+        List<Truck> trucks = new ArrayList<>();
+        trucks.add(new Truck());
 
         for (char[][] packageShape : packages) {
             log.info("Loading package {}", (Object) packageShape);

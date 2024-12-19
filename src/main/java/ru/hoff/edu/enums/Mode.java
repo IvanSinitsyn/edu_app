@@ -1,4 +1,4 @@
-package ru.hoff.enums;
+package ru.hoff.edu.enums;
 
 public enum Mode {
     EASY,

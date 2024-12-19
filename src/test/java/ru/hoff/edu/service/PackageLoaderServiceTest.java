@@ -1,36 +1,38 @@
-package ru.hoff.edu_app;
+package ru.hoff.edu.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import ru.hoff.domain.Truck;
-import ru.hoff.enums.Mode;
-import ru.hoff.service.PackageLoaderService;
-import ru.hoff.util.TxtParser;
+import ru.hoff.edu.domain.Truck;
+import ru.hoff.edu.enums.Mode;
+import ru.hoff.edu.util.InputFileParser;
+import ru.hoff.edu.util.PackageConverter;
+import ru.hoff.edu.util.PackageSorter;
 
-import java.util.ArrayList;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
-public class PackageLoaderServiceTests {
+public class PackageLoaderServiceTest {
 
-    private TxtParser txtParserMock;
+    private InputFileParser txtParserMock;
     private PackageLoaderService packageLoaderService;
 
     @BeforeEach
     void setUp() {
-        txtParserMock = Mockito.mock(TxtParser.class);
+        txtParserMock = Mockito.mock(InputFileParser.class);
         packageLoaderService = new PackageLoaderService(txtParserMock);
     }
 
     @Test
     void testLoadPackageEasyMode() {
         // Arrange
-        String inputFile = "dummyPath";
         char[][] package1 = {
                 {'1'}
         };
@@ -43,10 +45,8 @@ public class PackageLoaderServiceTests {
                 {'3', '3', '3'}
         };
 
-        when(txtParserMock.parsePackageFromFile(inputFile)).thenReturn(Arrays.asList(package1, package2, package3));
-
         // Act
-        List<Truck> trucks = packageLoaderService.loadPackages(inputFile, Mode.EASY);
+        List<Truck> trucks = packageLoaderService.loadPackagesInTrucks(Arrays.asList(package1, package2, package3), Mode.EASY);
 
         // Assert
         assertEquals(3, trucks.size());
@@ -88,7 +88,6 @@ public class PackageLoaderServiceTests {
     @Test
     void testLoadPackagesHardMode() {
         // Arrange
-        String inputFile = "dummyPath";
         char[][] package1 = {
                 {'1'}
         };
@@ -105,10 +104,8 @@ public class PackageLoaderServiceTests {
                 {'4', '4', '4', '4'}
         };
 
-        when(txtParserMock.parsePackageFromFile(inputFile)).thenReturn(Arrays.asList(package4, package3, package2, package1));
-
         // Act
-        List<Truck> trucks = packageLoaderService.loadPackages(inputFile, Mode.HARD);
+        List<Truck> trucks = packageLoaderService.loadPackagesInTrucks(Arrays.asList(package4, package3, package2, package1), Mode.HARD);
 
         // Assert
         assertEquals(1, trucks.size()); // Все посылки должны поместиться в один грузовик
@@ -122,6 +119,45 @@ public class PackageLoaderServiceTests {
                 {' ', ' ', ' ', ' ', ' ', ' '}
         };
 
-        assertArrayEquals(expectedTruckGrid, trucks.get(0).getGrid());
+        assertArrayEquals(expectedTruckGrid, trucks.getFirst().getGrid());
+    }
+
+    @Test
+    void parsePackageFromFile_WithValidData_ReturnCorrectPackages() throws Exception {
+        // Arrange
+        InputFileParser inputFileParser = new InputFileParser(new PackageConverter(), new PackageSorter());
+
+        Path tempFile = Files.createTempFile("test-file", ".txt");
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile.toFile()))) {
+            writer.write("""
+                    1
+                    
+                    22
+                    
+                    333
+                    
+                    4444
+                    """);
+        }
+
+
+        // Act
+        List<char[][]> packages = inputFileParser.parsePackageFromFile(tempFile.toString());
+
+        // Assert
+        List<char[][]> expected = Arrays.asList(
+                new char[][]{{'4', '4', '4', '4'}},
+                new char[][]{{'3', '3', '3'}},
+                new char[][]{{'2', '2'}},
+                new char[][]{{'1'}});
+
+        assertEquals(expected.size(), packages.size());
+        for (int i = 0; i < expected.size(); i++) {
+            assertEquals(expected.get(i).length, packages.get(i).length);
+            for (int j = 0; j < expected.get(i).length; j++) {
+                assertEquals(Arrays.toString(expected.get(i)[j]), Arrays.toString(packages.get(i)[j]));
+            }
+        }
+        Files.deleteIfExists(tempFile);
     }
 }

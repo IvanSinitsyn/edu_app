@@ -1,4 +1,4 @@
-package ru.hoff.domain;
+package ru.hoff.edu.domain;
 
 public class Truck {
     public static final int WIDTH = 6;
@@ -60,7 +60,7 @@ public class Truck {
         return true;
     }
 
-    public void print() {
+    public void showLoadingResult() {
         System.out.println("+++++++");
         for (int i = HEIGHT - 1; i >= 0; i--) {
             System.out.print("+");
