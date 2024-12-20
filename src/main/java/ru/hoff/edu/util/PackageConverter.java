@@ -9,14 +9,25 @@ public class PackageConverter {
 
     public char[][] convertToPackage(List<String> packageLines) {
         int height = packageLines.size();
-        int width = 0;
+        int width = calculateMaxWidth(packageLines);
 
+        char[][] packageShape = createPackageShape(packageLines, height, width);
+        logPackage(packageShape);
+
+        return packageShape;
+    }
+
+    private int calculateMaxWidth(List<String> packageLines) {
+        int maxWidth = 0;
         for (String line : packageLines) {
-            if (line.length() > width) {
-                width = line.length();
+            if (line.length() > maxWidth) {
+                maxWidth = line.length();
             }
         }
+        return maxWidth;
+    }
 
+    private char[][] createPackageShape(List<String> packageLines, int height, int width) {
         char[][] packageShape = new char[height][width];
         for (int i = 0, reversedI = height - 1; i < height && reversedI >= 0; i++, reversedI--) {
             for (int j = 0; j < width; j++) {
@@ -27,8 +38,10 @@ public class PackageConverter {
                 }
             }
         }
-
-        log.info("Found package: {}", (Object) packageShape);
         return packageShape;
+    }
+
+    private void logPackage(char[][] packageShape) {
+        log.info("Found package: {}", DataConverter.packageToString(packageShape));
     }
 }

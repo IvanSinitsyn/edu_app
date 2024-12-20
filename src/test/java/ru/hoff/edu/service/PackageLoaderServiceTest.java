@@ -2,17 +2,12 @@ package ru.hoff.edu.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import ru.hoff.edu.domain.Truck;
 import ru.hoff.edu.enums.Mode;
 import ru.hoff.edu.util.InputFileParser;
 import ru.hoff.edu.util.PackageConverter;
 import ru.hoff.edu.util.PackageSorter;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,17 +16,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PackageLoaderServiceTest {
 
-    private InputFileParser txtParserMock;
     private PackageLoaderService packageLoaderService;
 
     @BeforeEach
     void setUp() {
-        txtParserMock = Mockito.mock(InputFileParser.class);
-        packageLoaderService = new PackageLoaderService(txtParserMock);
+        packageLoaderService = new PackageLoaderService();
     }
 
     @Test
-    void testLoadPackageEasyMode() {
+    void loadPackagesInTrucks_InEasyMode_WithValidInput_ReturnsValidTrucks() {
         // Arrange
         char[][] package1 = {
                 {'1'}
@@ -86,7 +79,7 @@ public class PackageLoaderServiceTest {
     }
 
     @Test
-    void testLoadPackagesHardMode() {
+    void loadPackagesInTrucks_InHardMode_WithValidInput_ReturnsValidTrucks() {
         // Arrange
         char[][] package1 = {
                 {'1'}
@@ -123,26 +116,21 @@ public class PackageLoaderServiceTest {
     }
 
     @Test
-    void parsePackageFromFile_WithValidData_ReturnCorrectPackages() throws Exception {
+    void parsePackageFromFile_WithValidData_ReturnCorrectPackages() {
         // Arrange
         InputFileParser inputFileParser = new InputFileParser(new PackageConverter(), new PackageSorter());
-
-        Path tempFile = Files.createTempFile("test-file", ".txt");
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile.toFile()))) {
-            writer.write("""
-                    1
-                    
-                    22
-                    
-                    333
-                    
-                    4444
-                    """);
-        }
-
+        List<String> fileLines = List.of(
+                "1",
+                "",
+                "22",
+                "",
+                "333",
+                "",
+                "4444"
+        );
 
         // Act
-        List<char[][]> packages = inputFileParser.parsePackageFromFile(tempFile.toString());
+        List<char[][]> packages = inputFileParser.parsePackages(fileLines);
 
         // Assert
         List<char[][]> expected = Arrays.asList(
@@ -158,6 +146,5 @@ public class PackageLoaderServiceTest {
                 assertEquals(Arrays.toString(expected.get(i)[j]), Arrays.toString(packages.get(i)[j]));
             }
         }
-        Files.deleteIfExists(tempFile);
     }
 }

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.hoff.edu.domain.Truck;
 import ru.hoff.edu.enums.Mode;
-import ru.hoff.edu.util.InputFileParser;
+import ru.hoff.edu.util.DataConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,15 +12,6 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class PackageLoaderService {
-
-    private final InputFileParser inputFileParser;
-
-    public void packageProcessingFromFile(String inputFile, boolean isEasyMode) {
-        Mode mode = isEasyMode ? Mode.EASY : Mode.HARD;
-        List<char[][]> packages = inputFileParser.parsePackageFromFile(inputFile);
-        List<Truck> trucks = loadPackagesInTrucks(packages, mode);
-        makeLoadingReport(trucks);
-    }
 
     public List<Truck> loadPackagesInTrucks(List<char[][]> packages, Mode mode) {
         if (packages.isEmpty()) {
@@ -38,7 +29,7 @@ public class PackageLoaderService {
         return trucks;
     }
 
-    private void makeLoadingReport(List<Truck> trucks) {
+    public void makeLoadingReport(List<Truck> trucks) {
         for (int i = 0; i < trucks.size(); i++) {
             System.out.println("Truck " + (i + 1) + ":");
             trucks.get(i).showLoadingResult();
@@ -52,7 +43,7 @@ public class PackageLoaderService {
             Truck newTruck = new Truck();
             newTruck.place(packageShape, 0, 0);
             trucks.add(newTruck);
-            log.info("Package {} loaded", (Object) packageShape);
+            log.info("Package {} loaded", DataConverter.packageToString(packageShape));
         }
 
         log.info("Import is completed");
@@ -62,36 +53,31 @@ public class PackageLoaderService {
     private List<Truck> loadWithHardMode(List<char[][]> packages) {
         log.info("Start loading trucks with hard mode");
         List<Truck> trucks = new ArrayList<>();
-        trucks.add(new Truck());
-
         for (char[][] packageShape : packages) {
-            log.info("Loading package {}", (Object) packageShape);
-            boolean placed = false;
-
-            for (Truck truck : trucks) {
-                if (tryPlacePackageInTruck(truck, packageShape)) {
-                    placed = true;
-                    log.info("Package {} loaded", (Object) packageShape);
-                    break;
-                }
-            }
-
-            if (placed) {
-                continue;
-            }
-
-            Truck newTruck = new Truck();
-            if (!tryPlacePackageInTruck(newTruck, packageShape)) {
-                continue;
-            }
-
-            trucks.add(newTruck);
-            log.info("Package {} loaded", (Object) packageShape);
+            log.info("Loading package {}", DataConverter.packageToString(packageShape));
+            placePackageInTrucks(trucks, packageShape);
+            log.info("Package {} loaded", DataConverter.packageToString(packageShape));
         }
 
         trucks.removeIf(Truck::isEmpty);
         log.info("Import is completed");
         return trucks;
+    }
+
+    private boolean placePackageInTrucks(List<Truck> trucks, char[][] packageShape) {
+        if (trucks.isEmpty()) {
+            trucks.add(new Truck());
+        }
+
+        for (Truck truck : trucks) {
+            if (tryPlacePackageInTruck(truck, packageShape)) {
+                log.info("Package {} loaded", DataConverter.packageToString(packageShape));
+                return true;
+            }
+        }
+
+        trucks.add(new Truck());
+        return placePackageInTrucks(trucks, packageShape);
     }
 
 
