@@ -2,45 +2,50 @@ package ru.hoff.edu.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.hoff.edu.domain.Truck;
-import ru.hoff.edu.enums.Mode;
-import ru.hoff.edu.util.InputFileParser;
-import ru.hoff.edu.util.InputFileReader;
+import ru.hoff.edu.model.Command;
+import ru.hoff.edu.util.CommandParser;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Slf4j
 @RequiredArgsConstructor
 public class CommandHandler {
 
-    private final Pattern IMPORT_FILE_PATTERN = Pattern.compile("import(?:\\s+easy)?\\s+(.+\\.txt)");
-    private final InputFileReader inputFileReader;
-    private final InputFileParser inputFileParser;
-    private final PackageLoaderService packageLoaderService;
+    private final String HELP_COMMAND = "help";
+    private final CommandParser commandParser;
+    private final ParcelServiceFactory parcelServiceFactory;
 
-    public void handle(String command) {
-        Matcher hardMatcher = IMPORT_FILE_PATTERN.matcher(command);
-        if  (!hardMatcher.matches()) {
-            log.error("Unknown command: {}", command);
+    public void handle(String commandString) {
+        if (HELP_COMMAND.equals(commandString)) {
+            printHelp();
             return;
         }
 
         try {
-            String inputFile = hardMatcher.group(1);
-            log.info("Start reading inputFile...");
-            List<String> fileLines = inputFileReader.readLinesFromFile(inputFile);
-
-            log.info("Start parsing packages...");
-            List<char[][]> packages = inputFileParser.parsePackages(fileLines);
-
-            Mode mode = command.contains("easy") ? Mode.EASY : Mode.HARD;
-            List<Truck> trucks = packageLoaderService.loadPackagesInTrucks(packages, mode);
-            packageLoaderService.makeLoadingReport(trucks);
+            Command command = commandParser.parse(commandString);
+            ParcelService parcelService = parcelServiceFactory.createPackageService(command);
+            parcelService.processing(command);
         } catch (IOException ex) {
             log.error("Error reading input file", ex);
+        } catch (IllegalArgumentException ex) {
+            log.error(ex.getMessage(), ex);
         }
+    }
+
+    private void printHelp() {
+        System.out.println("Команда для погрузки посылок: upload {algorithm} {path_to_file} {maxTrucksCount} {saveResultToFile}");
+        System.out.println("Параметры:");
+        System.out.println("\talgorithm:");
+        System.out.println("\t\teasy - одна посылка в одну машину");
+        System.out.println("\t\tequally - машины загружаются равномерно");
+        System.out.println("\t\toptimal - каждая машина загружается полностью;");
+        System.out.println("\tpath_to_file(необязательный): путь к файлу с посылками в формате txt");
+        System.out.println("\tmaxTrucksCount(необязательный): максимально кол-во грузовиков для погрузки посылок");
+        System.out.println("\tsaveResultToFile(необязательный): при использовании результат погрузки сохраняется в файл в формате json");
+
+        System.out.println("Команда для разгрузки посылок: unload {path_to_file} {path_to_result_file}");
+        System.out.println("Параметры:");
+        System.out.println("\tpath_to_file: путь к файлу с загруженными грузовиками в формате json");
+        System.out.println("\tpath_to_result_file: путь к файлу с разгруженными посылками в формате txt");
     }
 }

@@ -1,11 +1,21 @@
 package ru.hoff.edu.domain;
 
+import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Truck {
     public static final int WIDTH = 6;
     public static final int HEIGHT = 6;
+    private int id;
+    private final List<Parcel> parcels;
+
+    @Getter
     private final char[][] grid;
 
     public Truck() {
+        parcels = new ArrayList<>();
         grid = new char[WIDTH][HEIGHT];
         for (int i = 0; i < HEIGHT; i++) {
             for (int j = 0; j < WIDTH; j++) {
@@ -14,17 +24,17 @@ public class Truck {
         }
     }
 
-    public boolean canPlace(char[][] packageShape, int x, int y) {
-        int packageHeight = packageShape.length;
-        int packageWidth = packageShape[0].length;
+    public boolean canPlace(Parcel parcel, int gridX, int gridY) {
+        int packageHeight = parcel.getHeight();
+        int packageWidth = parcel.getWidth();
 
-        if (x + packageWidth > WIDTH || y + packageHeight > HEIGHT) {
+        if (gridX + packageWidth > WIDTH || gridY + packageHeight > HEIGHT) {
             return false;
         }
 
         for (int i = 0; i < packageHeight; i++) {
             for (int j = 0; j < packageWidth; j++) {
-                if (packageShape[i][j] != ' ' && grid[y + i][x + j] != ' ') {
+                if (parcel.getForm()[i][j] != ' ' && grid[gridY + i][gridX + j] != ' ') {
                     return false;
                 }
             }
@@ -32,21 +42,23 @@ public class Truck {
         return true;
     }
 
-    public char[][] getGrid() {
-        return grid;
+    public List<Parcel> getParcels() {
+        return parcels;
     }
 
-    public void place(char[][] packageShape, int x, int y) {
-        int packageHeight = packageShape.length;
-        int packageWidth = packageShape[0].length;
+    public void place(Parcel parcel, int x, int y) {
+        int packageHeight = parcel.getHeight();
+        int packageWidth = parcel.getWidth();
 
         for (int i = 0; i < packageHeight; i++) {
             for (int j = 0; j < packageWidth; j++) {
-                if (packageShape[i][j] != ' ') {
-                    grid[y + i][x + j] = packageShape[i][j];
+                if (parcel.getForm()[i][j] != ' ') {
+                    grid[y + i][x + j] = parcel.getForm()[i][j];
                 }
             }
         }
+
+        parcels.add(parcel);
     }
 
     public boolean isEmpty() {
@@ -70,5 +82,21 @@ public class Truck {
             System.out.println("+");
         }
         System.out.println("+++++++");
+    }
+
+    public int getCurrentLoad() {
+        int currentLoad = 0;
+        for (int y = 0; y < HEIGHT; y++) {
+            for (int x = 0; x < WIDTH; x++) {
+                if (grid[y][x] != ' ') { // Если ячейка занята
+                    currentLoad++;
+                }
+            }
+        }
+        return currentLoad;
+    }
+
+    public int getHalfCapacity() {
+        return Truck.HEIGHT * Truck.WIDTH / 2;
     }
 }

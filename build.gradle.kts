@@ -21,6 +21,11 @@ repositories {
 dependencies {
     implementation("org.slf4j:slf4j-api:${Version.slf4jVersion}")
     implementation("ch.qos.logback:logback-classic:${Version.logbackVersion}")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.0.1")
+    implementation("org.telegram:telegrambots:6.7.0")
+    implementation("org.telegram:telegrambots-spring-boot-starter:6.1.0")
+    implementation("org.telegram:telegrambots-abilities:6.0.1")
+    implementation("org.telegram:telegrambots-meta:6.5.0")
 
     compileOnly("org.projectlombok:lombok:${Version.lombokVersion}")
     annotationProcessor("org.projectlombok:lombok:${Version.lombokVersion}")

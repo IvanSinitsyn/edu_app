@@ -2,36 +2,29 @@ package ru.hoff.edu.util;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ru.hoff.edu.domain.Parcel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
 public class InputFileParser {
 
-    private final PackageConverter packageConverter;
-    private final PackageSorter packageSorter;
+    private final ParcelConverter parcelConverter;
+    private final ParcelSorter parcelSorter;
 
-    public List<char[][]> parsePackages(List<String> fileLines) {
-        List<char[][]> packages = new ArrayList<>();
-        List<String> currentPackage = new ArrayList<>();
-        for (String fileLine : fileLines) {
-            if (fileLine.isEmpty()) {
-                if (!currentPackage.isEmpty()) {
-                    packages.add(packageConverter.convertToPackage(currentPackage));
-                    currentPackage.clear();
-                }
-            } else {
-                log.info("Parsing line: {}", fileLine);
-                currentPackage.add(fileLine);
-            }
+    public List<Parcel> parseParcels(List<Map<String, Object>> fileData) {
+        List<Parcel> parcels = new ArrayList<>();
+
+        for (Map<String, Object> dataEntry : fileData) {
+            log.info("Parsing entry: {}", dataEntry);
+
+            Parcel parcel = parcelConverter.convertToParcel(dataEntry);
+            parcels.add(parcel);
         }
 
-        if (!currentPackage.isEmpty()) {
-            packages.add(packageConverter.convertToPackage(currentPackage));
-        }
-
-        return packageSorter.sortDesc(packages);
+        return parcelSorter.sortDesc(parcels);
     }
 }
