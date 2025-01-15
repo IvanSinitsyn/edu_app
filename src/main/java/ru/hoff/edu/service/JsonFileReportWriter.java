@@ -1,7 +1,8 @@
-package ru.hoff.edu.util.filewriter;
+package ru.hoff.edu.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
@@ -13,29 +14,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static ru.hoff.edu.util.DataConverter.convertShapeToStrings;
+import static ru.hoff.edu.util.DataConverter.convertFormToString;
 
 @Slf4j
-public class JsonFileWriter implements FileWriter<Truck> {
+@RequiredArgsConstructor
+public class JsonFileReportWriter implements ReportWriter {
 
+    private final String outputPath;
     private final ObjectWriter JSON_WRITER = new ObjectMapper().writerWithDefaultPrettyPrinter();
 
-    public void writeToFile(String filePath, List<Truck> trucks) {
+    @Override
+    public String writeReport(List<Truck> trucks) {
         try {
-            File file = new File(filePath);
+            File file = new File(outputPath);
 
             if (file.exists()) {
                 if (file.delete()) {
-                    System.out.println("Existing file deleted: " + filePath);
+                    log.info("Existing file deleted: {}", outputPath);
                 } else {
-                    System.out.println("Failed to delete existing file: " + filePath);
-                    return;
+                    log.error("Failed to delete existing file: {}", outputPath);
+                    throw new RuntimeException("Failed to delete existing file: " + outputPath);
                 }
             }
 
             if (!file.createNewFile()) {
-                System.out.println("Failed to create new file: " + filePath);
-                return;
+                log.error("Failed to create new file: {}", outputPath);
+                throw new RuntimeException("Failed to create new file: " + outputPath);
             }
 
             List<Map<String, Object>> truckDataList = new ArrayList<>();
@@ -50,7 +54,7 @@ public class JsonFileWriter implements FileWriter<Truck> {
                 for (Parcel parcel : truck.getParcels()) {
                     Map<String, Object> parcelData = new HashMap<>();
                     parcelData.put("name", parcel.getName());
-                    parcelData.put("form", convertShapeToStrings(parcel.getForm()));
+                    parcelData.put("form", convertFormToString(parcel.getForm()));
                     parcelDataList.add(parcelData);
                 }
 
@@ -63,11 +67,11 @@ public class JsonFileWriter implements FileWriter<Truck> {
             }
 
             JSON_WRITER.writeValue(file, truckDataList);
-            System.out.println("Wrote to " + filePath);
 
+            return "Report saved to " + outputPath;
         } catch (IOException ex) {
-            System.out.println("Error while writing to " + filePath);
-            log.error("Error while writing to {}", filePath, ex);
+            log.error("Error while writing to {}", outputPath, ex);
+            throw new RuntimeException("Error while writing to: " + outputPath, ex);
         }
     }
 }

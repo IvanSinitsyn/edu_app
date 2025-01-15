@@ -26,6 +26,7 @@ dependencies {
     implementation("org.telegram:telegrambots-spring-boot-starter:6.1.0")
     implementation("org.telegram:telegrambots-abilities:6.0.1")
     implementation("org.telegram:telegrambots-meta:6.5.0")
+    implementation("org.yaml:snakeyaml:2.0")
 
     compileOnly("org.projectlombok:lombok:${Version.lombokVersion}")
     annotationProcessor("org.projectlombok:lombok:${Version.lombokVersion}")

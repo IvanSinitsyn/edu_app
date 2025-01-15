@@ -1,16 +1,24 @@
 package ru.hoff.edu.domain;
 
 import lombok.Getter;
+import lombok.Setter;
+import ru.hoff.edu.util.DataConverter;
 
 @Getter
 public class Parcel {
 
     private final String name;
     private final char[][] form;
+    private final String symbol;
 
-    public Parcel(String name, char[][] form) {
+    @Setter
+    private boolean isLoaded;
+
+    public Parcel(String name, char[][] form, String symbol, boolean isLoaded) {
         this.name = name;
         this.form = form;
+        this.symbol = symbol;
+        this.isLoaded = isLoaded;
     }
 
     public Integer getWidth() {
@@ -19,5 +27,21 @@ public class Parcel {
 
     public Integer getHeight() {
         return form.length;
+    }
+
+    public void redraw(char symbol) {
+        for (int i = 0; i < form.length; i++) {
+            for (int j = 0; j < form[i].length; j++) {
+                if (form[i][j] == ' ') {
+                    continue;
+                }
+
+                form[i][j] = symbol;
+            }
+        }
+    }
+
+    public String showInfo() {
+        return "id(name): \"" + name + "\"\nform:\n" + String.join("\n", DataConverter.convertFormToString(form));
     }
 }

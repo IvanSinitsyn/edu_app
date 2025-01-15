@@ -1,96 +1,158 @@
 package ru.hoff.edu.util;
 
-import ru.hoff.edu.model.Command;
-import ru.hoff.edu.model.CommandUnload;
-import ru.hoff.edu.model.CommandUpload;
+import lombok.RequiredArgsConstructor;
+import ru.hoff.edu.dto.BaseCommandDto;
+import ru.hoff.edu.dto.CreateParcelCommandDto;
+import ru.hoff.edu.dto.DeleteParcelCommandDto;
+import ru.hoff.edu.dto.EditParcelCommandDto;
+import ru.hoff.edu.dto.FindParcelByIdQueryDto;
+import ru.hoff.edu.dto.LoadParcelsCommandDto;
+import ru.hoff.edu.dto.UnloadParcelsCommandDto;
 import ru.hoff.edu.model.enums.AlgorithmType;
-import ru.hoff.edu.model.enums.CommandType;
+import ru.hoff.edu.model.enums.FileType;
+import ru.hoff.edu.model.enums.ResultOutType;
+import ru.hoff.edu.util.filereader.FileReaderFactory;
+import ru.hoff.edu.util.filereader.InputFileReader;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+@RequiredArgsConstructor
 public class CommandParser {
 
-    private final int REQUIRED_NUMBER_OF_PARAMETERS_TO_UPLOAD = 3;
-    private final int REQUIRED_NUMBER_OF_PARAMETERS_TO_UNLOAD = 2;
+    private final FileReaderFactory fileReaderFactory;
 
-    public Command parse(String command) {
-        String[] commandParts = command.split(" ");
-        if (command.contains("upload")) {
-            return parseUploadCommand(commandParts);
+    public BaseCommandDto parseCommand(String commandData) {
+        if (commandData.startsWith("/create")) {
+            return parseCreateParcelCommand(commandData);
+        } else if (commandData.startsWith("/delete")) {
+            return parseDeleteParcelCommand(commandData);
+        } else if (commandData.startsWith("/edit")) {
+            return parseEditParcelCommand(commandData);
+        } else if (commandData.startsWith("/find")) {
+            return parseFindParcelByIdQuery(commandData);
+        } else if (commandData.startsWith("/load")) {
+            return parseLoadCommand(commandData);
+        } else if (commandData.startsWith("/unload")) {
+            return parseUnloadCommand(commandData);
+        } else {
+            throw new IllegalArgumentException("Неизвестная команда");
         }
-
-        if (command.contains("unload")) {
-            return parseUnloadCommand(commandParts);
-        }
-
-        throw new IllegalArgumentException("Invalid command format");
     }
 
-    private CommandUpload parseUploadCommand(String[] commandParts) {
-        if (commandParts.length < REQUIRED_NUMBER_OF_PARAMETERS_TO_UPLOAD) {
-            throw new IllegalArgumentException("Invalid command format");
+    private LoadParcelsCommandDto parseLoadCommand(String command) {
+        Pattern pattern = Pattern.compile(
+                "-parcels-(text|file) \"(.*?)\" -trucks \"(.*?)\" -algorithm \"(.*?)\" -out (\\w+)(?: -out-filename (\\w+))?");
+        Matcher matcher = pattern.matcher(command);
+
+        if (!matcher.find()) {
+            throw new IllegalArgumentException("Ошибка в синтаксисе команды load");
         }
 
-        CommandType type = CommandType.fromString(commandParts[0]);
-        AlgorithmType algorithmType = AlgorithmType.fromString(commandParts[1]);
+        String parcelsText = matcher.group(1);
+        String trucksDescriptions = matcher.group(2);
+        String algorithm = matcher.group(3);
+        String outputFormat = matcher.group(4);
+        String outputFilename = matcher.group(5);
 
-        String inputFile;
-        if (!commandParts[2].isEmpty()) {
-            inputFile = commandParts[2];
-        } else {
-            throw new IllegalArgumentException("InputFile path is empty");
+        String normalizedParcelsText = parcelsText.replace("\\n", "\n");
+        String normalizedTrucksDescriptions = trucksDescriptions.replace("\\n", "\n");
+
+        List<String> parcelsNames = Arrays.asList(normalizedParcelsText.split("\n"));
+        if (command.contains("-parcels-file")) {
+            InputFileReader fileReader = fileReaderFactory.createFileReader(FileType.fromString(getFileExtension(outputFilename)));
+            parcelsNames = fileReader.readFile(parcelsText);
         }
 
-        Integer maxTrucksCount;
-        if (canParseToInt(commandParts[3])) {
-            maxTrucksCount = Integer.parseInt(commandParts[3]);
-        } else {
-            maxTrucksCount = null;
-        }
-
-        String pathToResultFile = null;
-        for (int i = 3; i < commandParts.length; i++) {
-            if (canParseToInt(commandParts[i])) {
-                maxTrucksCount = Integer.valueOf(commandParts[i]);
-            } else {
-                pathToResultFile = commandParts[i];
-            }
-        }
-
-        return new CommandUpload(type, algorithmType, inputFile, maxTrucksCount, pathToResultFile);
+        return new LoadParcelsCommandDto(
+                AlgorithmType.fromString(algorithm),
+                parcelsNames,
+                Arrays.asList(normalizedTrucksDescriptions.split("\n")),
+                ResultOutType.fromString(outputFormat),
+                outputFilename);
     }
 
-    private CommandUnload parseUnloadCommand(String[] commandParts) {
-        if (commandParts.length < REQUIRED_NUMBER_OF_PARAMETERS_TO_UNLOAD) {
-            throw new IllegalArgumentException("Invalid command format");
+    private UnloadParcelsCommandDto parseUnloadCommand(String command) {
+        Pattern pattern = Pattern.compile(
+                "unload -infile \"(.*?)\" -outfile \"(.*?)\"(?: --withcount)?"
+        );
+
+        Matcher matcher = pattern.matcher(command);
+
+        if (!matcher.find()) {
+            throw new IllegalArgumentException("Ошибка в синтаксисе команды unload");
         }
 
-        CommandType type = CommandType.fromString(commandParts[0]);
+        String inFileName = matcher.group(1);
+        String outFileName = matcher.group(2);
+        boolean withCount = command.contains("--withcount");
 
-        String inputFile;
-        if (!commandParts[1].isEmpty()) {
-            inputFile = commandParts[1];
-        } else {
-            throw new IllegalArgumentException("InputFile path is empty");
-        }
-
-        String outputFile;
-        if (!commandParts[2].isEmpty()) {
-            outputFile = commandParts[2];
-        } else {
-            throw new IllegalArgumentException("OutputFile path is empty");
-        }
-
-        return new CommandUnload(type, inputFile, outputFile);
+        return new UnloadParcelsCommandDto(inFileName, outFileName, withCount);
     }
 
-    public static boolean canParseToInt(String value) {
-        if (value == null || value.isEmpty()) {
-            return false;
+    private CreateParcelCommandDto parseCreateParcelCommand(String command) {
+        Pattern pattern = Pattern.compile("-name \"(.*?)\" -form \"(.*?)\" -symbol \"(.*?)\"");
+        Matcher matcher = pattern.matcher(command);
+
+        if (!matcher.find()) {
+            throw new IllegalArgumentException("Ошибка в синтаксисе команды /create");
         }
-        try {
-            Integer.parseInt(value);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
+
+        String name = matcher.group(1);
+        String form = matcher.group(2);
+        String symbol = matcher.group(3);
+
+        String normalizedForm = form.replace("\\n", "\n");
+        return new CreateParcelCommandDto(name, normalizedForm, symbol);
+    }
+
+    private DeleteParcelCommandDto parseDeleteParcelCommand(String command) {
+        Pattern pattern = Pattern.compile("\"(.*?)\"");
+        Matcher matcher = pattern.matcher(command);
+
+        if (!matcher.find()) {
+            throw new IllegalArgumentException("Ошибка в синтаксисе команды /delete");
         }
+
+        String parcelName = matcher.group(1);
+        return new DeleteParcelCommandDto(parcelName);
+    }
+
+    private EditParcelCommandDto parseEditParcelCommand(String command) {
+        Pattern pattern = Pattern.compile("-id \"(.*?)\" -name \"(.*?)\" -form \"(.*?)\" -symbol \"(.*?)\"");
+        Matcher matcher = pattern.matcher(command);
+
+        if (!matcher.find()) {
+            throw new IllegalArgumentException("Ошибка в синтаксисе команды /edit");
+        }
+
+        String id = matcher.group(1);
+        String name = matcher.group(2);
+        String form = matcher.group(3);
+        String symbol = matcher.group(4);
+
+        String normalizedForm = form.replace("\\n", "\n");
+        return new EditParcelCommandDto(id, name, normalizedForm, symbol);
+    }
+
+    private FindParcelByIdQueryDto parseFindParcelByIdQuery(String command) {
+        Pattern pattern = Pattern.compile("\"(.*?)\"");
+        Matcher matcher = pattern.matcher(command);
+
+        if (!matcher.find()) {
+            throw new IllegalArgumentException("Ошибка в синтаксисе команды /find");
+        }
+
+        String parcelName = matcher.group(1);
+        return new FindParcelByIdQueryDto(parcelName);
+    }
+
+    private String getFileExtension(String fileName) {
+        if (fileName == null || !fileName.contains(".")) {
+            return "";
+        }
+        return fileName.substring(fileName.lastIndexOf('.') + 1);
     }
 }

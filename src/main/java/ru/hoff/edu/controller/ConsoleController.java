@@ -1,7 +1,7 @@
 package ru.hoff.edu.controller;
 
 import lombok.RequiredArgsConstructor;
-import ru.hoff.edu.service.CommandHandler;
+import ru.hoff.edu.service.command.handler.ConsoleCommandHandler;
 
 import java.util.Scanner;
 
@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class ConsoleController {
 
     private final String EXIT_COMMAND = "exit";
-    private final CommandHandler commandHandler;
+    private final ConsoleCommandHandler consoleCommandHandler;
 
     public void listen() {
         var scanner = new Scanner(System.in);
@@ -20,7 +20,7 @@ public class ConsoleController {
                 System.exit(0);
             }
 
-            commandHandler.handle(command);
+            consoleCommandHandler.handleCommand(command);
         }
     }
 }
