@@ -12,16 +12,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class TelegramCommandHandler implements CommandHandler<String> {
 
-    private final String HELP_COMMAND = "/help";
     private final CommandParser commandParser;
     private final Map<String, Command<?, ? extends BaseCommandDto>> commandHandlers;
 
     @Override
     public String handleCommand(String command) {
-        if (HELP_COMMAND.equals(command)) {
-            return getHelpMessage();
-        }
-
         try {
             BaseCommandDto commandDto = commandParser.parseCommand(command);
             Command<?, BaseCommandDto> handler = (Command<?, BaseCommandDto>) commandHandlers.get(commandDto.getCommandType());
@@ -34,9 +29,4 @@ public class TelegramCommandHandler implements CommandHandler<String> {
             return "Ошибка: " + ex.getMessage();
         }
     }
-
-    private String getHelpMessage() {
-        return "текст в работе";
-    }
-
 }

@@ -11,6 +11,12 @@ object Version {
     const val logbackVersion = "1.4.11"
     const val junitVersion = "5.10.0"
     const val mockitoVersion = "5.8.0"
+    const val fasterxmlVersion = "2.0.1"
+    const val telegrambotsVersion = "6.7.0"
+    const val telegrambotsSpringVersion = "6.1.0"
+    const val telegrambotsAbilitiesVersion = "6.0.1"
+    const val telegrambotsMetaVersion = "6.5.0"
+    const val snakeyamlVersion = "2.0"
 }
 
 
@@ -21,12 +27,12 @@ repositories {
 dependencies {
     implementation("org.slf4j:slf4j-api:${Version.slf4jVersion}")
     implementation("ch.qos.logback:logback-classic:${Version.logbackVersion}")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.0.1")
-    implementation("org.telegram:telegrambots:6.7.0")
-    implementation("org.telegram:telegrambots-spring-boot-starter:6.1.0")
-    implementation("org.telegram:telegrambots-abilities:6.0.1")
-    implementation("org.telegram:telegrambots-meta:6.5.0")
-    implementation("org.yaml:snakeyaml:2.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:${Version.fasterxmlVersion}")
+    implementation("org.telegram:telegrambots:${Version.telegrambotsVersion}")
+    implementation("org.telegram:telegrambots-spring-boot-starter:${Version.telegrambotsSpringVersion}")
+    implementation("org.telegram:telegrambots-abilities:${Version.telegrambotsAbilitiesVersion}")
+    implementation("org.telegram:telegrambots-meta:${Version.telegrambotsMetaVersion}")
+    implementation("org.yaml:snakeyaml:${Version.snakeyamlVersion}")
 
     compileOnly("org.projectlombok:lombok:${Version.lombokVersion}")
     annotationProcessor("org.projectlombok:lombok:${Version.lombokVersion}")

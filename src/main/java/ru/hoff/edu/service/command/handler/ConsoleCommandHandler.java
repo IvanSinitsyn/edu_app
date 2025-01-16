@@ -12,17 +12,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ConsoleCommandHandler implements CommandHandler<Void> {
 
-    private final String HELP_COMMAND = "help";
     private final CommandParser commandParser;
     private final Map<String, Command<?, ? extends BaseCommandDto>> commandHandlers;
 
     @Override
     public Void handleCommand(String command) {
-        if (HELP_COMMAND.equals(command)) {
-            printHelp();
-            return null;
-        }
-
         try {
             BaseCommandDto commandDto = commandParser.parseCommand(command);
             Command<?, BaseCommandDto> handler = (Command<?, BaseCommandDto>) commandHandlers.get(commandDto.getCommandType());
@@ -37,9 +31,5 @@ public class ConsoleCommandHandler implements CommandHandler<Void> {
         }
 
         return null;
-    }
-
-    private void printHelp() {
-        System.out.println("текст в работе");
     }
 }
