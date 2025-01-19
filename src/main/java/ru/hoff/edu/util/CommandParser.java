@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static ru.hoff.edu.util.FileExtensionParser.getFileExtension;
+
 @RequiredArgsConstructor
 public class CommandParser {
 
@@ -51,11 +53,11 @@ public class CommandParser {
             throw new IllegalArgumentException("Ошибка в синтаксисе команды load");
         }
 
-        String parcelsText = matcher.group(1);
-        String trucksDescriptions = matcher.group(2);
-        String algorithm = matcher.group(3);
-        String outputFormat = matcher.group(4);
-        String outputFilename = matcher.group(5);
+        String parcelsText = matcher.group(2);
+        String trucksDescriptions = matcher.group(3);
+        String algorithm = matcher.group(4);
+        String outputFormat = matcher.group(5);
+        String outputFilename = matcher.group(6);
 
         String normalizedParcelsText = parcelsText.replace("\\n", "\n");
         String normalizedTrucksDescriptions = trucksDescriptions.replace("\\n", "\n");
@@ -147,12 +149,5 @@ public class CommandParser {
 
         String parcelName = matcher.group(1);
         return new FindParcelByIdQueryDto(parcelName);
-    }
-
-    private String getFileExtension(String fileName) {
-        if (fileName == null || !fileName.contains(".")) {
-            return "";
-        }
-        return fileName.substring(fileName.lastIndexOf('.') + 1);
     }
 }

@@ -1,9 +1,10 @@
-package ru.hoff.edu.service;
+package ru.hoff.edu.service.strategy;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
+import ru.hoff.edu.service.ParcelService;
 import ru.hoff.edu.util.DataConverter;
 
 import java.util.ArrayList;

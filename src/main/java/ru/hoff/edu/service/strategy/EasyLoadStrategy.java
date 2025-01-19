@@ -1,9 +1,10 @@
-package ru.hoff.edu.service;
+package ru.hoff.edu.service.strategy;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
+import ru.hoff.edu.service.ParcelService;
 import ru.hoff.edu.util.DataConverter;
 
 import java.util.ArrayList;
@@ -32,11 +33,7 @@ public class EasyLoadStrategy implements LoadStrategy {
         log.info("Start loading trucks with easy mode");
         for (Truck truck : trucks) {
             for (Parcel parcel : parcels) {
-                if (parcel.isLoaded()) {
-                    continue;
-                }
-
-                if (parcelService.tryPlacePackageInTruck(truck, parcel)) {
+                if (!parcel.isLoaded() && parcelService.tryPlacePackageInTruck(truck, parcel)) {
                     parcelService.placeParcelInTruck(truck, parcel);
                     trucksResult.add(truck);
                     parcel.setLoaded(true);

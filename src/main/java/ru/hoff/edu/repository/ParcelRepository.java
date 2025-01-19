@@ -4,9 +4,11 @@ import ru.hoff.edu.domain.Parcel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ParcelRepository {
 
+    private static final int START_OF_CHAR_SYMBOL = 0;
     private final List<Parcel> parcels;
 
     public ParcelRepository() {
@@ -33,7 +35,7 @@ public class ParcelRepository {
     public Parcel edit(String id, String newName, char[][] newForm, String newSymbol) {
         Parcel newParcel = new Parcel(newName, newForm, newSymbol, false);
         deleteParcel(id);
-        newParcel.redraw(newSymbol.charAt(0));
+        newParcel.redraw(newSymbol.charAt(START_OF_CHAR_SYMBOL));
         parcels.add(newParcel);
         return newParcel;
     }
@@ -46,10 +48,9 @@ public class ParcelRepository {
         return new ArrayList<>(parcels);
     }
 
-    public Parcel findParcelByName(String name) {
+    public Optional<Parcel> findParcelByName(String name) {
         return parcels.stream()
                 .filter(parcel -> parcel.getName().equals(name))
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
 }

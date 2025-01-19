@@ -2,16 +2,17 @@ package ru.hoff.edu.util.filewriter;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
-public class TxtFileWriter implements FileWriter<Map<String, Object>> {
+public class TxtOutputFileWriter implements OutputFileWriter<Map<String, Object>> {
 
     @Override
-    public void writeToFile(String filePath, List<Map<String, Object>> data) throws IOException {
-        try (java.io.FileWriter writer = new java.io.FileWriter(filePath)) {
+    public void write(String filePath, List<Map<String, Object>> data) throws IOException {
+        try (FileWriter writer = new FileWriter(filePath)) {
             for (Map<String, Object> truckEntry : data) {
                 Map<String, Object> truck = (Map<String, Object>) truckEntry.get("truck");
                 if (truck == null) {

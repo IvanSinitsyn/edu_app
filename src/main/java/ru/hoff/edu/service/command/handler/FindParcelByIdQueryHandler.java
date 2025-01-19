@@ -7,10 +7,11 @@ import ru.hoff.edu.service.command.Command;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class FindParcelByIdQueryHandler implements Command<String, FindParcelByIdQueryDto> {
 
-    private final String FIND_ALL_PARCEL_COMMAND = "all";
+    private static final String FIND_ALL_PARCEL_COMMAND = "all";
     private final ParcelService parcelService;
 
     public FindParcelByIdQueryHandler(ParcelService parcelService) {
@@ -19,20 +20,20 @@ public class FindParcelByIdQueryHandler implements Command<String, FindParcelByI
 
     @Override
     public String execute(FindParcelByIdQueryDto queryDto) {
-        try {
-            if (!FIND_ALL_PARCEL_COMMAND.equals(queryDto.getParcelName())) {
-                Parcel parcel = parcelService.findByName(queryDto.getParcelName());
-                return parcel.showInfo();
+        if (!FIND_ALL_PARCEL_COMMAND.equals(queryDto.getParcelName())) {
+            Optional<Parcel> parcel = parcelService.findByName(queryDto.getParcelName());
+            if (parcel.isPresent()) {
+                return parcel.get().showInfo();
             }
 
-            List<Parcel> parcels = parcelService.findAll();
-            List<String> parcelInfo = new ArrayList<>();
-            for (Parcel parcel : parcels) {
-                parcelInfo.add(parcel.showInfo());
-            }
-            return String.join("\n", parcelInfo);
-        } catch (Exception e) {
-            return e.getMessage();
+            return "Посылка не найдена";
         }
+
+        List<Parcel> parcels = parcelService.findAll();
+        List<String> parcelInfo = new ArrayList<>();
+        for (Parcel parcel : parcels) {
+            parcelInfo.add(parcel.showInfo());
+        }
+        return String.join("\n", parcelInfo);
     }
 }

@@ -27,6 +27,7 @@ public class ConsoleCommandHandler implements CommandHandler<Void> {
                 System.out.println("Обработчик для команды не найден: " + commandDto.getCommandType());
             }
         } catch (IllegalArgumentException ex) {
+            log.error("Ошибка: ", ex);
             System.err.println("Ошибка: " + ex.getMessage());
         }
 

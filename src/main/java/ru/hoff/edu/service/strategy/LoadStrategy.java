@@ -1,4 +1,4 @@
-package ru.hoff.edu.service;
+package ru.hoff.edu.service.strategy;
 
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;

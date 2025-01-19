@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface ReportWriter {
 
-    String writeReport(List<Truck> trucks);
+    String write(List<Truck> trucks);
 }

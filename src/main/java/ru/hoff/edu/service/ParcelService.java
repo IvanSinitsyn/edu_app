@@ -7,6 +7,7 @@ import ru.hoff.edu.repository.ParcelRepository;
 import ru.hoff.edu.validation.ParcelValidator;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 public class ParcelService {
@@ -18,8 +19,8 @@ public class ParcelService {
     }
 
     public void add(Parcel parcel) {
-        Parcel existedParcel = parcelRepository.findParcelByName(parcel.getName());
-        if (existedParcel != null) {
+        Optional<Parcel> existedParcel = parcelRepository.findParcelByName(parcel.getName());
+        if (existedParcel.isPresent()) {
             throw new IllegalArgumentException("Посылка с таким именем уже существует");
         }
 
@@ -35,13 +36,8 @@ public class ParcelService {
         return parcelRepository.findAllParcels();
     }
 
-    public Parcel findByName(String name) {
-        Parcel parcel = parcelRepository.findParcelByName(name);
-        if (parcel == null) {
-            throw new IllegalArgumentException("Посылка не найдена");
-        }
-
-        return parcel;
+    public Optional<Parcel> findByName(String name) {
+        return parcelRepository.findParcelByName(name);
     }
 
     public void delete(String name) {
@@ -49,12 +45,12 @@ public class ParcelService {
     }
 
     public Parcel edit(String id, String newName, char[][] newForm, String newSymbol) {
-        Parcel existedParcel = parcelRepository.findParcelByName(id);
-        if (existedParcel == null) {
+        Optional<Parcel> existedParcel = parcelRepository.findParcelByName(id);
+        if (!existedParcel.isPresent()) {
             throw new IllegalArgumentException("Посылка не найдена");
         }
 
-        if (!ParcelValidator.isParcelFormValid(newForm, existedParcel.getSymbol().charAt(0))) {
+        if (!ParcelValidator.isParcelFormValid(newForm, existedParcel.get().getSymbol().charAt(0))) {
             throw new IllegalArgumentException("Новая форма невалидная");
         }
 

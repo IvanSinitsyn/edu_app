@@ -8,7 +8,7 @@ import java.util.Scanner;
 @RequiredArgsConstructor
 public class ConsoleController {
 
-    private final String EXIT_COMMAND = "exit";
+    private static final String EXIT_COMMAND = "exit";
     private final ConsoleCommandHandler consoleCommandHandler;
 
     public void listen() {

@@ -8,22 +8,30 @@ import java.util.List;
 
 public class TextReportWriter implements ReportWriter {
 
+    private static final String NEW_LINE = "\n";
+
     @Override
-    public String writeReport(List<Truck> trucks) {
+    public String write(List<Truck> trucks) {
         StringBuilder summary = new StringBuilder();
-        summary.append("Кузов:\n");
+        summary.append("Кузов:");
+        summary.append(NEW_LINE);
 
         for (Truck truck : trucks) {
-            summary.append(truck.showTruckSize()).append("\n")
-                    .append(DataConverter.convertFormToString(truck.getGrid())).append("\n");
+            summary.append(truck.showTruckSize())
+                    .append(NEW_LINE)
+                    .append(DataConverter.convertFormToString(truck.getGrid()))
+                    .append(NEW_LINE);
 
             List<Parcel> parcels = truck.getParcels();
             for (Parcel parcel : parcels) {
-                summary.append(parcel.getName()).append("\n")
-                        .append(DataConverter.convertFormToString(parcel.getForm())).append("\n");
+                summary.append(parcel.getName())
+                        .append(NEW_LINE)
+                        .append(DataConverter.convertFormToString(parcel.getForm()))
+                        .append(NEW_LINE);
             }
 
-            summary.append("---------------\n");
+            summary.append("---------------");
+            summary.append(NEW_LINE);
         }
 
         return summary.toString();

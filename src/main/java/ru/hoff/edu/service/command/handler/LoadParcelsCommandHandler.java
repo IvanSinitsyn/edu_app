@@ -6,15 +6,16 @@ import lombok.extern.slf4j.Slf4j;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
 import ru.hoff.edu.dto.LoadParcelsCommandDto;
-import ru.hoff.edu.service.LoadStrategy;
-import ru.hoff.edu.service.LoadStrategyFactory;
 import ru.hoff.edu.service.ParcelService;
 import ru.hoff.edu.service.ReportWriter;
-import ru.hoff.edu.service.ReportWriterFactory;
 import ru.hoff.edu.service.command.Command;
+import ru.hoff.edu.service.factory.LoadStrategyFactory;
+import ru.hoff.edu.service.factory.ReportWriterFactory;
+import ru.hoff.edu.service.strategy.LoadStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Getter
@@ -34,12 +35,12 @@ public class LoadParcelsCommandHandler implements Command<String, LoadParcelsCom
 
         List<Parcel> parcels = new ArrayList<>();
         for (String parcelId : loadParcelsCommandDto.getParcelIds()) {
-            Parcel parcel = parcelService.findByName(parcelId);
-            if (parcel == null) {
+            Optional<Parcel> parcel = parcelService.findByName(parcelId);
+            if (!parcel.isPresent()) {
                 continue;
             }
 
-            parcels.add(parcel);
+            parcels.add(parcel.get());
         }
 
         List<Truck> trucks = Truck.createTrucksByDescription(loadParcelsCommandDto.getTrucksDescriptions());
@@ -48,6 +49,6 @@ public class LoadParcelsCommandHandler implements Command<String, LoadParcelsCom
         List<Truck> result = strategy.loadParcels(parcels, trucks);
 
         ReportWriter reportWriter = reportWriterFactory.createReportWriter(loadParcelsCommandDto.getResultOutType(), loadParcelsCommandDto.getPathToResultFile());
-        return reportWriter.writeReport(result);
+        return reportWriter.write(result);
     }
 }

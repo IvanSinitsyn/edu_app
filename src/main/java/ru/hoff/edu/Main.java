@@ -4,15 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
-import ru.hoff.edu.config.ConfigLoader;
 import ru.hoff.edu.config.TelegramBotConfig;
 import ru.hoff.edu.controller.ConsoleController;
 import ru.hoff.edu.controller.TelegramController;
 import ru.hoff.edu.dto.BaseCommandDto;
 import ru.hoff.edu.repository.ParcelRepository;
-import ru.hoff.edu.service.LoadStrategyFactory;
 import ru.hoff.edu.service.ParcelService;
-import ru.hoff.edu.service.ReportWriterFactory;
 import ru.hoff.edu.service.command.Command;
 import ru.hoff.edu.service.command.handler.ConsoleCommandHandler;
 import ru.hoff.edu.service.command.handler.CreateParcelCommandHandler;
@@ -22,6 +19,8 @@ import ru.hoff.edu.service.command.handler.FindParcelByIdQueryHandler;
 import ru.hoff.edu.service.command.handler.LoadParcelsCommandHandler;
 import ru.hoff.edu.service.command.handler.TelegramCommandHandler;
 import ru.hoff.edu.service.command.handler.UnloadParcelsCommandHandler;
+import ru.hoff.edu.service.factory.LoadStrategyFactory;
+import ru.hoff.edu.service.factory.ReportWriterFactory;
 import ru.hoff.edu.util.CommandParser;
 import ru.hoff.edu.util.filereader.FileReaderFactory;
 
@@ -51,9 +50,8 @@ public class Main {
 
         ConsoleCommandHandler consoleCommandHandler = new ConsoleCommandHandler(commandParser, commandHandlers);
         TelegramCommandHandler telegramCommandHandler = new TelegramCommandHandler(commandParser, commandHandlers);
-        TelegramBotConfig botConfig = ConfigLoader.loadTelegramBotConfig();
         TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-        botsApi.registerBot(new TelegramController(botConfig, telegramCommandHandler));
+        botsApi.registerBot(new TelegramController(new TelegramBotConfig(), telegramCommandHandler));
 
         log.info("Starting application...");
 

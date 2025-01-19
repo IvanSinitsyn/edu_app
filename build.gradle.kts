@@ -17,6 +17,7 @@ object Version {
     const val telegrambotsAbilitiesVersion = "6.0.1"
     const val telegrambotsMetaVersion = "6.5.0"
     const val snakeyamlVersion = "2.0"
+    const val mokitoInline = "2.7.21"
 }
 
 
@@ -43,6 +44,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.junit.jupiter:junit-jupiter:${Version.junitVersion}")
     testImplementation("org.mockito:mockito-core:${Version.mockitoVersion}")
+    testImplementation("org.mockito:mockito-inline:${Version.mokitoInline}")
 }
 
 tasks.test {
