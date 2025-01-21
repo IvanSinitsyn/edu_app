@@ -1,10 +1,14 @@
 package ru.hoff.edu.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import ru.hoff.edu.util.DataConverter;
 
 @Getter
+@Builder
+@AllArgsConstructor
 public class Parcel {
 
     private final String name;
@@ -13,13 +17,6 @@ public class Parcel {
 
     @Setter
     private boolean isLoaded;
-
-    public Parcel(String name, char[][] form, String symbol, boolean isLoaded) {
-        this.name = name;
-        this.form = form;
-        this.symbol = symbol;
-        this.isLoaded = isLoaded;
-    }
 
     public Integer getWidth() {
         return form[0].length;

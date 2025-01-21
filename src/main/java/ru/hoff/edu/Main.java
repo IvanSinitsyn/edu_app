@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
-import ru.hoff.edu.config.TelegramBotConfig;
 import ru.hoff.edu.controller.ConsoleController;
 import ru.hoff.edu.controller.TelegramController;
 import ru.hoff.edu.dto.BaseCommandDto;
@@ -19,9 +18,9 @@ import ru.hoff.edu.service.command.handler.FindParcelByIdQueryHandler;
 import ru.hoff.edu.service.command.handler.LoadParcelsCommandHandler;
 import ru.hoff.edu.service.command.handler.TelegramCommandHandler;
 import ru.hoff.edu.service.command.handler.UnloadParcelsCommandHandler;
+import ru.hoff.edu.service.factory.CommandParserFactory;
 import ru.hoff.edu.service.factory.LoadStrategyFactory;
 import ru.hoff.edu.service.factory.ReportWriterFactory;
-import ru.hoff.edu.util.CommandParser;
 import ru.hoff.edu.util.filereader.FileReaderFactory;
 
 import java.io.PrintStream;
@@ -36,7 +35,7 @@ public class Main {
         System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
 
         ParcelService parcelService = new ParcelService(new ParcelRepository());
-        CommandParser commandParser = new CommandParser(new FileReaderFactory());
+        CommandParserFactory commandParserFactory = new CommandParserFactory(new FileReaderFactory());
         ReportWriterFactory reportWriterFactory = new ReportWriterFactory();
         LoadStrategyFactory loadStrategyFactory = new LoadStrategyFactory(parcelService);
 
@@ -48,10 +47,10 @@ public class Main {
         commandHandlers.put("/load", new LoadParcelsCommandHandler(reportWriterFactory, loadStrategyFactory, parcelService));
         commandHandlers.put("/unload", new UnloadParcelsCommandHandler());
 
-        ConsoleCommandHandler consoleCommandHandler = new ConsoleCommandHandler(commandParser, commandHandlers);
-        TelegramCommandHandler telegramCommandHandler = new TelegramCommandHandler(commandParser, commandHandlers);
+        ConsoleCommandHandler consoleCommandHandler = new ConsoleCommandHandler(commandParserFactory, commandHandlers);
+        TelegramCommandHandler telegramCommandHandler = new TelegramCommandHandler(commandParserFactory, commandHandlers);
         TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-        botsApi.registerBot(new TelegramController(new TelegramBotConfig(), telegramCommandHandler));
+        botsApi.registerBot(new TelegramController(telegramCommandHandler));
 
         log.info("Starting application...");
 

@@ -20,7 +20,7 @@ public class ConsoleController {
                 System.exit(0);
             }
 
-            consoleCommandHandler.handleCommand(command);
+            consoleCommandHandler.handle(command);
         }
     }
 }

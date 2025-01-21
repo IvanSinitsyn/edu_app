@@ -7,7 +7,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
-public class ParcelValidatorTest {
+class ParcelValidatorTest {
 
     private static Stream<TestCase> provideFormsForValidation() {
         return Stream.of(

@@ -1,5 +1,6 @@
 package ru.hoff.edu.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
@@ -10,13 +11,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
+@RequiredArgsConstructor
 public class ParcelService {
 
     private final ParcelRepository parcelRepository;
-
-    public ParcelService(ParcelRepository parcelRepository) {
-        this.parcelRepository = parcelRepository;
-    }
 
     public void add(Parcel parcel) {
         Optional<Parcel> existedParcel = parcelRepository.findParcelByName(parcel.getName());

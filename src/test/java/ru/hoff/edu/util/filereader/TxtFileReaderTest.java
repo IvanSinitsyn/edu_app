@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TxtFileReaderTest {
+class TxtFileReaderTest {
 
     @Test
     void readFile_Check_Result_IsValid() throws IOException {

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static ru.hoff.edu.util.FileExtensionParser.getFileExtension;
 
-public class FileExtensionParserTest {
+class FileExtensionParserTest {
 
     @Test
     void getFileExtension_shouldReturnCorrectExtension() {

@@ -16,11 +16,11 @@ public class CreateParcelCommandHandler implements Command<String, CreateParcelC
 
     @Override
     public String execute(CreateParcelCommandDto commandDto) {
-        Parcel parcel = new Parcel(
-                commandDto.getName(),
-                DataConverter.convertStringToForm(commandDto.getForm()),
-                commandDto.getSymbol(),
-                false);
+        Parcel parcel = Parcel.builder()
+                .name(commandDto.getName())
+                .form(DataConverter.convertStringToForm(commandDto.getForm()))
+                .symbol(commandDto.getSymbol())
+                .build();
         parcelService.add(parcel);
         return parcel.showInfo();
     }
