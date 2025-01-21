@@ -1,11 +1,13 @@
 package ru.hoff.edu.service.command.handler;
 
+import org.springframework.stereotype.Component;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.dto.CreateParcelCommandDto;
 import ru.hoff.edu.service.ParcelService;
 import ru.hoff.edu.service.command.Command;
 import ru.hoff.edu.util.DataConverter;
 
+@Component
 public class CreateParcelCommandHandler implements Command<String, CreateParcelCommandDto> {
 
     private final ParcelService parcelService;

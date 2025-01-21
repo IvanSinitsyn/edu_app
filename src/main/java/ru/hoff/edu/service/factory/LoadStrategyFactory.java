@@ -1,6 +1,7 @@
 package ru.hoff.edu.service.factory;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import ru.hoff.edu.model.enums.AlgorithmType;
 import ru.hoff.edu.service.ParcelService;
 import ru.hoff.edu.service.strategy.EasyLoadStrategy;
@@ -8,6 +9,7 @@ import ru.hoff.edu.service.strategy.EqualLoadStrategy;
 import ru.hoff.edu.service.strategy.LoadStrategy;
 import ru.hoff.edu.service.strategy.OptimalLoadStrategy;
 
+@Component
 @RequiredArgsConstructor
 public class LoadStrategyFactory {
 

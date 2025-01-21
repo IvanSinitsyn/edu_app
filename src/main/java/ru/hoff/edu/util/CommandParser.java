@@ -1,6 +1,7 @@
 package ru.hoff.edu.util;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import ru.hoff.edu.dto.BaseCommandDto;
 import ru.hoff.edu.dto.CreateParcelCommandDto;
 import ru.hoff.edu.dto.DeleteParcelCommandDto;
@@ -22,6 +23,7 @@ import java.util.regex.Pattern;
 import static ru.hoff.edu.util.FileExtensionParser.getFileExtension;
 
 @RequiredArgsConstructor
+@Component
 public class CommandParser {
 
     private final FileReaderFactory fileReaderFactory;
@@ -46,7 +48,7 @@ public class CommandParser {
 
     private LoadParcelsCommandDto parseLoadCommand(String command) {
         Pattern pattern = Pattern.compile(
-                "-parcels-(text|file) \"(.*?)\" -trucks \"(.*?)\" -algorithm \"(.*?)\" -out (\\w+)(?: -out-filename (\\w+))?");
+                "--arcels-(text|file) \"(.*?)\" >trucks \"(.*?)\" >algorithm \"(.*?)\" >out (\\w+)(?: >out-filename (\\w+))?");
         Matcher matcher = pattern.matcher(command);
 
         if (!matcher.find()) {
@@ -63,7 +65,7 @@ public class CommandParser {
         String normalizedTrucksDescriptions = trucksDescriptions.replace("\\n", "\n");
 
         List<String> parcelsNames = Arrays.asList(normalizedParcelsText.split("\n"));
-        if (command.contains("-parcels-file")) {
+        if (command.contains(">parcels-file")) {
             InputFileReader fileReader = fileReaderFactory.createFileReader(FileType.fromString(getFileExtension(outputFilename)));
             parcelsNames = fileReader.readFile(parcelsText);
         }
@@ -78,7 +80,7 @@ public class CommandParser {
 
     private UnloadParcelsCommandDto parseUnloadCommand(String command) {
         Pattern pattern = Pattern.compile(
-                "unload -infile \"(.*?)\" -outfile \"(.*?)\"(?: --withcount)?"
+                ">infile \"(.*?)\" >outfile \"(.*?)\"(?: >withcount)?"
         );
 
         Matcher matcher = pattern.matcher(command);
@@ -89,13 +91,13 @@ public class CommandParser {
 
         String inFileName = matcher.group(1);
         String outFileName = matcher.group(2);
-        boolean withCount = command.contains("--withcount");
+        boolean withCount = command.contains(">withcount");
 
         return new UnloadParcelsCommandDto(inFileName, outFileName, withCount);
     }
 
     private CreateParcelCommandDto parseCreateParcelCommand(String command) {
-        Pattern pattern = Pattern.compile("-name \"(.*?)\" -form \"(.*?)\" -symbol \"(.*?)\"");
+        Pattern pattern = Pattern.compile("-name (.*?) -form (.*?) -symbol (.*?)");
         Matcher matcher = pattern.matcher(command);
 
         if (!matcher.find()) {
@@ -123,7 +125,7 @@ public class CommandParser {
     }
 
     private EditParcelCommandDto parseEditParcelCommand(String command) {
-        Pattern pattern = Pattern.compile("-id \"(.*?)\" -name \"(.*?)\" -form \"(.*?)\" -symbol \"(.*?)\"");
+        Pattern pattern = Pattern.compile("--id \"(.*?)\" --name \"(.*?)\" --form \"(.*?)\" --symbol \"(.*?)\"");
         Matcher matcher = pattern.matcher(command);
 
         if (!matcher.find()) {

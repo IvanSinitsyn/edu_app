@@ -2,6 +2,7 @@ package ru.hoff.edu.service.command.handler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import ru.hoff.edu.dto.BaseCommandDto;
 import ru.hoff.edu.service.command.Command;
 import ru.hoff.edu.util.CommandParser;
@@ -9,6 +10,7 @@ import ru.hoff.edu.util.CommandParser;
 import java.util.Map;
 
 @Slf4j
+@Component
 @RequiredArgsConstructor
 public class TelegramCommandHandler implements CommandHandler<String> {
 

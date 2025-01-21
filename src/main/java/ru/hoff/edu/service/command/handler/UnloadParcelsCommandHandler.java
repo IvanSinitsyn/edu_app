@@ -1,9 +1,11 @@
 package ru.hoff.edu.service.command.handler;
 
 import lombok.Getter;
+import org.springframework.stereotype.Component;
 import ru.hoff.edu.dto.UnloadParcelsCommandDto;
 import ru.hoff.edu.service.command.Command;
 
+@Component
 @Getter
 public class UnloadParcelsCommandHandler implements Command<Void, UnloadParcelsCommandDto> {
 

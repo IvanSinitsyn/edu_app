@@ -1,5 +1,6 @@
 package ru.hoff.edu.service.command.handler;
 
+import org.springframework.stereotype.Component;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.dto.FindParcelByIdQueryDto;
 import ru.hoff.edu.service.ParcelService;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Component
 public class FindParcelByIdQueryHandler implements Command<String, FindParcelByIdQueryDto> {
 
     private static final String FIND_ALL_PARCEL_COMMAND = "all";

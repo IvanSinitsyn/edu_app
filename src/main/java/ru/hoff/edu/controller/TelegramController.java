@@ -7,7 +7,7 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import ru.hoff.edu.config.TelegramBotConfig;
+import ru.hoff.edu.config.TgBotConfig;
 import ru.hoff.edu.service.command.handler.TelegramCommandHandler;
 
 @Slf4j
@@ -15,17 +15,17 @@ import ru.hoff.edu.service.command.handler.TelegramCommandHandler;
 @RequiredArgsConstructor
 public class TelegramController extends TelegramLongPollingBot {
 
-    private final TelegramBotConfig botConfig;
+    private final TgBotConfig tgBotConfig;
     private final TelegramCommandHandler telegramCommandHandler;
 
     @Override
     public String getBotUsername() {
-        return botConfig.getBotName();
+        return tgBotConfig.getBotName();
     }
 
     @Override
     public String getBotToken() {
-        return botConfig.getBotToken();
+        return tgBotConfig.getBotToken();
     }
 
     @Override

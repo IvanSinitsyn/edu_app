@@ -1,3 +1,10 @@
-telegram-bot-configuration:
+tg-bot-configuration:
   bot-name: "SiivEduAppBot"
   bot-token: ""
+
+spring:
+  shell:
+    interactive:
+      enabled: true
+  main:
+    web-application-type: none

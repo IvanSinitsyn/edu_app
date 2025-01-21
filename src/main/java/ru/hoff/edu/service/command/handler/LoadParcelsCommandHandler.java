@@ -3,6 +3,7 @@ package ru.hoff.edu.service.command.handler;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
 import ru.hoff.edu.dto.LoadParcelsCommandDto;
@@ -19,6 +20,7 @@ import java.util.Optional;
 
 @Slf4j
 @Getter
+@Component
 @RequiredArgsConstructor
 public class LoadParcelsCommandHandler implements Command<String, LoadParcelsCommandDto> {
 

@@ -1,6 +1,7 @@
 package ru.hoff.edu.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
 import ru.hoff.edu.repository.ParcelRepository;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
+@Service
 public class ParcelService {
 
     private final ParcelRepository parcelRepository;

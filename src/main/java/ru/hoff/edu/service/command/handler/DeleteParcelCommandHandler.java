@@ -1,9 +1,11 @@
 package ru.hoff.edu.service.command.handler;
 
+import org.springframework.stereotype.Component;
 import ru.hoff.edu.dto.DeleteParcelCommandDto;
 import ru.hoff.edu.service.ParcelService;
 import ru.hoff.edu.service.command.Command;
 
+@Component
 public class DeleteParcelCommandHandler implements Command<String, DeleteParcelCommandDto> {
 
     private final ParcelService parcelService;

@@ -1,11 +1,13 @@
 package ru.hoff.edu.repository;
 
+import org.springframework.stereotype.Component;
 import ru.hoff.edu.domain.Parcel;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Component
 public class ParcelRepository {
 
     private static final int START_OF_CHAR_SYMBOL = 0;
