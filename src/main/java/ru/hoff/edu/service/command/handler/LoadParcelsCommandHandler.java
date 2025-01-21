@@ -38,7 +38,7 @@ public class LoadParcelsCommandHandler implements Command<String, LoadParcelsCom
         List<Parcel> parcels = new ArrayList<>();
         for (String parcelId : loadParcelsCommandDto.getParcelIds()) {
             Optional<Parcel> parcel = parcelService.findByName(parcelId);
-            if (!parcel.isPresent()) {
+            if (parcel.isEmpty()) {
                 continue;
             }
 

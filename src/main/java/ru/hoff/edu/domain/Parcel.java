@@ -1,11 +1,13 @@
 package ru.hoff.edu.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import ru.hoff.edu.util.DataConverter;
 
 @Getter
+@Builder
 @AllArgsConstructor
 public class Parcel {
 

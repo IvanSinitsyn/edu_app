@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
-public class DataConverterTest {
+class DataConverterTest {
 
     static Stream<Object[]> provideInputAndExpectedOutput() {
         return Stream.of(
