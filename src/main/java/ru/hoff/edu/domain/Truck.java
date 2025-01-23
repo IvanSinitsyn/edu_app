@@ -1,12 +1,24 @@
 package ru.hoff.edu.domain;
 
+import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Getter
 public class Truck {
     public static final int WIDTH = 6;
     public static final int HEIGHT = 6;
+    private final int width;
+    private final int height;
+    private final List<Parcel> parcels;
     private final char[][] grid;
 
     public Truck() {
+        parcels = new ArrayList<>();
         grid = new char[WIDTH][HEIGHT];
+        width = WIDTH;
+        height = HEIGHT;
         for (int i = 0; i < HEIGHT; i++) {
             for (int j = 0; j < WIDTH; j++) {
                 grid[j][i] = ' ';
@@ -14,17 +26,45 @@ public class Truck {
         }
     }
 
-    public boolean canPlace(char[][] packageShape, int x, int y) {
-        int packageHeight = packageShape.length;
-        int packageWidth = packageShape[0].length;
+    public Truck(String description) {
+        parcels = new ArrayList<>();
+        String[] dimensions = description.split("x");
+        if (dimensions.length != 2) {
+            throw new IllegalArgumentException("Invalid input format. Expected format: NxM (e.g., 3x3)");
+        }
 
-        if (x + packageWidth > WIDTH || y + packageHeight > HEIGHT) {
+        int rows = Integer.parseInt(dimensions[0]);
+        width = rows;
+        int cols = Integer.parseInt(dimensions[1]);
+        height = cols;
+        grid = new char[rows][cols];
+        for (int i = 0; i < HEIGHT; i++) {
+            for (int j = 0; j < WIDTH; j++) {
+                grid[j][i] = ' ';
+            }
+        }
+    }
+
+    public static List<Truck> createTrucksByDescription(List<String> description) {
+        List<Truck> trucks = new ArrayList<>();
+        for (String desc : description) {
+            trucks.add(new Truck(desc));
+        }
+
+        return trucks;
+    }
+
+    public boolean canPlace(Parcel parcel, int gridX, int gridY) {
+        int packageHeight = parcel.getHeight();
+        int packageWidth = parcel.getWidth();
+
+        if (gridX + packageWidth > WIDTH || gridY + packageHeight > HEIGHT) {
             return false;
         }
 
         for (int i = 0; i < packageHeight; i++) {
             for (int j = 0; j < packageWidth; j++) {
-                if (packageShape[i][j] != ' ' && grid[y + i][x + j] != ' ') {
+                if (parcel.getForm()[i][j] != ' ' && grid[gridY + i][gridX + j] != ' ') {
                     return false;
                 }
             }
@@ -32,21 +72,19 @@ public class Truck {
         return true;
     }
 
-    public char[][] getGrid() {
-        return grid;
-    }
-
-    public void place(char[][] packageShape, int x, int y) {
-        int packageHeight = packageShape.length;
-        int packageWidth = packageShape[0].length;
+    public void place(Parcel parcel, int x, int y) {
+        int packageHeight = parcel.getHeight();
+        int packageWidth = parcel.getWidth();
 
         for (int i = 0; i < packageHeight; i++) {
             for (int j = 0; j < packageWidth; j++) {
-                if (packageShape[i][j] != ' ') {
-                    grid[y + i][x + j] = packageShape[i][j];
+                if (parcel.getForm()[i][j] != ' ') {
+                    grid[y + i][x + j] = parcel.getForm()[i][j];
                 }
             }
         }
+
+        parcels.add(parcel);
     }
 
     public boolean isEmpty() {
@@ -60,15 +98,23 @@ public class Truck {
         return true;
     }
 
-    public void showLoadingResult() {
-        System.out.println("+++++++");
-        for (int i = HEIGHT - 1; i >= 0; i--) {
-            System.out.print("+");
-            for (int j = 0; j < WIDTH; j++) {
-                System.out.print(grid[i][j]);
+    public int getCurrentLoad() {
+        int currentLoad = 0;
+        for (int y = 0; y < HEIGHT; y++) {
+            for (int x = 0; x < WIDTH; x++) {
+                if (grid[y][x] != ' ') { // Если ячейка занята
+                    currentLoad++;
+                }
             }
-            System.out.println("+");
         }
-        System.out.println("+++++++");
+        return currentLoad;
+    }
+
+    public int getHalfCapacity() {
+        return Truck.HEIGHT * Truck.WIDTH / 2;
+    }
+
+    public String showTruckSize() {
+        return this.getHeight() + "x" + this.getWidth();
     }
 }
