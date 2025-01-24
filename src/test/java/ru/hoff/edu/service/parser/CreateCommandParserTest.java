@@ -3,6 +3,7 @@ package ru.hoff.edu.service.parser;
 import org.junit.jupiter.api.Test;
 import ru.hoff.edu.dto.BaseCommandDto;
 import ru.hoff.edu.dto.CreateParcelCommandDto;
+import ru.hoff.edu.service.parser.impl.CreateCommandParser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;

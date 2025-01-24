@@ -5,7 +5,8 @@ import ru.hoff.edu.dto.BaseCommandDto;
 import ru.hoff.edu.dto.LoadParcelsCommandDto;
 import ru.hoff.edu.model.enums.AlgorithmType;
 import ru.hoff.edu.model.enums.ResultOutType;
-import ru.hoff.edu.util.filereader.FileReaderFactory;
+import ru.hoff.edu.service.factory.FileReaderFactory;
+import ru.hoff.edu.service.parser.impl.LoadCommandParser;
 
 import java.util.Arrays;
 

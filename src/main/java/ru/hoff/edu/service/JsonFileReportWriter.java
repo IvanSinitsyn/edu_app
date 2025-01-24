@@ -6,7 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +17,10 @@ import java.util.Map;
 
 import static ru.hoff.edu.util.DataConverter.convertFormToString;
 
+/**
+ * Класс, реализующий запись данных о грузовиках и посылках в JSON-файл.
+ * Использует {@link ObjectWriter} для преобразования данных в JSON-формат.
+ */
 @Slf4j
 @RequiredArgsConstructor
 public class JsonFileReportWriter implements ReportWriter {
@@ -22,12 +28,24 @@ public class JsonFileReportWriter implements ReportWriter {
     private final String outputPath;
     private final ObjectWriter jsonWriter;
 
+    /**
+     * Записывает данные о грузовиках и посылках в JSON-файл.
+     *
+     * @param trucks Список грузовиков, данные о которых необходимо записать.
+     * @return Сообщение о результате записи (например, путь к файлу или ошибка).
+     * @throws RuntimeException если возникает ошибка ввода-вывода при записи в файл.
+     */
     @Override
     public String write(List<Truck> trucks) {
         try {
             File file = prepareFile(outputPath);
             List<Map<String, Object>> truckDataList = buildTruckDataList(trucks);
-            jsonWriter.writeValue(file, truckDataList);
+
+            try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(file))) {
+                jsonWriter.writeValue(bufferedOutputStream, truckDataList);
+                bufferedOutputStream.flush();
+            }
+
             return "Report saved to " + outputPath;
         } catch (IOException ex) {
             log.error("Error while writing to {}", outputPath, ex);

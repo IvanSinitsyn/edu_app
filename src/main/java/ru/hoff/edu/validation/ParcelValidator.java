@@ -1,5 +1,11 @@
 package ru.hoff.edu.validation;
 
+/**
+ * Класс ParcelValidator предоставляет методы для проверки валидности формы посылки (Parcel).
+ * Основная задача класса — убедиться, что символы в форме посылки расположены корректно,
+ * без нарушения правил соседства (например, отсутствия ортогональных соседей для символов,
+ * находящихся по диагонали друг от друга).
+ */
 public class ParcelValidator {
 
     public static boolean isParcelFormValid(char[][] form, char symbol) {
