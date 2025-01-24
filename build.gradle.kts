@@ -18,6 +18,9 @@ object Version {
     const val telegrambotsMetaVersion = "6.5.0"
     const val snakeyamlVersion = "2.0"
     const val mokitoInline = "2.7.21"
+    const val springShellStarter = "3.4.0"
+    const val springBootStarterActuator = "3.4.1"
+    const val springBootConfigProcessor = "3.4.1"
 }
 
 
@@ -34,6 +37,9 @@ dependencies {
     implementation("org.telegram:telegrambots-abilities:${Version.telegrambotsAbilitiesVersion}")
     implementation("org.telegram:telegrambots-meta:${Version.telegrambotsMetaVersion}")
     implementation("org.yaml:snakeyaml:${Version.snakeyamlVersion}")
+    implementation("org.springframework.shell:spring-shell-starter:${Version.springShellStarter}")
+    implementation("org.springframework.boot:spring-boot-starter-actuator:${Version.springBootStarterActuator}")
+    implementation("org.springframework.boot:spring-boot-configuration-processor:${Version.springBootConfigProcessor}")
 
     compileOnly("org.projectlombok:lombok:${Version.lombokVersion}")
     annotationProcessor("org.projectlombok:lombok:${Version.lombokVersion}")
