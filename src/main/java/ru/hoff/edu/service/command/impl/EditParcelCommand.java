@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.dto.EditParcelCommandDto;
+import ru.hoff.edu.dto.response.EditParcelResponseDto;
+import ru.hoff.edu.service.ParcelMapper;
 import ru.hoff.edu.service.ParcelService;
 import ru.hoff.edu.service.command.Command;
 import ru.hoff.edu.util.DataConverter;
@@ -14,9 +16,10 @@ import ru.hoff.edu.util.DataConverter;
  */
 @Component
 @RequiredArgsConstructor
-public class EditParcelCommand implements Command<String, EditParcelCommandDto> {
+public class EditParcelCommand implements Command<EditParcelResponseDto, EditParcelCommandDto> {
 
     private final ParcelService parcelService;
+    private final ParcelMapper parcelMapper;
 
     /**
      * Выполняет команду редактирования посылки.
@@ -25,12 +28,13 @@ public class EditParcelCommand implements Command<String, EditParcelCommandDto> 
      * @return Строка с информацией о отредактированной посылке.
      */
     @Override
-    public String execute(EditParcelCommandDto commandDto) {
-        Parcel editedParcel = parcelService.edit(
-                commandDto.getId(),
-                commandDto.getName(),
-                DataConverter.convertStringToForm(commandDto.getForm()),
-                commandDto.getSymbol());
-        return editedParcel.showInfo();
+    public EditParcelResponseDto execute(EditParcelCommandDto commandDto) {
+        Parcel parcel = parcelService.edit(
+                commandDto.id(),
+                commandDto.name(),
+                DataConverter.convertStringToForm(commandDto.form()),
+                commandDto.symbol());
+
+        return new EditParcelResponseDto(parcelMapper.toDto(parcel));
     }
 }

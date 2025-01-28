@@ -61,21 +61,10 @@ class TextReportWriterTest {
         trucks.add(truck1);
         trucks.add(truck2);
 
-        String expectedReport = """
-                Кузов:
-                6x6
-                [XX    , XX    ,       ,       ,       ,       ]
-                Parcel1
-                [XX,  X]
-                Parcel2
-                [X , XX]
-                ---------------
-                6x6
-                [XXX   ,  X    ,       ,       ,       ,       ]
-                Parcel3
-                [XXX,  X ]
-                ---------------
-                """;
+        String expectedReport = "Кузов:" + System.lineSeparator() + "6x6" + System.lineSeparator() + "[XX    , XX    ,       ,       ,       ,       ]" + System.lineSeparator() +
+                "Parcel1" + System.lineSeparator() + "[XX,  X]" + System.lineSeparator() + "Parcel2" + System.lineSeparator() + "[X , XX]" + System.lineSeparator() +
+                "---------------" + System.lineSeparator() + "6x6" + System.lineSeparator() + "[XXX   ,  X    ,       ,       ,       ,       ]" + System.lineSeparator() +
+                "Parcel3" + System.lineSeparator() + "[XXX,  X ]" + System.lineSeparator() + "---------------";
 
         // Act
         String actualReport = reportWriter.write(trucks);
@@ -88,7 +77,7 @@ class TextReportWriterTest {
     void write_shouldReturnEmptyReport_whenTruckListIsEmpty() {
         // Arrange
         List<Truck> trucks = new ArrayList<>();
-        String expectedReport = "Кузов:\n";
+        String expectedReport = "Кузов:" + System.lineSeparator();
 
         // Act
         String actualReport = reportWriter.write(trucks);

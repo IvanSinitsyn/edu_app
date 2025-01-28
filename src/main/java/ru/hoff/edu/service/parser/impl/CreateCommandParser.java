@@ -13,7 +13,10 @@ import java.util.regex.Pattern;
  */
 public class CreateCommandParser implements CommandParser {
 
-    private final static Pattern pattern = Pattern.compile("--name \"(.*?)\" --form \"(.*?)\" --symbol \"(.*?)\"");
+    private static final int NAME_GROUP = 1;
+    private static final int FORM_GROUP = 2;
+    private static final int SYMBOL_GROUP = 3;
+    private static final Pattern pattern = Pattern.compile("--name \"(.*?)\" --form \"(.*?)\" --symbol \"(.*?)\"");
 
     /**
      * Разбирает строку команды создания посылки и преобразует её в DTO.
@@ -30,9 +33,9 @@ public class CreateCommandParser implements CommandParser {
             throw new IllegalArgumentException("Ошибка в синтаксисе команды /create");
         }
 
-        String name = matcher.group(1);
-        String form = matcher.group(2);
-        String symbol = matcher.group(3);
+        String name = matcher.group(NAME_GROUP);
+        String form = matcher.group(FORM_GROUP);
+        String symbol = matcher.group(SYMBOL_GROUP);
         return new CreateParcelCommandDto(name, form, symbol);
     }
 }

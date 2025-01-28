@@ -24,7 +24,12 @@ import static ru.hoff.edu.util.FileExtensionParser.getFileExtension;
 @RequiredArgsConstructor
 public class LoadCommandParser implements CommandParser {
 
-    private final static String PATTERN = "--parcels-(text|file) \"(.*?)\" --trucks \"(.*?)\" --algorithm \"(.*?)\" --out (\\w+)(?: --out-filename (\\w+))?";
+    private static final int PARCEL_FILE_GROUP = 2;
+    private static final int TRUCKS_GROUP = 3;
+    private static final int ALGORITHM_GROUP = 4;
+    private static final int OUT_TYPE_GROUP = 5;
+    private static final int OUT_FILENAME_GROUP = 6;
+    private static final Pattern pattern = Pattern.compile("--parcels-(text|file) \"(.*?)\" --trucks \"(.*?)\" --algorithm \"(.*?)\" --out (\\w+)(?: --out-filename (\\w+))?");
     private final FileReaderFactory fileReaderFactory;
 
     /**
@@ -36,18 +41,17 @@ public class LoadCommandParser implements CommandParser {
      */
     @Override
     public BaseCommandDto parse(String command) {
-        Pattern pattern = Pattern.compile(PATTERN);
         Matcher matcher = pattern.matcher(command);
 
         if (!matcher.find()) {
             throw new IllegalArgumentException("Ошибка в синтаксисе команды load");
         }
 
-        String parcelsText = matcher.group(2);
-        String trucksDescriptions = matcher.group(3);
-        String algorithm = matcher.group(4);
-        String outputFormat = matcher.group(5);
-        String outputFilename = matcher.group(6);
+        String parcelsText = matcher.group(PARCEL_FILE_GROUP);
+        String trucksDescriptions = matcher.group(TRUCKS_GROUP);
+        String algorithm = matcher.group(ALGORITHM_GROUP);
+        String outputFormat = matcher.group(OUT_TYPE_GROUP);
+        String outputFilename = matcher.group(OUT_FILENAME_GROUP);
 
         String normalizedParcelsText = parcelsText.replace("\\n", "\n");
         String normalizedTrucksDescriptions = trucksDescriptions.replace("\\n", "\n");

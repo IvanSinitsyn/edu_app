@@ -29,7 +29,7 @@ public class TelegramController extends TelegramLongPollingBot {
      */
     @Override
     public String getBotUsername() {
-        return tgBotConfig.getBotName();
+        return tgBotConfig.botName();
     }
 
     /**
@@ -39,7 +39,7 @@ public class TelegramController extends TelegramLongPollingBot {
      */
     @Override
     public String getBotToken() {
-        return tgBotConfig.getBotToken();
+        return tgBotConfig.botToken();
     }
 
     /**
@@ -57,7 +57,10 @@ public class TelegramController extends TelegramLongPollingBot {
         String userMessage = update.getMessage().getText();
 
         String response = telegramCommandHandler.handle(userMessage);
+        sendMessage(chatId, response);
+    }
 
+    private void sendMessage(String chatId, String response) {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText(response);

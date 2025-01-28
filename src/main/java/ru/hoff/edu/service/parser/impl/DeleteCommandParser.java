@@ -13,7 +13,8 @@ import java.util.regex.Pattern;
  */
 public class DeleteCommandParser implements CommandParser {
 
-    private final static String PATTERN = "--name \"(.*?)\"";
+    private static final int NAME_GROUP = 1;
+    private static final Pattern pattern = Pattern.compile("--name \"(.*?)\"");
 
     /**
      * Разбирает строку команды удаления посылки и преобразует её в DTO.
@@ -24,14 +25,13 @@ public class DeleteCommandParser implements CommandParser {
      */
     @Override
     public BaseCommandDto parse(String command) {
-        Pattern pattern = Pattern.compile(PATTERN);
         Matcher matcher = pattern.matcher(command);
 
         if (!matcher.find()) {
             throw new IllegalArgumentException("Ошибка в синтаксисе команды /delete");
         }
 
-        String parcelName = matcher.group(1);
+        String parcelName = matcher.group(NAME_GROUP);
         return new DeleteParcelCommandDto(parcelName);
     }
 }

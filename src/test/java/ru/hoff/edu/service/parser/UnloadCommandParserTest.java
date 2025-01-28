@@ -14,7 +14,7 @@ public class UnloadCommandParserTest {
     @Test
     void parseCommand_shouldReturnUnloadParcelsCommandDto() {
         CommandParser parser = new UnloadCommandParser();
-        BaseCommandDto unloadDto = parser.parse("/unload -infile \"input.txt\" -outfile \"output.txt\" --withcount");
+        BaseCommandDto unloadDto = parser.parse("/unload --infile \"input.txt\" --outfile \"output.txt\" --withcount");
         assertInstanceOf(UnloadParcelsCommandDto.class, unloadDto);
     }
 
@@ -22,12 +22,12 @@ public class UnloadCommandParserTest {
     void parseUnloadCommand_shouldReturnUnloadParcelsCommandDto() {
         CommandParser parser = new UnloadCommandParser();
 
-        String command = "/unload -infile \"input.txt\" -outfile \"output.txt\" --withcount";
+        String command = "/unload --infile \"input.txt\" --outfile \"output.txt\" --withcount";
 
         UnloadParcelsCommandDto dto = (UnloadParcelsCommandDto) parser.parse(command);
 
-        assertEquals("input.txt", dto.getInFileName());
-        assertEquals("output.txt", dto.getOutFileName());
-        assertTrue(dto.isWithCount());
+        assertEquals("input.txt", dto.inFileName());
+        assertEquals("output.txt", dto.outFileName());
+        assertTrue(dto.withCount());
     }
 }

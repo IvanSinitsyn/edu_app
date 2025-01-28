@@ -22,6 +22,11 @@ public enum CommandType {
     FIND("/find"),
 
     /**
+     * Команда для поиска всех посылок.
+     */
+    FINDALL("/findall"),
+
+    /**
      * Команда удаления посылки.
      */
     DELETE("/delete"),
@@ -40,30 +45,5 @@ public enum CommandType {
 
     CommandType(String description) {
         this.description = description;
-    }
-
-    /**
-     * Преобразует текстовое описание команды в соответствующее значение перечисления {@link CommandType}.
-     *
-     * @param description Текстовое описание команды.
-     * @return Соответствующее значение перечисления {@link CommandType}.
-     * @throws IllegalArgumentException если переданное описание не соответствует ни одной команде.
-     */
-    public static CommandType fromDescription(String description) {
-        for (CommandType commandType : CommandType.values()) {
-            if (commandType.getDescription().equals(description)) {
-                return commandType;
-            }
-        }
-        throw new IllegalArgumentException("No enum constant with description: " + description);
-    }
-
-    /**
-     * Возвращает текстовое описание команды.
-     *
-     * @return Текстовое описание команды.
-     */
-    public String getDescription() {
-        return description;
     }
 }

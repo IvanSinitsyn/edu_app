@@ -2,14 +2,20 @@ package ru.hoff.edu.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
+import ru.hoff.edu.entity.ParcelEntity;
 import ru.hoff.edu.repository.ParcelRepository;
+import ru.hoff.edu.service.exception.ParcelNotFoundException;
 import ru.hoff.edu.validation.ParcelValidator;
 
 import java.util.List;
-import java.util.Optional;
+
+import static ru.hoff.edu.util.DataConverter.convertArrayToString;
 
 /**
  * Сервис для работы с посылками.
@@ -22,6 +28,8 @@ import java.util.Optional;
 public class ParcelService {
 
     private final ParcelRepository parcelRepository;
+    private final ParcelMapper parcelMapper;
+    private final ParcelValidator parcelValidator;
 
     /**
      * Добавляет новую посылку в репозиторий.
@@ -30,17 +38,17 @@ public class ParcelService {
      * @throws IllegalArgumentException если посылка с таким именем уже существует или форма посылки невалидна.
      */
     public void add(Parcel parcel) {
-        Optional<Parcel> existedParcel = parcelRepository.findParcelByName(parcel.getName());
-        if (existedParcel.isPresent()) {
+        ParcelEntity existedParcel = parcelRepository.findById(parcel.getName()).orElse(null);
+        if (existedParcel != null) {
             throw new IllegalArgumentException("Посылка с таким именем уже существует");
         }
 
-        if (!ParcelValidator.isParcelFormValid(parcel.getForm(), parcel.getSymbol().charAt(0))) {
+        if (!parcelValidator.isParcelFormValid(parcel.getForm(), parcel.getSymbol().charAt(0))) {
             throw new IllegalArgumentException("Форма посылки невалидная");
         }
 
         parcel.redraw(parcel.getSymbol().charAt(0));
-        parcelRepository.addParcel(parcel);
+        parcelRepository.save(parcelMapper.toEntity(parcel));
     }
 
     /**
@@ -48,8 +56,10 @@ public class ParcelService {
      *
      * @return Список всех посылок.
      */
-    public List<Parcel> findAll() {
-        return parcelRepository.findAllParcels();
+    public Page<Parcel> findAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ParcelEntity> parcelEntities = parcelRepository.findAll(pageable);
+        return parcelEntities.map(parcelMapper::fromEntity);
     }
 
     /**
@@ -58,8 +68,8 @@ public class ParcelService {
      * @param name Название посылки.
      * @return Optional, содержащий найденную посылку, или пустой Optional, если посылка не найдена.
      */
-    public Optional<Parcel> findByName(String name) {
-        return parcelRepository.findParcelByName(name);
+    public Parcel findByName(String name) {
+        return parcelMapper.fromEntity(parcelRepository.findById(name).orElseThrow(() -> new ParcelNotFoundException("Посылка " + name + "не найдена")));
     }
 
     /**
@@ -68,7 +78,7 @@ public class ParcelService {
      * @param name Название посылки, которую необходимо удалить.
      */
     public void delete(String name) {
-        parcelRepository.deleteParcel(name);
+        parcelRepository.deleteById(name);
     }
 
     /**
@@ -82,16 +92,23 @@ public class ParcelService {
      * @throws IllegalArgumentException если посылка не найдена или новая форма невалидна.
      */
     public Parcel edit(String id, String newName, char[][] newForm, String newSymbol) {
-        Optional<Parcel> existedParcel = parcelRepository.findParcelByName(id);
-        if (!existedParcel.isPresent()) {
-            throw new IllegalArgumentException("Посылка не найдена");
-        }
+        ParcelEntity existedParcel = parcelRepository.findById(id).orElseThrow(() -> new ParcelNotFoundException("Посылка " + id + "не найдена"));
 
-        if (!ParcelValidator.isParcelFormValid(newForm, existedParcel.get().getSymbol().charAt(0))) {
+        if (!parcelValidator.isParcelFormValid(newForm, existedParcel.getSymbol().charAt(0))) {
             throw new IllegalArgumentException("Новая форма невалидная");
         }
 
-        return parcelRepository.edit(id, newName, newForm, newSymbol);
+        if (!id.equals(newName)) {
+            ParcelEntity newParcel = new ParcelEntity(newName, convertArrayToString(newForm), newSymbol, false);
+            parcelRepository.delete(existedParcel);
+            parcelRepository.save(newParcel);
+            return parcelMapper.fromEntity(newParcel);
+        } else {
+            existedParcel.setForm(convertArrayToString(newForm));
+            existedParcel.setSymbol(newSymbol);
+            ParcelEntity updatedParcel = parcelRepository.save(existedParcel);
+            return parcelMapper.fromEntity(updatedParcel);
+        }
     }
 
     /**

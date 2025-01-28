@@ -41,8 +41,7 @@ public class TelegramCommandHandler implements CommandHandler<String, String> {
                 return "Обработчик для команды не найден: " + commandDto.getCommandType();
             }
         } catch (IllegalArgumentException ex) {
-            log.error("Ошибка: ", ex);
-            return "Ошибка: " + ex.getMessage();
+            throw new IllegalArgumentException(ex);
         }
     }
 }

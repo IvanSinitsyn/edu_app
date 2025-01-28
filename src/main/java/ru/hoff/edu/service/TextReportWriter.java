@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class TextReportWriter implements ReportWriter {
 
-    private static final String NEW_LINE = "\n";
+    private static final String NEW_LINE = System.lineSeparator();
 
     /**
      * Генерирует текстовый отчет на основе списка грузовиков.

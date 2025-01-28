@@ -1,27 +1,22 @@
 package ru.hoff.edu.dto;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder;
 import ru.hoff.edu.model.enums.CommandType;
 
 /**
- * Класс, представляющий DTO (Data Transfer Object) для команды редактирования посылки (Parcel).
+ * Запись, представляющая DTO (Data Transfer Object) для команды редактирования посылки (Parcel).
  * Используется для передачи данных, необходимых для изменения существующей посылки.
  */
-@Getter
-@RequiredArgsConstructor
-public class EditParcelCommandDto implements BaseCommandDto {
-
-    private final String id;
-    private final String name;
-    private final String form;
-    private final String symbol;
+@Builder
+public record EditParcelCommandDto(String id, String name, String form, String symbol) implements BaseCommandDto {
 
     /**
      * Возвращает тип команды. В данном случае всегда возвращает {@link CommandType#EDIT}.
      *
      * @return Тип команды — {@link CommandType#EDIT}.
      */
+    @JsonIgnore
     @Override
     public CommandType getCommandType() {
         return CommandType.EDIT;

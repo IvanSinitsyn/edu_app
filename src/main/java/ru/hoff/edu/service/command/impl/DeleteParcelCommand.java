@@ -3,6 +3,7 @@ package ru.hoff.edu.service.command.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.hoff.edu.dto.DeleteParcelCommandDto;
+import ru.hoff.edu.dto.response.DeleteParcelResponseDto;
 import ru.hoff.edu.service.ParcelService;
 import ru.hoff.edu.service.command.Command;
 
@@ -12,7 +13,7 @@ import ru.hoff.edu.service.command.Command;
  */
 @Component
 @RequiredArgsConstructor
-public class DeleteParcelCommand implements Command<String, DeleteParcelCommandDto> {
+public class DeleteParcelCommand implements Command<DeleteParcelResponseDto, DeleteParcelCommandDto> {
 
     private final ParcelService parcelService;
 
@@ -23,8 +24,8 @@ public class DeleteParcelCommand implements Command<String, DeleteParcelCommandD
      * @return Строка с подтверждением удаления посылки.
      */
     @Override
-    public String execute(DeleteParcelCommandDto commandDto) {
-        parcelService.delete(commandDto.getParcelName());
-        return String.format("Посылка %s удалена", commandDto.getParcelName());
+    public DeleteParcelResponseDto execute(DeleteParcelCommandDto commandDto) {
+        parcelService.delete(commandDto.parcelName());
+        return new DeleteParcelResponseDto(String.format("Посылка %s удалена", commandDto.parcelName()));
     }
 }

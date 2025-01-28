@@ -1,23 +1,39 @@
 package ru.hoff.edu.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellOption;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import ru.hoff.edu.dto.CreateParcelCommandDto;
 import ru.hoff.edu.dto.DeleteParcelCommandDto;
 import ru.hoff.edu.dto.EditParcelCommandDto;
+import ru.hoff.edu.dto.FindAllParcelsQueryDto;
 import ru.hoff.edu.dto.FindParcelByIdQueryDto;
 import ru.hoff.edu.dto.LoadParcelsCommandDto;
 import ru.hoff.edu.dto.UnloadParcelsCommandDto;
-import ru.hoff.edu.model.enums.AlgorithmType;
+import ru.hoff.edu.dto.request.LoadParcelRequestDto;
+import ru.hoff.edu.dto.response.DeleteParcelResponseDto;
+import ru.hoff.edu.dto.response.EditParcelResponseDto;
+import ru.hoff.edu.dto.response.FindAllParcelsResponseDto;
+import ru.hoff.edu.dto.response.FindParcelByIdResponseDto;
+import ru.hoff.edu.dto.response.LoadParcelsResponseDto;
 import ru.hoff.edu.model.enums.FileType;
-import ru.hoff.edu.model.enums.ResultOutType;
 import ru.hoff.edu.service.factory.FileReaderFactory;
 import ru.hoff.edu.service.filereader.InputFileReader;
 import ru.hoff.edu.service.handler.impl.ConsoleCommandHandler;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static ru.hoff.edu.util.FileExtensionParser.getFileExtension;
@@ -29,16 +45,12 @@ import static ru.hoff.edu.util.FileExtensionParser.getFileExtension;
  * загрузки и выгрузки посылок. Каждая команда обрабатывается соответствующим обработчиком.
  * </p>
  */
-@ShellComponent
+@RestController
+@RequestMapping("api/v1/parcels")
+@Tag(name = "Parcel API", description = "API для управления посылками")
 @RequiredArgsConstructor
 public class ParcelController {
 
-    private final static String CREATE_COMMAND = "/create";
-    private final static String EDIT_COMMAND = "/edit";
-    private final static String FIND_COMMAND = "/find";
-    private final static String DELETE_COMMAND = "/delete";
-    private final static String LOAD_COMMAND = "/load";
-    private final static String UNLOAD_COMMAND = "/unload";
     private final ConsoleCommandHandler commandHandler;
     private final FileReaderFactory fileReaderFactory;
 
@@ -48,16 +60,17 @@ public class ParcelController {
      * Эта команда создает новую посылку с указанными именем, формой и символом.
      * </p>
      *
-     * @param name   Имя посылки.
-     * @param form   Форма посылки.
-     * @param symbol Символ, используемый для отображения посылки.
+     * @param createParcelCommandDto DTO для создания посылки.
+     * @see CreateParcelCommandDto
      */
-    @ShellMethod(key = CREATE_COMMAND)
-    public void createParcel(
-            @ShellOption(value = {"--name", "-n"}) String name,
-            @ShellOption(value = {"--form", "-f"}) String form,
-            @ShellOption(value = {"--symbol", "-s"}) String symbol) {
-        commandHandler.handle(new CreateParcelCommandDto(name, form, symbol));
+    @PostMapping()
+    @Operation(summary = "Создание новой посылки")
+    @ApiResponse(responseCode = "201", description = "Посылка создана")
+    public ResponseEntity<?> createParcel(
+            @Parameter(description = "Данные для создания посылки", required = true)
+            @RequestBody CreateParcelCommandDto createParcelCommandDto) {
+        commandHandler.handle(createParcelCommandDto);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
@@ -66,18 +79,17 @@ public class ParcelController {
      * Эта команда редактирует посылку с указанным идентификатором, обновляя её имя, форму и символ.
      * </p>
      *
-     * @param id Идентификатор посылки.
-     * @param name Новое имя посылки.
-     * @param form Новая форма посылки.
-     * @param symbol Новый символ, используемый для отображения посылки.
+     * @param editParcelCommandDto DTO для обновления посылки.
+     * @see EditParcelCommandDto
      */
-    @ShellMethod(key = EDIT_COMMAND)
-    public void editParcel(
-            @ShellOption(value = {"--id", "-i"}) String id,
-            @ShellOption(value = {"--name", "-n"}) String name,
-            @ShellOption(value = {"--form", "-f"}) String form,
-            @ShellOption(value = {"--symbol", "-s"}) String symbol) {
-        commandHandler.handle(new EditParcelCommandDto(id, name, form, symbol));
+    @PutMapping()
+    @Operation(summary = "Изменение существующей посылки")
+    @ApiResponse(responseCode = "200", description = "Посылка изменена")
+    public ResponseEntity<?> editParcel(
+            @Parameter(description = "Данные для изменения посылки", required = true)
+            @RequestBody EditParcelCommandDto editParcelCommandDto) {
+        EditParcelResponseDto response = (EditParcelResponseDto) commandHandler.handle(editParcelCommandDto);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     /**
@@ -86,12 +98,39 @@ public class ParcelController {
      * Эта команда ищет посылку по указанному имени и возвращает информацию о ней.
      * </p>
      *
-     * @param name Имя посылки для поиска.
+     * @param id Имя посылки для поиска.
      */
-    @ShellMethod(key = FIND_COMMAND)
-    public void findParcel(@ShellOption(value = {"--name", "-n"}) String name) {
-        commandHandler.handle(new FindParcelByIdQueryDto(name));
+    @GetMapping("/{id}")
+    @Operation(summary = "Поиск посылки по Id(имени)")
+    @ApiResponse(responseCode = "200", description = "Посылка найдена")
+    @ApiResponse(responseCode = "404", description = "Посылка не найдена")
+    public ResponseEntity<?> findParcelById(
+            @Parameter(description = "Id для поиска посылки", required = true)
+            @PathVariable(name = "id") String id) {
+        FindParcelByIdResponseDto result = (FindParcelByIdResponseDto) commandHandler.handle(new FindParcelByIdQueryDto(id));
+        if (result.getParcel() == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
+
+    /**
+     * Возвращает все посылки.
+     * <p>
+     * Эта команда возвращает все посылки.
+     * </p>
+     */
+    @GetMapping("/all")
+    @Operation(summary = "Получение всех посылок")
+    @ApiResponse(responseCode = "200", description = "Посылки получены")
+    public ResponseEntity<?> fetchAllParcels(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size
+    ) {
+        FindAllParcelsResponseDto result = (FindAllParcelsResponseDto) commandHandler.handle(new FindAllParcelsQueryDto(page, size));
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
 
     /**
      * Удаляет посылку по имени.
@@ -99,11 +138,16 @@ public class ParcelController {
      * Эта команда удаляет посылку с указанным именем.
      * </p>
      *
-     * @param name Имя посылки для удаления.
+     * @param id Имя посылки для удаления.
      */
-    @ShellMethod(key = DELETE_COMMAND)
-    public void deleteParcel(@ShellOption(value = {"--name", "-n"}) String name) {
-        commandHandler.handle(new DeleteParcelCommandDto(name));
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Удаление посылки по Id(имени)")
+    @ApiResponse(responseCode = "200", description = "Посылка удалена")
+    public ResponseEntity<?> deleteParcelById(
+            @Parameter(description = "Id посылки для удаления", required = true)
+            @PathVariable(name = "id") String id) {
+        DeleteParcelResponseDto result = (DeleteParcelResponseDto) commandHandler.handle(new DeleteParcelCommandDto(id));
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     /**
@@ -113,39 +157,34 @@ public class ParcelController {
      * Посылки могут быть переданы в виде текста или считаны из файла.
      * </p>
      *
-     * @param parcelsNames Список имен посылок в виде текста (разделенных символом новой строки).
-     * @param parcelsFile Путь к файлу с именами посылок.
-     * @param trucksDescriptions Описания грузовиков (разделенные символом новой строки).
-     * @param algorithm Алгоритм загрузки.
-     * @param outputFormat Формат вывода результата.
-     * @param outputFilename Имя файла для сохранения результата.
+     * @param loadParcelRequestDto DTO для загрузки посылок.
+     * @see LoadParcelRequestDto
      */
-    @ShellMethod(key = LOAD_COMMAND)
-    public void loadParcel(
-            @ShellOption(value = "--parcels-text", defaultValue = "") String parcelsNames,
-            @ShellOption(value = "--parcels-file", defaultValue = "") String parcelsFile,
-            @ShellOption(value = "--trucks") String trucksDescriptions,
-            @ShellOption(value = "--algorithm") String algorithm,
-            @ShellOption(value = "--out") String outputFormat,
-            @ShellOption(value = "--out-filename", defaultValue = "") String outputFilename) {
+    @PostMapping("/load")
+    @Operation(
+            summary = "Загружает посылки в грузовики",
+            description = "Эта команда загружает посылки в грузовики в соответствии с указанным алгоритмом. Посылки могут быть переданы в виде текста или считаны из файла.")
+    @ApiResponse(responseCode = "200", description = "Посылки погружены")
+    public ResponseEntity<?> loadParcels(
+            @Parameter(description = "DTO для загрузки посылок", required = true)
+            @RequestBody LoadParcelRequestDto loadParcelRequestDto) {
         List<String> parcelIds;
-        if (!parcelsNames.isEmpty()) {
-            String normalizedParcelsText = parcelsNames.replace("\\n", "\n");
-            parcelIds = Arrays.asList(normalizedParcelsText.split("\n"));
+        if (!loadParcelRequestDto.parcelIds().isEmpty()) {
+            parcelIds = loadParcelRequestDto.parcelIds();
         } else {
-            InputFileReader fileReader = fileReaderFactory.createFileReader(FileType.fromString(getFileExtension(parcelsFile)));
-            parcelIds = fileReader.readFile(parcelsFile);
+            InputFileReader fileReader = fileReaderFactory.createFileReader(FileType.fromString(getFileExtension(loadParcelRequestDto.pathToParcelsFile())));
+            parcelIds = fileReader.readFile(loadParcelRequestDto.pathToParcelsFile());
         }
-        String normalizedTrucksDescriptions = trucksDescriptions.replace("\\n", "\n");
 
-        commandHandler.handle(new LoadParcelsCommandDto(
-                AlgorithmType.fromString(algorithm),
+        LoadParcelsResponseDto result = (LoadParcelsResponseDto) commandHandler.handle(new LoadParcelsCommandDto(
+                loadParcelRequestDto.algorithmType(),
                 parcelIds,
-                Arrays.asList(normalizedTrucksDescriptions.split("\n")),
-                ResultOutType.fromString(outputFormat),
-                outputFilename)
-        );
+                loadParcelRequestDto.trucksDescriptions(),
+                loadParcelRequestDto.resultOutType(),
+                loadParcelRequestDto.pathToResultFile()));
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
+
 
     /**
      * Выгружает посылки из файла.
@@ -153,16 +192,16 @@ public class ParcelController {
      * Эта команда выгружает посылки из указанного файла и сохраняет результат в другой файл.
      * </p>
      *
-     * @param infile Путь к файлу с данными о посылках.
-     * @param outfile Путь к файлу для сохранения результата.
-     * @param withCount Флаг, указывающий на необходимость подсчета количества посылок.
+     * @param unloadParcelsCommandDto DTO для разгрузки посылок.
+     * @see UnloadParcelsCommandDto
      */
-    @ShellMethod(key = UNLOAD_COMMAND)
-    public void unloadParcel(
-            @ShellOption(value = "--infile") String infile,
-            @ShellOption(value = "--outfile") String outfile,
-            @ShellOption(value = "--withcount", defaultValue = "") String withCount
-    ) {
-        commandHandler.handle(new UnloadParcelsCommandDto(infile, outfile, !withCount.isEmpty()));
+    @PostMapping("/unload")
+    @Operation(summary = "Выгружает посылки из файла.", description = "Выгружает посылки из указанного файла и сохраняет результат в другой файл.")
+    @ApiResponse(responseCode = "200", description = "Посылки выгружены")
+    public ResponseEntity<?> unloadParcels(
+            @Parameter(description = "DTO для разгрузки посылок.", required = true)
+            @RequestBody UnloadParcelsCommandDto unloadParcelsCommandDto) {
+        commandHandler.handle(unloadParcelsCommandDto);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

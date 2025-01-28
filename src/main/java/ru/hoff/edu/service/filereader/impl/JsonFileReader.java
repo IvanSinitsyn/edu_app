@@ -3,6 +3,7 @@ package ru.hoff.edu.service.filereader.impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import ru.hoff.edu.service.exception.JsonFileReaderException;
 import ru.hoff.edu.service.filereader.InputFileReader;
 
 import java.io.File;
@@ -35,7 +36,7 @@ public class JsonFileReader implements InputFileReader {
                     }
             );
         } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            throw new JsonFileReaderException("Ошибка при чтении входного JSON файла", e);
         }
     }
 }

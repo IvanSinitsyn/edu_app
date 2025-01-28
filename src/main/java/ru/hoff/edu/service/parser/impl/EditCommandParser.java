@@ -13,7 +13,11 @@ import java.util.regex.Pattern;
  */
 public class EditCommandParser implements CommandParser {
 
-    private final static String PATTERN = "--id \"(.*?)\" --name \"(.*?)\" --form \"(.*?)\" --symbol \"(.*?)\"";
+    private static final int ID_GROUP = 1;
+    private static final int NAME_GROUP = 2;
+    private static final int FORM_GROUP = 3;
+    private static final int SYMBOL_GROUP = 4;
+    private static final Pattern pattern = Pattern.compile("--id \"(.*?)\" --name \"(.*?)\" --form \"(.*?)\" --symbol \"(.*?)\"");
 
     /**
      * Разбирает строку команды редактирования посылки и преобразует её в DTO.
@@ -24,17 +28,16 @@ public class EditCommandParser implements CommandParser {
      */
     @Override
     public BaseCommandDto parse(String command) {
-        Pattern pattern = Pattern.compile(PATTERN);
         Matcher matcher = pattern.matcher(command);
 
         if (!matcher.find()) {
             throw new IllegalArgumentException("Ошибка в синтаксисе команды /edit");
         }
 
-        String id = matcher.group(1);
-        String name = matcher.group(2);
-        String form = matcher.group(3);
-        String symbol = matcher.group(4);
+        String id = matcher.group(ID_GROUP);
+        String name = matcher.group(NAME_GROUP);
+        String form = matcher.group(FORM_GROUP);
+        String symbol = matcher.group(SYMBOL_GROUP);
 
         String normalizedForm = form.replace("\\n", "\n");
         return new EditParcelCommandDto(id, name, normalizedForm, symbol);

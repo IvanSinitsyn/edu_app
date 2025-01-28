@@ -1,16 +1,18 @@
 package ru.hoff.edu.service.filereader.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import ru.hoff.edu.service.exception.TxtFileIOException;
+import ru.hoff.edu.service.exception.TxtFileNotFoundException;
 import ru.hoff.edu.service.filereader.InputFileReader;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Класс, реализующий чтение данных из текстового файла.
@@ -30,20 +32,27 @@ public class TxtFileReader implements InputFileReader {
     public List<String> readFile(String inputFile) {
         List<String> parcelNames = new ArrayList<>();
 
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(inputFile);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream)))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (!line.trim().isEmpty()) {
-                    parcelNames.add(line.trim());
+        InputStream inputStream;
+        try {
+            inputStream = getClass().getClassLoader().getResourceAsStream(inputFile);
+            if (inputStream == null) {
+                inputStream = new FileInputStream(inputFile);
+            }
+
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (!line.trim().isEmpty()) {
+                        parcelNames.add(line.trim());
+                    }
                 }
             }
         } catch (FileNotFoundException e) {
             log.error("File with parcel names not found", e);
-            throw new RuntimeException(e);
+            throw new TxtFileNotFoundException("Файл с названиями посылок не неайден", e);
         } catch (IOException e) {
             log.error("Error while reading parcel names", e);
-            throw new RuntimeException(e);
+            throw new TxtFileIOException("Ошибка при чтении файла с посылками", e);
         }
 
         return parcelNames;

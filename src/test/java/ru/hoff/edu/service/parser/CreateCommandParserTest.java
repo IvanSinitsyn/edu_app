@@ -13,7 +13,7 @@ public class CreateCommandParserTest {
     @Test
     void parseCommand_shouldReturnCreateParcelCommandDto() {
         CommandParser parser = new CreateCommandParser();
-        BaseCommandDto createDto = parser.parse("/create -name \"Test\" -form \"Rectangle\" -symbol \"X\"");
+        BaseCommandDto createDto = parser.parse("/create --name \"Test\" --form \"Rectangle\" --symbol \"X\"");
         assertInstanceOf(CreateParcelCommandDto.class, createDto);
     }
 
@@ -21,12 +21,12 @@ public class CreateCommandParserTest {
     void parseCreateParcelCommand_shouldReturnCreateParcelCommandDto() {
         CommandParser parser = new CreateCommandParser();
 
-        String command = "/create -name \"Parcel1\" -form \"Rectangle\" -symbol \"X\"";
+        String command = "/create --name \"Parcel1\" --form \"Rectangle\" --symbol \"X\"";
 
         CreateParcelCommandDto dto = (CreateParcelCommandDto) parser.parse(command);
 
-        assertEquals("Parcel1", dto.getName());
-        assertEquals("Rectangle", dto.getForm());
-        assertEquals("X", dto.getSymbol());
+        assertEquals("Parcel1", dto.name());
+        assertEquals("Rectangle", dto.form());
+        assertEquals("X", dto.symbol());
     }
 }

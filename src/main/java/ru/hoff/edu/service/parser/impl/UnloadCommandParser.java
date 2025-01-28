@@ -13,7 +13,9 @@ import java.util.regex.Pattern;
  */
 public class UnloadCommandParser implements CommandParser {
 
-    private final static String PATTERN = "--infile \"(.*?)\" --outfile \"(.*?)\"(?: --withcount)?";
+    private static final int IN_FILE_GROUP = 1;
+    private static final int OUT_FILE_GROUP = 2;
+    private static final Pattern pattern = Pattern.compile("--infile \"(.*?)\" --outfile \"(.*?)\"(?: --withcount)?");
 
     /**
      * Разбирает строку команды выгрузки данных и преобразует её в DTO.
@@ -24,16 +26,14 @@ public class UnloadCommandParser implements CommandParser {
      */
     @Override
     public BaseCommandDto parse(String command) {
-        Pattern pattern = Pattern.compile(PATTERN);
-
         Matcher matcher = pattern.matcher(command);
 
         if (!matcher.find()) {
             throw new IllegalArgumentException("Ошибка в синтаксисе команды unload");
         }
 
-        String inFileName = matcher.group(1);
-        String outFileName = matcher.group(2);
+        String inFileName = matcher.group(IN_FILE_GROUP);
+        String outFileName = matcher.group(OUT_FILE_GROUP);
         boolean withCount = command.contains("--withcount");
 
         return new UnloadParcelsCommandDto(inFileName, outFileName, withCount);

@@ -1,18 +1,14 @@
 package ru.hoff.edu.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
 import ru.hoff.edu.model.enums.CommandType;
 
 /**
- * Класс, представляющий DTO (Data Transfer Object) для команды удаления посылки (Parcel).
+ * Запись, представляющая DTO (Data Transfer Object) для команды удаления посылки (Parcel).
  * Используется для передачи данных, необходимых для удаления существующей посылки.
  */
-@Getter
-@AllArgsConstructor
-public class DeleteParcelCommandDto implements BaseCommandDto {
-
-    private final String parcelName;
+@Builder
+public record DeleteParcelCommandDto(String parcelName) implements BaseCommandDto {
 
     /**
      * Возвращает тип команды. В данном случае всегда возвращает {@link CommandType#DELETE}.

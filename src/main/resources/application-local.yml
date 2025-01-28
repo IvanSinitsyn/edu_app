@@ -1,10 +1,17 @@
 tg-bot-configuration:
   bot-name: "SiivEduAppBot"
-  bot-token: ""
+  bot-token: ${BOT_TOKEN}
 
 spring:
-  shell:
-    interactive:
-      enabled: true
-  main:
-    web-application-type: none
+  datasource:
+    url: jdbc:postgresql://localhost:7777/parcels_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+server:
+  port: 7778
+
+springdoc:
+  swagger-ui:
+    enabled: true

@@ -1,7 +1,7 @@
 package ru.hoff.edu.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -23,17 +23,12 @@ import ru.hoff.edu.controller.TelegramController;
  * @see TelegramController
  */
 @Slf4j
+@RequiredArgsConstructor
 @Component
 public class TelegramBotInitializer implements ApplicationRunner {
 
     private final TelegramBotsApi botsApi;
     private final TelegramController telegramController;
-
-    @Autowired
-    public TelegramBotInitializer(TelegramBotsApi botsApi, TelegramController telegramController) {
-        this.botsApi = botsApi;
-        this.telegramController = telegramController;
-    }
 
     /**
      * Метод, вызываемый после запуска Spring Boot приложения. Регистрирует бота

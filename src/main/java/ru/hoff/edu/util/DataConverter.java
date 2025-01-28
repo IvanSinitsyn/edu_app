@@ -24,6 +24,9 @@ import java.util.List;
  */
 public class DataConverter {
 
+    private DataConverter() {
+    }
+
     /**
      * Преобразует посылку (Parcel) в строковое представление.
      * Форма посылки (двумерный массив символов) преобразуется в строку,
@@ -58,6 +61,17 @@ public class DataConverter {
             shapeStrings.add(new String(row));
         }
         return shapeStrings;
+    }
+
+    /**
+     * Преобразует двумерный массив символов (форму) в строку.
+     *
+     * @param shape Двумерный массив символов, представляющий форму.
+     * @return Строка соединенных массивов.
+     */
+    public static String convertArrayToString(char[][] shape) {
+        List<String> shapeStrings = convertFormToString(shape);
+        return String.join("\n", shapeStrings);
     }
 
     /**

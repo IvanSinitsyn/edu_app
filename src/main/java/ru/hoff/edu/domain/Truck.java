@@ -16,12 +16,12 @@ public class Truck {
     /**
      * Ширина грузовика по умолчанию.
      */
-    public static final int WIDTH = 6;
+    private static final int WIDTH = 6;
 
     /**
      * Высота грузовика по умолчанию.
      */
-    public static final int HEIGHT = 6;
+    private static final int HEIGHT = 6;
     private final int width;
     private final int height;
     private final List<Parcel> parcels;
@@ -47,12 +47,12 @@ public class Truck {
      * Конструктор, который создает грузовик с размерами, указанными в строке описания.
      * Ожидаемый формат строки: "NxM", где N — высота, M — ширина.
      *
-     * @param description Строка описания размеров грузовика (например, "3x3").
+     * @param truckSize Строка описания размеров грузовика (например, "3x3").
      * @throws IllegalArgumentException если строка описания имеет неверный формат.
      */
-    public Truck(String description) {
+    public Truck(String truckSize) {
         parcels = new ArrayList<>();
-        String[] dimensions = description.split("x");
+        String[] dimensions = truckSize.split("x");
         if (dimensions.length != 2) {
             throw new IllegalArgumentException("Invalid input format. Expected format: NxM (e.g., 3x3)");
         }

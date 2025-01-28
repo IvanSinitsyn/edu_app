@@ -11,6 +11,7 @@ import ru.hoff.edu.service.command.Command;
 import ru.hoff.edu.service.command.impl.CreateParcelCommand;
 import ru.hoff.edu.service.command.impl.DeleteParcelCommand;
 import ru.hoff.edu.service.command.impl.EditParcelCommand;
+import ru.hoff.edu.service.command.impl.FindAllParcelsQuery;
 import ru.hoff.edu.service.command.impl.FindParcelByIdQuery;
 import ru.hoff.edu.service.command.impl.LoadParcelsCommand;
 import ru.hoff.edu.service.command.impl.UnloadParcelsCommand;
@@ -50,7 +51,8 @@ public class AppConfig {
             EditParcelCommand editParcelCommand,
             DeleteParcelCommand deleteParcelCommand,
             LoadParcelsCommand loadParcelsCommand,
-            UnloadParcelsCommand unloadParcelsCommand) {
+            UnloadParcelsCommand unloadParcelsCommand,
+            FindAllParcelsQuery findAllParcelsQuery) {
         Map<CommandType, Command<?, ?>> commandHandlers = new HashMap<>();
         commandHandlers.put(CommandType.CREATE, createParcelCommand);
         commandHandlers.put(CommandType.FIND, findParcelByIdQuery);
@@ -58,6 +60,7 @@ public class AppConfig {
         commandHandlers.put(CommandType.DELETE, deleteParcelCommand);
         commandHandlers.put(CommandType.LOAD, loadParcelsCommand);
         commandHandlers.put(CommandType.UNLOAD, unloadParcelsCommand);
+        commandHandlers.put(CommandType.FINDALL, findAllParcelsQuery);
         return commandHandlers;
     }
 

@@ -15,7 +15,10 @@ package ru.hoff.edu.util;
  */
 public class FileExtensionParser {
 
-    private final static int INDENT_INDEX_FOR_EXTENSION = 1;
+    private static final int INDENT_INDEX_FOR_EXTENSION = 1;
+
+    private FileExtensionParser() {
+    }
 
     /**
      * Извлекает расширение файла из его имени.

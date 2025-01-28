@@ -13,7 +13,7 @@ public class DeleteCommandParserTest {
     @Test
     void parseCommand_shouldReturnDeleteParcelCommandDto() {
         CommandParser parser = new DeleteCommandParser();
-        BaseCommandDto deleteDto = parser.parse("/delete \"Parcel1\"");
+        BaseCommandDto deleteDto = parser.parse("/delete --name \"Parcel1\"");
         assertInstanceOf(DeleteParcelCommandDto.class, deleteDto);
     }
 
@@ -21,10 +21,10 @@ public class DeleteCommandParserTest {
     void parseDeleteParcelCommand_shouldReturnDeleteParcelCommandDto() {
         CommandParser parser = new DeleteCommandParser();
 
-        String command = "/delete \"Parcel1\"";
+        String command = "/delete --name \"Parcel1\"";
 
         DeleteParcelCommandDto dto = (DeleteParcelCommandDto) parser.parse(command);
 
-        assertEquals("Parcel1", dto.getParcelName());
+        assertEquals("Parcel1", dto.parcelName());
     }
 }

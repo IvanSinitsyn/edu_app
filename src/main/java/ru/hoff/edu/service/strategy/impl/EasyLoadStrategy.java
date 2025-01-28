@@ -34,7 +34,7 @@ public class EasyLoadStrategy implements LoadStrategy {
     public List<Truck> loadParcels(List<Parcel> parcels, List<Truck> trucks) {
         if (trucks == null || trucks.isEmpty()) {
             trucks = new ArrayList<>();
-            for (Parcel ignored : parcels) {
+            while (trucks.size() != parcels.size()) {
                 trucks.add(new Truck());
             }
         }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.hoff.edu.dto.BaseCommandDto;
+import ru.hoff.edu.dto.response.BaseResponseDto;
 import ru.hoff.edu.model.enums.CommandType;
 import ru.hoff.edu.service.command.Command;
 import ru.hoff.edu.service.handler.CommandHandler;
@@ -17,7 +18,7 @@ import java.util.Map;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class ConsoleCommandHandler implements CommandHandler<Void, BaseCommandDto> {
+public class ConsoleCommandHandler implements CommandHandler<BaseResponseDto, BaseCommandDto> {
 
     private final Map<CommandType, Command<?, ? extends BaseCommandDto>> commandHandlers;
 
@@ -28,20 +29,23 @@ public class ConsoleCommandHandler implements CommandHandler<Void, BaseCommandDt
      * @return Всегда возвращает {@code null}, так как результат выводится в консоль.
      */
     @Override
-    public Void handle(BaseCommandDto command) {
+    public BaseResponseDto handle(BaseCommandDto command) {
         try {
             Command<?, BaseCommandDto> handler = (Command<?, BaseCommandDto>) commandHandlers.get(command.getCommandType());
-            if (handler != null) {
-                String result = (String) handler.execute(command);
-                System.out.println(result);
-            } else {
+            if (handler == null) {
+                log.warn("Обработчик для команды не найден: {}", command.getCommandType());
                 System.out.println("Обработчик для команды не найден: " + command.getCommandType());
+                return null;
+
             }
+
+            BaseResponseDto result = (BaseResponseDto) handler.execute(command);
+            System.out.println(result);
+            return result;
         } catch (IllegalArgumentException ex) {
             log.error("Ошибка: ", ex);
             System.err.println("Ошибка: " + ex.getMessage());
+            return null;
         }
-
-        return null;
     }
 }

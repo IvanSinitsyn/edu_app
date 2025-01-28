@@ -5,6 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
+import ru.hoff.edu.service.exception.DeleteFileException;
+import ru.hoff.edu.service.exception.FileCreationException;
+import ru.hoff.edu.service.exception.JsonFileWriterException;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -48,20 +51,18 @@ public class JsonFileReportWriter implements ReportWriter {
 
             return "Report saved to " + outputPath;
         } catch (IOException ex) {
-            log.error("Error while writing to {}", outputPath, ex);
-            throw new RuntimeException("Error while writing to: " + outputPath, ex);
+            throw new JsonFileWriterException("Error while writing to: " + outputPath, ex);
         }
     }
 
     private File prepareFile(String path) throws IOException {
         File file = new File(path);
         if (file.exists() && !file.delete()) {
-            log.error("Failed to delete existing file: {}", path);
-            throw new RuntimeException("Failed to delete existing file: " + path);
+            throw new DeleteFileException("Failed to delete existing file: " + path);
         }
         if (!file.createNewFile()) {
             log.error("Failed to create new file: {}", path);
-            throw new RuntimeException("Failed to create new file: " + path);
+            throw new FileCreationException("Failed to create new file: " + path);
         }
         log.info("File prepared for writing: {}", path);
         return file;

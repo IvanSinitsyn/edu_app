@@ -1,8 +1,11 @@
 package ru.hoff.edu.service.command.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.dto.CreateParcelCommandDto;
+import ru.hoff.edu.dto.response.CreateParcelResponseDto;
+import ru.hoff.edu.service.ParcelMapper;
 import ru.hoff.edu.service.ParcelService;
 import ru.hoff.edu.service.command.Command;
 import ru.hoff.edu.util.DataConverter;
@@ -12,13 +15,11 @@ import ru.hoff.edu.util.DataConverter;
  * Использует сервис {@link ParcelService} для добавления новой посылки.
  */
 @Component
-public class CreateParcelCommand implements Command<String, CreateParcelCommandDto> {
+@RequiredArgsConstructor
+public class CreateParcelCommand implements Command<CreateParcelResponseDto, CreateParcelCommandDto> {
 
     private final ParcelService parcelService;
-
-    public CreateParcelCommand(ParcelService parcelService) {
-        this.parcelService = parcelService;
-    }
+    private final ParcelMapper parcelMapper;
 
     /**
      * Выполняет команду создания посылки.
@@ -27,13 +28,13 @@ public class CreateParcelCommand implements Command<String, CreateParcelCommandD
      * @return Строка с информацией о созданной посылке.
      */
     @Override
-    public String execute(CreateParcelCommandDto commandDto) {
+    public CreateParcelResponseDto execute(CreateParcelCommandDto commandDto) {
         Parcel parcel = Parcel.builder()
-                .name(commandDto.getName())
-                .form(DataConverter.convertStringToForm(commandDto.getForm()))
-                .symbol(commandDto.getSymbol())
+                .name(commandDto.name())
+                .form(DataConverter.convertStringToForm(commandDto.form()))
+                .symbol(commandDto.symbol())
                 .build();
         parcelService.add(parcel);
-        return parcel.showInfo();
+        return new CreateParcelResponseDto(parcelMapper.toDto(parcel));
     }
 }

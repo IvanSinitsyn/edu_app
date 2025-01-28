@@ -13,7 +13,7 @@ public class FindByIdCommandParserTest {
     @Test
     void parseCommand_shouldReturnFindParcelByIdQueryDto() {
         CommandParser parser = new FindByIdCommandParser();
-        BaseCommandDto findDto = parser.parse("/find \"Parcel2\"");
+        BaseCommandDto findDto = parser.parse("/find --name \"Parcel2\"");
         assertInstanceOf(FindParcelByIdQueryDto.class, findDto);
     }
 
@@ -21,10 +21,10 @@ public class FindByIdCommandParserTest {
     void parseFindParcelByIdQuery_shouldReturnFindParcelByIdQueryDto() {
         CommandParser parser = new FindByIdCommandParser();
 
-        String command = "/find \"Parcel1\"";
+        String command = "/find --name \"Parcel1\"";
 
         FindParcelByIdQueryDto dto = (FindParcelByIdQueryDto) parser.parse(command);
 
-        assertEquals("Parcel1", dto.getParcelName());
+        assertEquals("Parcel1", dto.parcelName());
     }
 }
