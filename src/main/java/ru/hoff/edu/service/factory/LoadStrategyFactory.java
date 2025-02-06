@@ -3,11 +3,9 @@ package ru.hoff.edu.service.factory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.hoff.edu.model.enums.AlgorithmType;
-import ru.hoff.edu.service.ParcelService;
 import ru.hoff.edu.service.strategy.LoadStrategy;
-import ru.hoff.edu.service.strategy.impl.EasyLoadStrategy;
-import ru.hoff.edu.service.strategy.impl.EqualLoadStrategy;
-import ru.hoff.edu.service.strategy.impl.OptimalLoadStrategy;
+
+import java.util.Map;
 
 /**
  * Фабрика для создания стратегий загрузки посылок в грузовики.
@@ -17,7 +15,7 @@ import ru.hoff.edu.service.strategy.impl.OptimalLoadStrategy;
 @RequiredArgsConstructor
 public class LoadStrategyFactory {
 
-    private final ParcelService parcelService;
+    private final Map<AlgorithmType, LoadStrategy> loadStrategies;
 
     /**
      * Создает стратегию загрузки на основе переданного типа алгоритма.
@@ -26,10 +24,6 @@ public class LoadStrategyFactory {
      * @return Стратегия загрузки, соответствующая переданному типу алгоритма.
      */
     public LoadStrategy createStrategy(AlgorithmType algorithmType) {
-        return switch (algorithmType) {
-            case EASY -> new EasyLoadStrategy(parcelService);
-            case EQUALLY -> new EqualLoadStrategy(parcelService);
-            case OPTIMAL -> new OptimalLoadStrategy(parcelService);
-        };
+        return loadStrategies.get(algorithmType);
     }
 }

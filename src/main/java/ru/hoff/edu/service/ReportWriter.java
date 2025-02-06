@@ -10,5 +10,9 @@ import java.util.List;
  */
 public interface ReportWriter {
 
-    String write(List<Truck> trucks);
+    String write(List<Truck> trucks, String outPath);
+
+    default String write(List<Truck> trucks) {
+        return write(trucks, null);
+    }
 }

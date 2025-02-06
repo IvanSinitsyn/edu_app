@@ -1,5 +1,5 @@
 plugins {
-    id("org.springframework.boot") version "3.2.12"
+    id("org.springframework.boot") version "3.2.11"
     id("java")
 }
 
@@ -7,7 +7,7 @@ group = "ru.hoff"
 version = "1.0-SNAPSHOT"
 
 object Version {
-    const val springVersion = "3.2.12"
+    const val springVersion = "3.2.11"
     const val lombokVersion = "1.18.36"
     const val slf4jVersion = "2.0.6"
     const val logbackVersion = "1.4.11"
@@ -22,6 +22,8 @@ object Version {
     const val swagger = "2.8.3"
     const val jpa = "3.4.2"
     const val h2 = "2.3.232"
+    const val springShellStarter = "3.4.0"
+    const val springBootStarterActuator = "3.4.1"
 }
 
 repositories {
@@ -29,6 +31,9 @@ repositories {
 }
 
 dependencies {
+    implementation("org.mapstruct:mapstruct:1.5.5.Final")
+    annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
+
     implementation("org.slf4j:slf4j-api:${Version.slf4jVersion}")
     implementation("ch.qos.logback:logback-classic:${Version.logbackVersion}")
     implementation("com.fasterxml.jackson.core:jackson-databind:${Version.fasterxmlVersion}")
@@ -47,6 +52,8 @@ dependencies {
     implementation("org.glassfish.jaxb:jaxb-runtime:2.3.3")
     implementation("javax.xml.bind:jaxb-api:2.3.1")
     implementation("com.fasterxml.jackson.core:jackson-core:2.14.1")
+    implementation("org.springframework.shell:spring-shell-starter:${Version.springShellStarter}")
+    implementation("org.springframework.boot:spring-boot-starter-actuator:${Version.springBootStarterActuator}")
 
 
     compileOnly("org.projectlombok:lombok:${Version.lombokVersion}")
@@ -61,6 +68,7 @@ dependencies {
     testImplementation("org.mockito:mockito-inline:${Version.mokitoInline}")
     testImplementation("org.springframework.boot:spring-boot-starter-test:${Version.springVersion}")
     testImplementation("com.h2database:h2:${Version.h2}")
+    testImplementation("org.assertj:assertj-core:3.24.2")
 }
 
 tasks.test {

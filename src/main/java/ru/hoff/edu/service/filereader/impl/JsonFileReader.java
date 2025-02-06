@@ -3,6 +3,7 @@ package ru.hoff.edu.service.filereader.impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import ru.hoff.edu.service.exception.JsonFileReaderException;
 import ru.hoff.edu.service.filereader.InputFileReader;
 
@@ -15,6 +16,7 @@ import java.util.List;
  * Класс, реализующий чтение данных из JSON-файла.
  * Использует {@link ObjectMapper} для преобразования JSON-данных в список строк.
  */
+@Component
 @RequiredArgsConstructor
 public class JsonFileReader implements InputFileReader {
 

@@ -1,8 +1,9 @@
 package ru.hoff.edu.service.parser.impl;
 
-import ru.hoff.edu.dto.BaseCommandDto;
-import ru.hoff.edu.dto.EditParcelCommandDto;
+import org.springframework.stereotype.Component;
 import ru.hoff.edu.service.parser.CommandParser;
+import ru.hoff.edu.service.request.Request;
+import ru.hoff.edu.service.request.impl.EditParcelRequest;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,6 +12,7 @@ import java.util.regex.Pattern;
  * Класс, реализующий парсер для команды редактирования посылки.
  * Разбирает строку команды и преобразует её в DTO для редактирования посылки.
  */
+@Component
 public class EditCommandParser implements CommandParser {
 
     private static final int ID_GROUP = 1;
@@ -23,11 +25,11 @@ public class EditCommandParser implements CommandParser {
      * Разбирает строку команды редактирования посылки и преобразует её в DTO.
      *
      * @param command Строка команды, которую необходимо разобрать.
-     * @return Объект {@link EditParcelCommandDto}, содержащий данные для редактирования посылки.
+     * @return Объект {@link EditParcelRequest}, содержащий данные для редактирования посылки.
      * @throws IllegalArgumentException если строка команды не соответствует ожидаемому формату.
      */
     @Override
-    public BaseCommandDto parse(String command) {
+    public Request parse(String command) {
         Matcher matcher = pattern.matcher(command);
 
         if (!matcher.find()) {
@@ -40,6 +42,6 @@ public class EditCommandParser implements CommandParser {
         String symbol = matcher.group(SYMBOL_GROUP);
 
         String normalizedForm = form.replace("\\n", "\n");
-        return new EditParcelCommandDto(id, name, normalizedForm, symbol);
+        return new EditParcelRequest(id, name, normalizedForm, symbol);
     }
 }

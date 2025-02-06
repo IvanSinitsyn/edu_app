@@ -1,6 +1,7 @@
 package ru.hoff.edu.service.filereader.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import ru.hoff.edu.service.exception.TxtFileIOException;
 import ru.hoff.edu.service.exception.TxtFileNotFoundException;
 import ru.hoff.edu.service.filereader.InputFileReader;
@@ -19,6 +20,7 @@ import java.util.List;
  * Используется для чтения списка наименований посылок из файла в формате TXT.
  */
 @Slf4j
+@Component
 public class TxtFileReader implements InputFileReader {
 
     /**
@@ -48,10 +50,8 @@ public class TxtFileReader implements InputFileReader {
                 }
             }
         } catch (FileNotFoundException e) {
-            log.error("File with parcel names not found", e);
             throw new TxtFileNotFoundException("Файл с названиями посылок не неайден", e);
         } catch (IOException e) {
-            log.error("Error while reading parcel names", e);
             throw new TxtFileIOException("Ошибка при чтении файла с посылками", e);
         }
 

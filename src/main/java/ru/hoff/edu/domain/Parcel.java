@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import ru.hoff.edu.util.DataConverter;
+import lombok.experimental.Accessors;
 
 import java.util.Arrays;
 
@@ -13,16 +13,16 @@ import java.util.Arrays;
  * Форма посылки представлена двумерным массивом символов.
  * Класс предоставляет методы для получения размеров посылки, перерисовки формы и отображения информации.
  */
+@Accessors(chain = true)
+@Setter
 @Getter
 @Builder
 @AllArgsConstructor
 public class Parcel {
 
-    private final String name;
-    private final char[][] form;
-    private final String symbol;
-
-    @Setter
+    private String name;
+    private char[][] form;
+    private String symbol;
     private boolean isLoaded;
 
     /**
@@ -32,7 +32,7 @@ public class Parcel {
      */
     public Parcel(Parcel other) {
         this.name = other.name;
-        this.form = Arrays.copyOf(other.form, other.form.length); // Копирование массива
+        this.form = Arrays.copyOf(other.form, other.form.length);
         this.symbol = other.symbol;
         this.isLoaded = other.isLoaded;
     }
@@ -55,6 +55,38 @@ public class Parcel {
         return form.length;
     }
 
+    public char[][] getForm() {
+        return form;
+    }
+
+    public void setForm(char[][] form) {
+        this.form = form;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
+    }
+
+    public boolean getIsLoaded() {
+        return isLoaded;
+    }
+
+    public void setIsLoaded(boolean isLoaded) {
+        this.isLoaded = isLoaded;
+    }
+
     /**
      * Перерисовывает форму посылки, заменяя все символы (кроме пробелов) на указанный символ.
      *
@@ -70,14 +102,5 @@ public class Parcel {
                 form[i][j] = symbol;
             }
         }
-    }
-
-    /**
-     * Возвращает строку с информацией о посылке, включая её имя и форму.
-     *
-     * @return Строка с информацией о посылке.
-     */
-    public String showInfo() {
-        return "id(name): \"" + name + "\"\nform:\n" + String.join("\n", DataConverter.convertFormToString(form));
     }
 }

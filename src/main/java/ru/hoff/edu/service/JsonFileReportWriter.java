@@ -3,6 +3,7 @@ package ru.hoff.edu.service;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
 import ru.hoff.edu.service.exception.DeleteFileException;
@@ -18,18 +19,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static ru.hoff.edu.util.DataConverter.convertFormToString;
-
 /**
  * Класс, реализующий запись данных о грузовиках и посылках в JSON-файл.
  * Использует {@link ObjectWriter} для преобразования данных в JSON-формат.
  */
 @Slf4j
+@Component
 @RequiredArgsConstructor
 public class JsonFileReportWriter implements ReportWriter {
 
-    private final String outputPath;
-    private final ObjectWriter jsonWriter;
+    private final ObjectWriter objectWriter;
+    private final DataConverter dataConverter;
 
     /**
      * Записывает данные о грузовиках и посылках в JSON-файл.
@@ -39,13 +39,13 @@ public class JsonFileReportWriter implements ReportWriter {
      * @throws RuntimeException если возникает ошибка ввода-вывода при записи в файл.
      */
     @Override
-    public String write(List<Truck> trucks) {
+    public String write(List<Truck> trucks, String outputPath) {
         try {
             File file = prepareFile(outputPath);
             List<Map<String, Object>> truckDataList = buildTruckDataList(trucks);
 
             try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(file))) {
-                jsonWriter.writeValue(bufferedOutputStream, truckDataList);
+                objectWriter.writeValue(bufferedOutputStream, truckDataList);
                 bufferedOutputStream.flush();
             }
 
@@ -61,7 +61,6 @@ public class JsonFileReportWriter implements ReportWriter {
             throw new DeleteFileException("Failed to delete existing file: " + path);
         }
         if (!file.createNewFile()) {
-            log.error("Failed to create new file: {}", path);
             throw new FileCreationException("Failed to create new file: " + path);
         }
         log.info("File prepared for writing: {}", path);
@@ -93,7 +92,7 @@ public class JsonFileReportWriter implements ReportWriter {
         for (Parcel parcel : parcels) {
             Map<String, Object> parcelData = new HashMap<>();
             parcelData.put("name", parcel.getName());
-            parcelData.put("form", convertFormToString(parcel.getForm()));
+            parcelData.put("form", dataConverter.convertFormToString(parcel.getForm()));
             parcelDataList.add(parcelData);
         }
         return parcelDataList;

@@ -11,6 +11,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class ParcelValidator {
 
+    private static final int DIAGONAL_DIRECTIONS = 4;
+    private static final int BACK_OFFSET = -1;
+    private static final int FORWARD_OFFSET = 1;
+    private static final int NO_OFFSET = 0;
+
+
     public boolean isParcelFormValid(char[][] form, char symbol) {
         int rows = form.length;
         int cols = form[0].length;
@@ -29,15 +35,19 @@ public class ParcelValidator {
         int rows = form.length;
         int cols = form[0].length;
 
-        int[] rowDir = {-1, -1, 1, 1};
-        int[] colDir = {-1, 1, -1, 1};
+        int[] rowOffsets = {BACK_OFFSET, BACK_OFFSET, FORWARD_OFFSET, FORWARD_OFFSET};
+        int[] colOffsets = {BACK_OFFSET, FORWARD_OFFSET, BACK_OFFSET, FORWARD_OFFSET};
 
-        for (int d = 0; d < 4; d++) {
-            int diagRow = row + rowDir[d];
-            int diagCol = col + colDir[d];
+        for (int direction = 0; direction < DIAGONAL_DIRECTIONS; direction++) {
+            int diagonalRow = row + rowOffsets[direction];
+            int diagonalCol = col + colOffsets[direction];
 
-            if (diagRow >= 0 && diagRow < rows && diagCol >= 0 && diagCol < cols &&
-                    form[diagRow][diagCol] == symbol && !hasOrthogonalNeighbor(form, diagRow, diagCol, symbol)) {
+            boolean isWithinBounds = diagonalRow >= 0 && diagonalRow < rows &&
+                    diagonalCol >= 0 && diagonalCol < cols;
+
+            if (isWithinBounds &&
+                    form[diagonalRow][diagonalCol] == symbol &&
+                    !hasOrthogonalNeighbor(form, diagonalRow, diagonalCol, symbol)) {
                 return true;
             }
         }
@@ -49,15 +59,17 @@ public class ParcelValidator {
         int rows = form.length;
         int cols = form[0].length;
 
-        int[] rowDir = {-1, 1, 0, 0};
-        int[] colDir = {0, 0, -1, 1};
+        int[] rowOffsets = {BACK_OFFSET, FORWARD_OFFSET, NO_OFFSET, NO_OFFSET};
+        int[] colOffsets = {NO_OFFSET, NO_OFFSET, BACK_OFFSET, FORWARD_OFFSET};
 
-        for (int d = 0; d < 4; d++) {
-            int neighborRow = row + rowDir[d];
-            int neighborCol = col + colDir[d];
+        for (int direction = 0; direction < DIAGONAL_DIRECTIONS; direction++) {
+            int neighborRow = row + rowOffsets[direction];
+            int neighborCol = col + colOffsets[direction];
 
-            if (neighborRow >= 0 && neighborRow < rows && neighborCol >= 0 && neighborCol < cols &&
-                    form[neighborRow][neighborCol] == symbol) {
+            boolean isWithinBounds = neighborRow >= 0 && neighborRow < rows &&
+                    neighborCol >= 0 && neighborCol < cols;
+
+            if (isWithinBounds && form[neighborRow][neighborCol] == symbol) {
                 return true;
             }
         }

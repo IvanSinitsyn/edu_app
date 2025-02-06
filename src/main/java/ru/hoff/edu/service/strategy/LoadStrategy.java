@@ -1,5 +1,6 @@
 package ru.hoff.edu.service.strategy;
 
+import org.springframework.stereotype.Component;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
 
@@ -9,6 +10,7 @@ import java.util.List;
  * Интерфейс, определяющий стратегию загрузки посылок в грузовики.
  * Реализации этого интерфейса предоставляют различные алгоритмы загрузки.
  */
+@Component
 public interface LoadStrategy {
 
     /**

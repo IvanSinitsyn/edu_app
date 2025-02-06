@@ -1,11 +1,11 @@
 package ru.hoff.edu.service.parser;
 
 import org.junit.jupiter.api.Test;
-import ru.hoff.edu.dto.BaseCommandDto;
-import ru.hoff.edu.dto.EditParcelCommandDto;
 import ru.hoff.edu.service.parser.impl.EditCommandParser;
+import ru.hoff.edu.service.request.Request;
+import ru.hoff.edu.service.request.impl.EditParcelRequest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public class EditCommandParserTest {
@@ -13,8 +13,8 @@ public class EditCommandParserTest {
     @Test
     void parseCommand_shouldReturnEditParcelCommandDto() {
         CommandParser parser = new EditCommandParser();
-        BaseCommandDto editDto = parser.parse("/edit --id \"1\" --name \"NewName\" --form \"Circle\" --symbol \"O\"");
-        assertInstanceOf(EditParcelCommandDto.class, editDto);
+        Request editDto = parser.parse("/edit --id \"1\" --name \"NewName\" --form \"Circle\" --symbol \"O\"");
+        assertInstanceOf(EditParcelRequest.class, editDto);
     }
 
     @Test
@@ -23,11 +23,11 @@ public class EditCommandParserTest {
 
         String command = "/edit --id \"1\" --name \"NewName\" --form \"Circle\" --symbol \"O\"";
 
-        EditParcelCommandDto dto = (EditParcelCommandDto) parser.parse(command);
+        EditParcelRequest dto = (EditParcelRequest) parser.parse(command);
 
-        assertEquals("1", dto.id());
-        assertEquals("NewName", dto.name());
-        assertEquals("Circle", dto.form());
-        assertEquals("O", dto.symbol());
+        assertThat(dto.id()).isEqualTo("1");
+        assertThat(dto.name()).isEqualTo("NewName");
+        assertThat(dto.form()).isEqualTo("Circle");
+        assertThat(dto.symbol()).isEqualTo("O");
     }
 }

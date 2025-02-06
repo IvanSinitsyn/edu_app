@@ -1,8 +1,9 @@
 package ru.hoff.edu.service.parser.impl;
 
-import ru.hoff.edu.dto.BaseCommandDto;
-import ru.hoff.edu.dto.CreateParcelCommandDto;
+import org.springframework.stereotype.Component;
 import ru.hoff.edu.service.parser.CommandParser;
+import ru.hoff.edu.service.request.Request;
+import ru.hoff.edu.service.request.impl.CreateParcelRequest;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,6 +12,7 @@ import java.util.regex.Pattern;
  * Класс, реализующий парсер для команды создания посылки.
  * Разбирает строку команды и преобразует её в DTO для создания посылки.
  */
+@Component
 public class CreateCommandParser implements CommandParser {
 
     private static final int NAME_GROUP = 1;
@@ -22,11 +24,11 @@ public class CreateCommandParser implements CommandParser {
      * Разбирает строку команды создания посылки и преобразует её в DTO.
      *
      * @param command Строка команды, которую необходимо разобрать.
-     * @return Объект {@link CreateParcelCommandDto}, содержащий данные команды.
+     * @return Объект {@link CreateParcelRequest}, содержащий данные команды.
      * @throws IllegalArgumentException если строка команды не соответствует ожидаемому формату.
      */
     @Override
-    public BaseCommandDto parse(String command) {
+    public Request parse(String command) {
         Matcher matcher = pattern.matcher(command);
 
         if (!matcher.find()) {
@@ -36,6 +38,6 @@ public class CreateCommandParser implements CommandParser {
         String name = matcher.group(NAME_GROUP);
         String form = matcher.group(FORM_GROUP);
         String symbol = matcher.group(SYMBOL_GROUP);
-        return new CreateParcelCommandDto(name, form, symbol);
+        return new CreateParcelRequest(name, form, symbol);
     }
 }

@@ -8,6 +8,7 @@ import ru.hoff.edu.domain.Truck;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TextReportWriterTest {
@@ -16,7 +17,7 @@ class TextReportWriterTest {
 
     @BeforeEach
     void setUp() {
-        reportWriter = new TextReportWriter();
+        reportWriter = new TextReportWriter(new DataConverter());
     }
 
     @Test
@@ -70,7 +71,7 @@ class TextReportWriterTest {
         String actualReport = reportWriter.write(trucks);
 
         // Assert
-        assertEquals(expectedReport, actualReport);
+        assertThat(actualReport).isEqualTo(expectedReport);
     }
 
     @Test

@@ -2,11 +2,12 @@ package ru.hoff.edu.service.strategy.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
+import ru.hoff.edu.service.DataConverter;
 import ru.hoff.edu.service.ParcelService;
 import ru.hoff.edu.service.strategy.LoadStrategy;
-import ru.hoff.edu.util.DataConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +17,12 @@ import java.util.List;
  * Каждая посылка загружается в отдельный грузовик, если это возможно.
  */
 @Slf4j
+@Component
 @RequiredArgsConstructor
 public class EasyLoadStrategy implements LoadStrategy {
 
     private final ParcelService parcelService;
+    private final DataConverter dataConverter;
 
     /**
      * Загружает посылки в грузовики по простой стратегии.
@@ -47,19 +50,19 @@ public class EasyLoadStrategy implements LoadStrategy {
         log.info("Start loading trucks with easy mode");
         for (Truck truck : trucks) {
             for (Parcel parcel : parcels) {
-                if (parcel.isLoaded()) {
+                if (parcel.getIsLoaded()) {
                     continue;
                 }
 
                 if (parcelService.tryPlacePackageInTruck(truck, parcel)) {
                     parcelService.placeParcelInTruck(truck, parcel);
                     trucksResult.add(truck);
-                    parcel.setLoaded(true);
-                    log.info("Package {} loaded", DataConverter.parcelToString(parcel));
+                    parcel.setIsLoaded(true);
+                    log.info("Package {} loaded", dataConverter.parcelToString(parcel));
                     break;
                 }
 
-                throw new IllegalArgumentException("Parcel " + DataConverter.parcelToString(parcel) + " was not loaded in truck " + truck.getHeight() + "x" + truck.getWidth());
+                throw new IllegalArgumentException("Parcel " + dataConverter.parcelToString(parcel) + " was not loaded in truck " + truck.getHeight() + "x" + truck.getWidth());
             }
         }
 

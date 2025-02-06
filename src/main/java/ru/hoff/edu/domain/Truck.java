@@ -47,19 +47,13 @@ public class Truck {
      * Конструктор, который создает грузовик с размерами, указанными в строке описания.
      * Ожидаемый формат строки: "NxM", где N — высота, M — ширина.
      *
-     * @param truckSize Строка описания размеров грузовика (например, "3x3").
+     * @param rows Высота грузовика.
+     * @param cols Ширина грузовика.
      * @throws IllegalArgumentException если строка описания имеет неверный формат.
      */
-    public Truck(String truckSize) {
+    public Truck(int rows, int cols) {
         parcels = new ArrayList<>();
-        String[] dimensions = truckSize.split("x");
-        if (dimensions.length != 2) {
-            throw new IllegalArgumentException("Invalid input format. Expected format: NxM (e.g., 3x3)");
-        }
-
-        int rows = Integer.parseInt(dimensions[0]);
         height = rows;
-        int cols = Integer.parseInt(dimensions[1]);
         width = cols;
         grid = new char[rows][cols];
         for (int i = 0; i < height; i++) {
@@ -67,21 +61,6 @@ public class Truck {
                 grid[i][j] = ' ';
             }
         }
-    }
-
-    /**
-     * Создает список грузовиков на основе списка строк описания.
-     *
-     * @param description Список строк описания размеров грузовиков.
-     * @return Список созданных грузовиков.
-     */
-    public static List<Truck> createTrucksByDescription(List<String> description) {
-        List<Truck> trucks = new ArrayList<>();
-        for (String desc : description) {
-            trucks.add(new Truck(desc));
-        }
-
-        return trucks;
     }
 
     /**

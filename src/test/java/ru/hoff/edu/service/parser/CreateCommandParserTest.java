@@ -1,11 +1,11 @@
 package ru.hoff.edu.service.parser;
 
 import org.junit.jupiter.api.Test;
-import ru.hoff.edu.dto.BaseCommandDto;
-import ru.hoff.edu.dto.CreateParcelCommandDto;
 import ru.hoff.edu.service.parser.impl.CreateCommandParser;
+import ru.hoff.edu.service.request.Request;
+import ru.hoff.edu.service.request.impl.CreateParcelRequest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public class CreateCommandParserTest {
@@ -13,8 +13,8 @@ public class CreateCommandParserTest {
     @Test
     void parseCommand_shouldReturnCreateParcelCommandDto() {
         CommandParser parser = new CreateCommandParser();
-        BaseCommandDto createDto = parser.parse("/create --name \"Test\" --form \"Rectangle\" --symbol \"X\"");
-        assertInstanceOf(CreateParcelCommandDto.class, createDto);
+        Request createDto = parser.parse("/create --name \"Test\" --form \"Rectangle\" --symbol \"X\"");
+        assertInstanceOf(CreateParcelRequest.class, createDto);
     }
 
     @Test
@@ -23,10 +23,10 @@ public class CreateCommandParserTest {
 
         String command = "/create --name \"Parcel1\" --form \"Rectangle\" --symbol \"X\"";
 
-        CreateParcelCommandDto dto = (CreateParcelCommandDto) parser.parse(command);
+        CreateParcelRequest dto = (CreateParcelRequest) parser.parse(command);
 
-        assertEquals("Parcel1", dto.name());
-        assertEquals("Rectangle", dto.form());
-        assertEquals("X", dto.symbol());
+        assertThat(dto.name()).isEqualTo("Parcel1");
+        assertThat(dto.form()).isEqualTo("Rectangle");
+        assertThat(dto.symbol()).isEqualTo("X");
     }
 }

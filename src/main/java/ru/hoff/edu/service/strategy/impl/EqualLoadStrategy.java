@@ -2,11 +2,12 @@ package ru.hoff.edu.service.strategy.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
+import ru.hoff.edu.service.DataConverter;
 import ru.hoff.edu.service.ParcelService;
 import ru.hoff.edu.service.strategy.LoadStrategy;
-import ru.hoff.edu.util.DataConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +17,12 @@ import java.util.List;
  * Посылки распределяются по грузовикам равномерно, с учетом их вместимости.
  */
 @Slf4j
+@Component
 @RequiredArgsConstructor
 public class EqualLoadStrategy implements LoadStrategy {
 
     private final ParcelService parcelService;
+    private final DataConverter dataConverter;
 
     /**
      * Загружает посылки в грузовики по стратегии равномерной загрузки.
@@ -42,16 +45,16 @@ public class EqualLoadStrategy implements LoadStrategy {
         log.info("Start loading equally mode with limited trucks");
 
         for (Parcel parcel : parcels) {
-            log.info("Loading package {}", DataConverter.parcelToString(parcel));
+            log.info("Loading package {}", dataConverter.parcelToString(parcel));
 
             Truck suitableTruck = parcelService.findSuitableTruck(trucks, parcel);
             if (suitableTruck != null) {
                 parcelService.placeParcelInTruck(suitableTruck, parcel);
-                parcel.setLoaded(true);
-                log.info("Package {} loaded", DataConverter.parcelToString(parcel));
+                parcel.setIsLoaded(true);
+                log.info("Package {} loaded", dataConverter.parcelToString(parcel));
             } else {
-                log.info("Cannot find suitable truck for parcel: {}", DataConverter.parcelToString(parcel));
-                throw new IllegalArgumentException("Cannot find suitable truck for parcel: " + DataConverter.parcelToString(parcel));
+                log.info("Cannot find suitable truck for parcel: {}", dataConverter.parcelToString(parcel));
+                throw new IllegalArgumentException("Cannot find suitable truck for parcel: " + dataConverter.parcelToString(parcel));
             }
         }
 
@@ -64,7 +67,7 @@ public class EqualLoadStrategy implements LoadStrategy {
         List<Truck> trucks = new ArrayList<>();
 
         for (Parcel parcel : parcels) {
-            log.info("Loading package {}", DataConverter.parcelToString(parcel));
+            log.info("Loading package {}", dataConverter.parcelToString(parcel));
 
             Truck suitableTruck = parcelService.findSuitableTruck(trucks, parcel);
             if (suitableTruck != null) {
@@ -75,8 +78,8 @@ public class EqualLoadStrategy implements LoadStrategy {
                 parcelService.placeParcelInTruck(newTruck, parcel);
             }
 
-            parcel.setLoaded(true);
-            log.info("Package {} loaded", DataConverter.parcelToString(parcel));
+            parcel.setIsLoaded(true);
+            log.info("Package {} loaded", dataConverter.parcelToString(parcel));
         }
 
         log.info("Loading with unlimited trucks completed");

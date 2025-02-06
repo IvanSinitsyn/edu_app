@@ -1,5 +1,7 @@
 package ru.hoff.edu.model.enums;
 
+import java.util.Arrays;
+
 /**
  * Перечисление, представляющее типы команд, которые могут быть выполнены в системе.
  * Каждый тип команды связан с текстовым описанием, используемым для идентификации команды.
@@ -24,7 +26,7 @@ public enum CommandType {
     /**
      * Команда для поиска всех посылок.
      */
-    FINDALL("/findall"),
+    FIND_ALL("/findall"),
 
     /**
      * Команда удаления посылки.
@@ -41,9 +43,20 @@ public enum CommandType {
      */
     UNLOAD("/unload");
 
-    private final String description;
+    private final String command;
 
-    CommandType(String description) {
-        this.description = description;
+    CommandType(String command) {
+        this.command = command;
+    }
+
+    public static CommandType fromString(String command) {
+        return Arrays.stream(values())
+                .filter(c -> c.getCommand().equals(command))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Неизвестная команда: " + command));
+    }
+
+    public String getCommand() {
+        return command;
     }
 }

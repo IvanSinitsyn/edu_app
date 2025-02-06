@@ -8,7 +8,10 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.hoff.edu.config.TgBotConfig;
-import ru.hoff.edu.service.handler.impl.TelegramCommandHandler;
+import ru.hoff.edu.model.enums.CommandType;
+import ru.hoff.edu.service.Mediator;
+import ru.hoff.edu.service.factory.CommandParserFactory;
+import ru.hoff.edu.service.request.Request;
 
 /**
  * Класс, реализующий контроллер Telegram-бота.
@@ -20,7 +23,8 @@ import ru.hoff.edu.service.handler.impl.TelegramCommandHandler;
 public class TelegramController extends TelegramLongPollingBot {
 
     private final TgBotConfig tgBotConfig;
-    private final TelegramCommandHandler telegramCommandHandler;
+    private final Mediator mediator;
+    private final CommandParserFactory commandParserFactory;
 
     /**
      * Возвращает имя бота.
@@ -56,8 +60,9 @@ public class TelegramController extends TelegramLongPollingBot {
         String chatId = update.getMessage().getChatId().toString();
         String userMessage = update.getMessage().getText();
 
-        String response = telegramCommandHandler.handle(userMessage);
-        sendMessage(chatId, response);
+        Request request = commandParserFactory.createCommandParser(CommandType.fromString(userMessage.split(" ")[0])).parse(userMessage);
+        Object response = mediator.send(request);
+        sendMessage(chatId, response.toString());
     }
 
     private void sendMessage(String chatId, String response) {

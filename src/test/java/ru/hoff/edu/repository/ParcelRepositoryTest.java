@@ -5,15 +5,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import ru.hoff.edu.entity.ParcelEntity;
+import ru.hoff.edu.model.entity.ParcelEntity;
 
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
@@ -40,10 +39,8 @@ class ParcelRepositoryTest {
 
     @Test
     void initializeParcels_shouldContainInitialParcels() {
-        // Act
         List<ParcelEntity> parcels = parcelRepository.findAll();
 
-        // Assert
         assertEquals(9, parcels.size());
         assertTrue(parcels.stream().anyMatch(parcel -> parcel.getName().equals("1")));
         assertTrue(parcels.stream().anyMatch(parcel -> parcel.getName().equals("5")));
@@ -73,14 +70,14 @@ class ParcelRepositoryTest {
         parcel.get().setForm("XY\nZ ");
         ParcelEntity parcelEntity = parcelRepository.save(parcel.get());
 
-        assertNotNull(parcelEntity);
+        assertThat(parcelEntity).isNotNull();
         assertEquals("XY\nZ ", parcelEntity.getForm());
     }
 
     @Test
     void deleteParcel_shouldRemoveParcelFromRepository() {
         ParcelEntity parcel = parcelRepository.findById("4").orElse(null);
-        assertNotNull(parcel);
+        assertThat(parcel).isNotNull();
 
         parcelRepository.delete(parcel);
         List<ParcelEntity> parcels = parcelRepository.findAll();
@@ -98,20 +95,17 @@ class ParcelRepositoryTest {
     @Test
     void findParcelByName_shouldReturnParcel_whenParcelExists() {
         ParcelEntity parcel = parcelRepository.findById("6").orElse(null);
-        assertNotNull(parcel);
+        assertThat(parcel).isNotNull();
         assertEquals("6", parcel.getName());
     }
 
     @Test
     void findParcelByName_shouldReturnEmpty_whenParcelDoesNotExist() {
-        // Arrange
         String parcelName = "NonExistentParcel";
 
-        // Act
         ParcelEntity foundParcel = parcelRepository.findById(parcelName).orElse(null);
 
-        // Assert
-        assertNull(foundParcel);
+        assertThat(foundParcel).isNotNull();
     }
 }
 

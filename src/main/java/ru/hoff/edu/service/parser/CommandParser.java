@@ -1,11 +1,13 @@
 package ru.hoff.edu.service.parser;
 
-import ru.hoff.edu.dto.BaseCommandDto;
+import org.springframework.stereotype.Component;
+import ru.hoff.edu.service.request.Request;
 
 /**
  * Интерфейс для парсеров команд.
  * Определяет метод для разбора строки команды и преобразования её в DTO (Data Transfer Object).
  */
+@Component
 public interface CommandParser {
 
     /**
@@ -14,5 +16,5 @@ public interface CommandParser {
      * @param command Строка команды, которую необходимо разобрать.
      * @return Объект DTO, содержащий данные команды.
      */
-    BaseCommandDto parse(String command);
+    Request parse(String command);
 }

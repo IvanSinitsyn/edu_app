@@ -1,8 +1,9 @@
 package ru.hoff.edu.service.parser.impl;
 
-import ru.hoff.edu.dto.BaseCommandDto;
-import ru.hoff.edu.dto.FindParcelByIdQueryDto;
+import org.springframework.stereotype.Component;
 import ru.hoff.edu.service.parser.CommandParser;
+import ru.hoff.edu.service.request.Request;
+import ru.hoff.edu.service.request.impl.FindParcelByIdRequest;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,6 +12,7 @@ import java.util.regex.Pattern;
  * Класс, реализующий парсер для команды поиска посылки по её названию.
  * Разбирает строку команды и преобразует её в DTO для поиска посылки.
  */
+@Component
 public class FindByIdCommandParser implements CommandParser {
 
     private static final int NAME_GROUP = 1;
@@ -20,11 +22,11 @@ public class FindByIdCommandParser implements CommandParser {
      * Разбирает строку команды поиска посылки и преобразует её в DTO.
      *
      * @param command Строка команды, которую необходимо разобрать.
-     * @return Объект {@link FindParcelByIdQueryDto}, содержащий название посылки.
+     * @return Объект {@link FindParcelByIdRequest}, содержащий название посылки.
      * @throws IllegalArgumentException если строка команды не соответствует ожидаемому формату.
      */
     @Override
-    public BaseCommandDto parse(String command) {
+    public Request parse(String command) {
         Matcher matcher = pattern.matcher(command);
 
         if (!matcher.find()) {
@@ -32,6 +34,6 @@ public class FindByIdCommandParser implements CommandParser {
         }
 
         String parcelName = matcher.group(NAME_GROUP);
-        return new FindParcelByIdQueryDto(parcelName);
+        return new FindParcelByIdRequest(parcelName);
     }
 }

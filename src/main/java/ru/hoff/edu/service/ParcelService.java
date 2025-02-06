@@ -8,14 +8,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
-import ru.hoff.edu.entity.ParcelEntity;
+import ru.hoff.edu.model.entity.ParcelEntity;
 import ru.hoff.edu.repository.ParcelRepository;
 import ru.hoff.edu.service.exception.ParcelNotFoundException;
 import ru.hoff.edu.validation.ParcelValidator;
 
 import java.util.List;
-
-import static ru.hoff.edu.util.DataConverter.convertArrayToString;
 
 /**
  * Сервис для работы с посылками.
@@ -30,6 +28,7 @@ public class ParcelService {
     private final ParcelRepository parcelRepository;
     private final ParcelMapper parcelMapper;
     private final ParcelValidator parcelValidator;
+    private final DataConverter dataConverter;
 
     /**
      * Добавляет новую посылку в репозиторий.
@@ -38,8 +37,7 @@ public class ParcelService {
      * @throws IllegalArgumentException если посылка с таким именем уже существует или форма посылки невалидна.
      */
     public void add(Parcel parcel) {
-        ParcelEntity existedParcel = parcelRepository.findById(parcel.getName()).orElse(null);
-        if (existedParcel != null) {
+        if (parcelRepository.existsById(parcel.getName())) {
             throw new IllegalArgumentException("Посылка с таким именем уже существует");
         }
 
@@ -99,12 +97,12 @@ public class ParcelService {
         }
 
         if (!id.equals(newName)) {
-            ParcelEntity newParcel = new ParcelEntity(newName, convertArrayToString(newForm), newSymbol, false);
+            ParcelEntity newParcel = new ParcelEntity(newName, dataConverter.convertArrayToString(newForm), newSymbol, false);
             parcelRepository.delete(existedParcel);
             parcelRepository.save(newParcel);
             return parcelMapper.fromEntity(newParcel);
         } else {
-            existedParcel.setForm(convertArrayToString(newForm));
+            existedParcel.setForm(dataConverter.convertArrayToString(newForm));
             existedParcel.setSymbol(newSymbol);
             ParcelEntity updatedParcel = parcelRepository.save(existedParcel);
             return parcelMapper.fromEntity(updatedParcel);

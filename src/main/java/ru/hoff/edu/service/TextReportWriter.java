@@ -1,8 +1,9 @@
 package ru.hoff.edu.service;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
-import ru.hoff.edu.util.DataConverter;
 
 import java.util.List;
 
@@ -20,9 +21,12 @@ import java.util.List;
  * @see Parcel
  * @see DataConverter
  */
+@Component
+@RequiredArgsConstructor
 public class TextReportWriter implements ReportWriter {
 
     private static final String NEW_LINE = System.lineSeparator();
+    private final DataConverter dataConverter;
 
     /**
      * Генерирует текстовый отчет на основе списка грузовиков.
@@ -39,7 +43,11 @@ public class TextReportWriter implements ReportWriter {
      * @return Текстовый отчет в виде строки.
      */
     @Override
-    public String write(List<Truck> trucks) {
+    public String write(List<Truck> trucks, String outPath) {
+        return writeToString(trucks);
+    }
+
+    private String writeToString(List<Truck> trucks) {
         StringBuilder summary = new StringBuilder();
         summary.append("Кузов:");
         summary.append(NEW_LINE);
@@ -47,14 +55,14 @@ public class TextReportWriter implements ReportWriter {
         for (Truck truck : trucks) {
             summary.append(truck.showTruckSize())
                     .append(NEW_LINE)
-                    .append(DataConverter.convertFormToString(truck.getGrid()))
+                    .append(dataConverter.convertFormToString(truck.getGrid()))
                     .append(NEW_LINE);
 
             List<Parcel> parcels = truck.getParcels();
             for (Parcel parcel : parcels) {
                 summary.append(parcel.getName())
                         .append(NEW_LINE)
-                        .append(DataConverter.convertFormToString(parcel.getForm()))
+                        .append(dataConverter.convertFormToString(parcel.getForm()))
                         .append(NEW_LINE);
             }
 

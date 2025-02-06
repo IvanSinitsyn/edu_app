@@ -1,11 +1,11 @@
 package ru.hoff.edu.service.parser;
 
 import org.junit.jupiter.api.Test;
-import ru.hoff.edu.dto.BaseCommandDto;
-import ru.hoff.edu.dto.FindParcelByIdQueryDto;
 import ru.hoff.edu.service.parser.impl.FindByIdCommandParser;
+import ru.hoff.edu.service.request.Request;
+import ru.hoff.edu.service.request.impl.FindParcelByIdRequest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public class FindByIdCommandParserTest {
@@ -13,8 +13,8 @@ public class FindByIdCommandParserTest {
     @Test
     void parseCommand_shouldReturnFindParcelByIdQueryDto() {
         CommandParser parser = new FindByIdCommandParser();
-        BaseCommandDto findDto = parser.parse("/find --name \"Parcel2\"");
-        assertInstanceOf(FindParcelByIdQueryDto.class, findDto);
+        Request findDto = parser.parse("/find --name \"Parcel2\"");
+        assertInstanceOf(FindParcelByIdRequest.class, findDto);
     }
 
     @Test
@@ -23,8 +23,8 @@ public class FindByIdCommandParserTest {
 
         String command = "/find --name \"Parcel1\"";
 
-        FindParcelByIdQueryDto dto = (FindParcelByIdQueryDto) parser.parse(command);
+        FindParcelByIdRequest dto = (FindParcelByIdRequest) parser.parse(command);
 
-        assertEquals("Parcel1", dto.parcelName());
+        assertThat(dto.parcelName()).isEqualTo("Parcel1");
     }
 }
