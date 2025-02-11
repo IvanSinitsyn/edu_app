@@ -3,6 +3,6 @@ WORKDIR /app
 
 COPY build/libs/edu_app.jar app.jar
 
-EXPOSE 8888
+EXPOSE 9992
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

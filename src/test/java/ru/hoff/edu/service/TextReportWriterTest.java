@@ -1,7 +1,10 @@
 package ru.hoff.edu.service;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
 
@@ -11,14 +14,14 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ExtendWith(MockitoExtension.class)
 class TextReportWriterTest {
 
+    @InjectMocks
     private TextReportWriter reportWriter;
 
-    @BeforeEach
-    void setUp() {
-        reportWriter = new TextReportWriter(new DataConverter());
-    }
+    @Mock
+    private ParcelMapper parcelMapper;
 
     @Test
     void write_shouldReturnFormattedReport_whenTrucksAndParcelsAreValid() {

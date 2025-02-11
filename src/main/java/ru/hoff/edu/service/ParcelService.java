@@ -28,7 +28,6 @@ public class ParcelService {
     private final ParcelRepository parcelRepository;
     private final ParcelMapper parcelMapper;
     private final ParcelValidator parcelValidator;
-    private final DataConverter dataConverter;
 
     /**
      * Добавляет новую посылку в репозиторий.
@@ -67,7 +66,8 @@ public class ParcelService {
      * @return Optional, содержащий найденную посылку, или пустой Optional, если посылка не найдена.
      */
     public Parcel findByName(String name) {
-        return parcelMapper.fromEntity(parcelRepository.findById(name).orElseThrow(() -> new ParcelNotFoundException("Посылка " + name + "не найдена")));
+        ParcelEntity parcel = parcelRepository.findById(name).orElseThrow(() -> new ParcelNotFoundException("Посылка " + name + " не найдена"));
+        return parcelMapper.fromEntity(parcel);
     }
 
     /**
@@ -97,12 +97,12 @@ public class ParcelService {
         }
 
         if (!id.equals(newName)) {
-            ParcelEntity newParcel = new ParcelEntity(newName, dataConverter.convertArrayToString(newForm), newSymbol, false);
+            ParcelEntity newParcel = new ParcelEntity(newName, parcelMapper.convertArrayToString(newForm), newSymbol, false);
             parcelRepository.delete(existedParcel);
             parcelRepository.save(newParcel);
             return parcelMapper.fromEntity(newParcel);
         } else {
-            existedParcel.setForm(dataConverter.convertArrayToString(newForm));
+            existedParcel.setForm(parcelMapper.convertArrayToString(newForm));
             existedParcel.setSymbol(newSymbol);
             ParcelEntity updatedParcel = parcelRepository.save(existedParcel);
             return parcelMapper.fromEntity(updatedParcel);

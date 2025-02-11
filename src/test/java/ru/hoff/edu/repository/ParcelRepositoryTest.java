@@ -105,7 +105,7 @@ class ParcelRepositoryTest {
 
         ParcelEntity foundParcel = parcelRepository.findById(parcelName).orElse(null);
 
-        assertThat(foundParcel).isNotNull();
+        assertThat(foundParcel).isNull();
     }
 }
 

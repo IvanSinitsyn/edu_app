@@ -4,11 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.telegram.telegrambots.meta.TelegramBotsApi;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import ru.hoff.edu.model.enums.AlgorithmType;
-import ru.hoff.edu.model.enums.CommandType;
 import ru.hoff.edu.model.enums.FileType;
 import ru.hoff.edu.model.enums.ResultOutType;
 import ru.hoff.edu.service.JsonFileReportWriter;
@@ -25,13 +21,6 @@ import ru.hoff.edu.service.handler.impl.FindAllParcelsRequestHandler;
 import ru.hoff.edu.service.handler.impl.FindParcelByIdRequestHandler;
 import ru.hoff.edu.service.handler.impl.LoadParcelsRequestHandler;
 import ru.hoff.edu.service.handler.impl.UnloadParcelsRequestHandler;
-import ru.hoff.edu.service.parser.CommandParser;
-import ru.hoff.edu.service.parser.impl.CreateCommandParser;
-import ru.hoff.edu.service.parser.impl.DeleteCommandParser;
-import ru.hoff.edu.service.parser.impl.EditCommandParser;
-import ru.hoff.edu.service.parser.impl.FindByIdCommandParser;
-import ru.hoff.edu.service.parser.impl.LoadCommandParser;
-import ru.hoff.edu.service.parser.impl.UnloadCommandParser;
 import ru.hoff.edu.service.request.Request;
 import ru.hoff.edu.service.request.impl.CreateParcelRequest;
 import ru.hoff.edu.service.request.impl.DeleteParcelRequest;
@@ -89,26 +78,6 @@ public class AppConfig {
     }
 
     @Bean
-    public Map<CommandType, CommandParser> commandParsers(
-            CreateCommandParser createCommandParser,
-            DeleteCommandParser deleteCommandParser,
-            EditCommandParser editCommandParser,
-            FindByIdCommandParser findByIdCommandParser,
-            LoadCommandParser loadCommandParser,
-            UnloadCommandParser unloadCommandParser) {
-        Map<CommandType, CommandParser> commandParsers = new HashMap<>();
-        commandParsers.put(CommandType.CREATE, createCommandParser);
-        commandParsers.put(CommandType.FIND, findByIdCommandParser);
-        commandParsers.put(CommandType.FIND_ALL, createCommandParser);
-        commandParsers.put(CommandType.EDIT, editCommandParser);
-        commandParsers.put(CommandType.DELETE, deleteCommandParser);
-        commandParsers.put(CommandType.UNLOAD, unloadCommandParser);
-        commandParsers.put(CommandType.LOAD, loadCommandParser);
-
-        return commandParsers;
-    }
-
-    @Bean
     public Map<AlgorithmType, LoadStrategy> loadStrategies(
             EasyLoadStrategy easyLoadStrategy,
             EqualLoadStrategy equalLoadStrategy,
@@ -133,19 +102,5 @@ public class AppConfig {
     @Bean
     public ObjectWriter objectWriter() {
         return new ObjectMapper().writerWithDefaultPrettyPrinter();
-    }
-
-    /**
-     * Создает и возвращает экземпляр TelegramBotsApi.
-     * <p>
-     * Этот бин используется для регистрации и управления Telegram-ботами.
-     * </p>
-     *
-     * @return Экземпляр TelegramBotsApi.
-     * @throws TelegramApiException Если возникает ошибка при создании TelegramBotsApi.
-     */
-    @Bean
-    public TelegramBotsApi telegramBotsApi() throws TelegramApiException {
-        return new TelegramBotsApi(DefaultBotSession.class);
     }
 }

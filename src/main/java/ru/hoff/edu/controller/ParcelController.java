@@ -23,6 +23,8 @@ import ru.hoff.edu.model.dto.response.EditParcelResponseDto;
 import ru.hoff.edu.model.dto.response.FindAllParcelsResponseDto;
 import ru.hoff.edu.model.dto.response.FindParcelByIdResponseDto;
 import ru.hoff.edu.model.dto.response.LoadParcelsResponseDto;
+import ru.hoff.edu.model.enums.AlgorithmType;
+import ru.hoff.edu.model.enums.ResultOutType;
 import ru.hoff.edu.service.Mediator;
 import ru.hoff.edu.service.request.impl.CreateParcelRequest;
 import ru.hoff.edu.service.request.impl.DeleteParcelRequest;
@@ -31,6 +33,8 @@ import ru.hoff.edu.service.request.impl.FindAllParcelsRequest;
 import ru.hoff.edu.service.request.impl.FindParcelByIdRequest;
 import ru.hoff.edu.service.request.impl.LoadParcelsRequest;
 import ru.hoff.edu.service.request.impl.UnloadParcelsRequest;
+
+import java.util.Arrays;
 
 /**
  * Контроллер для обработки команд, связанных с посылками, через Spring Shell.
@@ -124,7 +128,6 @@ public class ParcelController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-
     /**
      * Удаляет посылку по имени.
      * <p>
@@ -161,13 +164,17 @@ public class ParcelController {
     public ResponseEntity<?> loadParcels(
             @Parameter(description = "DTO для загрузки посылок", required = true)
             @RequestBody LoadParcelRequestDto loadParcelRequestDto) {
-        LoadParcelsResponseDto result = (LoadParcelsResponseDto) mediator.send(new LoadParcelsRequest(
-                loadParcelRequestDto.algorithmType(),
-                loadParcelRequestDto.parcelIds(),
-                loadParcelRequestDto.pathToParcelsFile(),
-                loadParcelRequestDto.trucksDescriptions(),
-                loadParcelRequestDto.resultOutType(),
-                loadParcelRequestDto.pathToResultFile()));
+        LoadParcelsResponseDto result = (LoadParcelsResponseDto) mediator.send(
+                new LoadParcelsRequest(
+                        loadParcelRequestDto.userId(),
+                        AlgorithmType.fromString(loadParcelRequestDto.algorithmType()),
+                        Arrays.stream(loadParcelRequestDto.parcelIds().split(",")).toList(),
+                        loadParcelRequestDto.pathToParcelsFile(),
+                        Arrays.stream(loadParcelRequestDto.trucksDescriptions().split("\\n")).toList(),
+                        ResultOutType.fromString(loadParcelRequestDto.resultOutType()),
+                        loadParcelRequestDto.pathToResultFile()
+                )
+        );
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 

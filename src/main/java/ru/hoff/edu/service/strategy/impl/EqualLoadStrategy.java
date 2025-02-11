@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
-import ru.hoff.edu.service.DataConverter;
+import ru.hoff.edu.service.ParcelMapper;
 import ru.hoff.edu.service.ParcelService;
 import ru.hoff.edu.service.strategy.LoadStrategy;
 
@@ -22,7 +22,7 @@ import java.util.List;
 public class EqualLoadStrategy implements LoadStrategy {
 
     private final ParcelService parcelService;
-    private final DataConverter dataConverter;
+    private final ParcelMapper parcelMapper;
 
     /**
      * Загружает посылки в грузовики по стратегии равномерной загрузки.
@@ -45,16 +45,16 @@ public class EqualLoadStrategy implements LoadStrategy {
         log.info("Start loading equally mode with limited trucks");
 
         for (Parcel parcel : parcels) {
-            log.info("Loading package {}", dataConverter.parcelToString(parcel));
+            log.info("Loading package {}", parcelMapper.parcelToString(parcel));
 
             Truck suitableTruck = parcelService.findSuitableTruck(trucks, parcel);
             if (suitableTruck != null) {
                 parcelService.placeParcelInTruck(suitableTruck, parcel);
                 parcel.setIsLoaded(true);
-                log.info("Package {} loaded", dataConverter.parcelToString(parcel));
+                log.info("Package {} loaded", parcelMapper.parcelToString(parcel));
             } else {
-                log.info("Cannot find suitable truck for parcel: {}", dataConverter.parcelToString(parcel));
-                throw new IllegalArgumentException("Cannot find suitable truck for parcel: " + dataConverter.parcelToString(parcel));
+                log.info("Cannot find suitable truck for parcel: {}", parcelMapper.parcelToString(parcel));
+                throw new IllegalArgumentException("Cannot find suitable truck for parcel: " + parcelMapper.parcelToString(parcel));
             }
         }
 
@@ -67,7 +67,7 @@ public class EqualLoadStrategy implements LoadStrategy {
         List<Truck> trucks = new ArrayList<>();
 
         for (Parcel parcel : parcels) {
-            log.info("Loading package {}", dataConverter.parcelToString(parcel));
+            log.info("Loading package {}", parcelMapper.parcelToString(parcel));
 
             Truck suitableTruck = parcelService.findSuitableTruck(trucks, parcel);
             if (suitableTruck != null) {
@@ -79,7 +79,7 @@ public class EqualLoadStrategy implements LoadStrategy {
             }
 
             parcel.setIsLoaded(true);
-            log.info("Package {} loaded", dataConverter.parcelToString(parcel));
+            log.info("Package {} loaded", parcelMapper.parcelToString(parcel));
         }
 
         log.info("Loading with unlimited trucks completed");

@@ -29,7 +29,7 @@ import java.util.Map;
 public class JsonFileReportWriter implements ReportWriter {
 
     private final ObjectWriter objectWriter;
-    private final DataConverter dataConverter;
+    private final ParcelMapper parcelMapper;
 
     /**
      * Записывает данные о грузовиках и посылках в JSON-файл.
@@ -92,7 +92,7 @@ public class JsonFileReportWriter implements ReportWriter {
         for (Parcel parcel : parcels) {
             Map<String, Object> parcelData = new HashMap<>();
             parcelData.put("name", parcel.getName());
-            parcelData.put("form", dataConverter.convertFormToString(parcel.getForm()));
+            parcelData.put("form", parcelMapper.convertArrayToString(parcel.getForm()));
             parcelDataList.add(parcelData);
         }
         return parcelDataList;

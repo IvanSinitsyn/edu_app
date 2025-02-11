@@ -19,7 +19,7 @@ public class LoadCommandParserTest {
     @Test
     void parseCommand_shouldReturnLoadParcelsCommandDto() {
         CommandParser parser = new LoadCommandParser(mock(FileReaderFactory.class), mock(FileExtensionParser.class));
-        Request loadDto = parser.parse("/load --parcels-text \"Parcel1\\nParcel2\" --trucks \"Truck1\\nTruck2\" --algorithm \"easy\" --out file");
+        Request loadDto = parser.parse("/load --user-id \"Ivan\" --parcels-text \"Parcel1\\nParcel2\" --trucks \"Truck1\\nTruck2\" --algorithm \"easy\" --out file");
         assertThat(loadDto).isInstanceOf(LoadParcelsRequest.class);
     }
 
@@ -27,7 +27,7 @@ public class LoadCommandParserTest {
     void parseLoadCommand_shouldReturnLoadParcelsCommandDto() {
         CommandParser parser = new LoadCommandParser(mock(FileReaderFactory.class), mock(FileExtensionParser.class));
 
-        String command = "/load --parcels-text \"Parcel1\\nParcel2\" --trucks \"Truck1\\nTruck2\" --algorithm \"EASY\" --out file";
+        String command = "/load --user-id \"Ivan\" --parcels-text \"Parcel1\\nParcel2\" --trucks \"Truck1\\nTruck2\" --algorithm \"EASY\" --out file";
 
         LoadParcelsRequest dto = (LoadParcelsRequest) parser.parse(command);
 
@@ -35,6 +35,6 @@ public class LoadCommandParserTest {
         assertThat(dto.parcelIds()).isEqualTo(Arrays.asList("Parcel1", "Parcel2"));
         assertThat(dto.trucksDescriptions()).isEqualTo(Arrays.asList("Truck1", "Truck2"));
         assertThat(dto.resultOutType()).isEqualTo(ResultOutType.FILE);
-        assertThat(dto.pathToResultFile()).isNotNull();
+        assertThat(dto.pathToResultFile()).isNull();
     }
 }

@@ -14,7 +14,6 @@ object Version {
     const val junitVersion = "5.10.0"
     const val mockitoVersion = "5.8.0"
     const val fasterxmlVersion = "2.15.2"
-    const val telegrambotsVersion = "5.3.0"
     const val snakeyamlVersion = "2.0"
     const val mokitoInline = "2.7.21"
     const val postgresql = "42.6.0"
@@ -24,6 +23,11 @@ object Version {
     const val h2 = "2.3.232"
     const val springShellStarter = "3.4.0"
     const val springBootStarterActuator = "3.4.1"
+    const val kafka = "3.2.1"
+    const val assertj = "3.24.2"
+    const val jacksonCore = "2.14.1"
+    const val jaxbApi = "2.3.1"
+    const val jaxbRuntime = "2.3.3"
 }
 
 repositories {
@@ -37,7 +41,6 @@ dependencies {
     implementation("org.slf4j:slf4j-api:${Version.slf4jVersion}")
     implementation("ch.qos.logback:logback-classic:${Version.logbackVersion}")
     implementation("com.fasterxml.jackson.core:jackson-databind:${Version.fasterxmlVersion}")
-    implementation("org.telegram:telegrambots:${Version.telegrambotsVersion}")
     implementation("org.yaml:snakeyaml:${Version.snakeyamlVersion}")
     implementation("org.springframework.boot:spring-boot-starter-actuator:${Version.springVersion}")
     implementation("org.springframework.boot:spring-boot-configuration-processor:${Version.springVersion}")
@@ -49,11 +52,12 @@ dependencies {
     implementation("org.flywaydb:flyway-database-postgresql:${Version.flyway}")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:${Version.swagger}")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:${Version.jpa}")
-    implementation("org.glassfish.jaxb:jaxb-runtime:2.3.3")
-    implementation("javax.xml.bind:jaxb-api:2.3.1")
-    implementation("com.fasterxml.jackson.core:jackson-core:2.14.1")
+    implementation("org.glassfish.jaxb:jaxb-runtime:${Version.jaxbRuntime}")
+    implementation("javax.xml.bind:jaxb-api:${Version.jaxbApi}")
+    implementation("com.fasterxml.jackson.core:jackson-core:${Version.jacksonCore}")
     implementation("org.springframework.shell:spring-shell-starter:${Version.springShellStarter}")
     implementation("org.springframework.boot:spring-boot-starter-actuator:${Version.springBootStarterActuator}")
+    implementation("org.springframework.kafka:spring-kafka:${Version.kafka}")
 
 
     compileOnly("org.projectlombok:lombok:${Version.lombokVersion}")
@@ -68,7 +72,7 @@ dependencies {
     testImplementation("org.mockito:mockito-inline:${Version.mokitoInline}")
     testImplementation("org.springframework.boot:spring-boot-starter-test:${Version.springVersion}")
     testImplementation("com.h2database:h2:${Version.h2}")
-    testImplementation("org.assertj:assertj-core:3.24.2")
+    testImplementation("org.assertj:assertj-core:${Version.assertj}")
 }
 
 tasks.test {

@@ -14,19 +14,16 @@ import java.util.List;
  *
  * <p>Каждый грузовик и его содержимое разделяются строкой "---------------".</p>
  *
- * <p>Для преобразования данных в строковый формат используется утилитный класс {@link DataConverter}.</p>
- *
  * @see ReportWriter
  * @see Truck
  * @see Parcel
- * @see DataConverter
  */
 @Component
 @RequiredArgsConstructor
 public class TextReportWriter implements ReportWriter {
 
     private static final String NEW_LINE = System.lineSeparator();
-    private final DataConverter dataConverter;
+    private final ParcelMapper parcelMapper;
 
     /**
      * Генерирует текстовый отчет на основе списка грузовиков.
@@ -55,14 +52,14 @@ public class TextReportWriter implements ReportWriter {
         for (Truck truck : trucks) {
             summary.append(truck.showTruckSize())
                     .append(NEW_LINE)
-                    .append(dataConverter.convertFormToString(truck.getGrid()))
+                    .append(parcelMapper.convertArrayToString(truck.getGrid()))
                     .append(NEW_LINE);
 
             List<Parcel> parcels = truck.getParcels();
             for (Parcel parcel : parcels) {
                 summary.append(parcel.getName())
                         .append(NEW_LINE)
-                        .append(dataConverter.convertFormToString(parcel.getForm()))
+                        .append(parcelMapper.convertArrayToString(parcel.getForm()))
                         .append(NEW_LINE);
             }
 

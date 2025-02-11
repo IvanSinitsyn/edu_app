@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.model.dto.response.CreateParcelResponseDto;
-import ru.hoff.edu.service.DataConverter;
 import ru.hoff.edu.service.ParcelMapper;
 import ru.hoff.edu.service.ParcelService;
 import ru.hoff.edu.service.handler.RequestHandler;
@@ -15,7 +14,6 @@ import ru.hoff.edu.service.request.impl.CreateParcelRequest;
 @RequiredArgsConstructor
 public class CreateParcelRequestHandler implements RequestHandler {
 
-    private final DataConverter dataConverter;
     private final ParcelService parcelService;
     private final ParcelMapper parcelMapper;
 
@@ -24,7 +22,7 @@ public class CreateParcelRequestHandler implements RequestHandler {
         CreateParcelRequest createRequest = (CreateParcelRequest) request;
         Parcel parcel = Parcel.builder()
                 .name(createRequest.name())
-                .form(dataConverter.convertStringToForm(createRequest.form()))
+                .form(parcelMapper.convertStringToForm(createRequest.form()))
                 .symbol(createRequest.symbol())
                 .build();
         parcelService.add(parcel);

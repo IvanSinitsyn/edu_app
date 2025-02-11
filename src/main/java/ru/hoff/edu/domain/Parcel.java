@@ -3,39 +3,27 @@ package ru.hoff.edu.domain;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.util.Arrays;
 
 /**
  * Класс, представляющий посылку (Parcel) с именем, формой и символом.
  * Форма посылки представлена двумерным массивом символов.
  * Класс предоставляет методы для получения размеров посылки, перерисовки формы и отображения информации.
  */
+@AllArgsConstructor
+@NoArgsConstructor
 @Accessors(chain = true)
 @Setter
 @Getter
 @Builder
-@AllArgsConstructor
 public class Parcel {
 
     private String name;
     private char[][] form;
     private String symbol;
     private boolean isLoaded;
-
-    /**
-     * Конструктор копирования. Создает новый объект Parcel на основе существующего.
-     *
-     * @param other Объект Parcel, который необходимо скопировать.
-     */
-    public Parcel(Parcel other) {
-        this.name = other.name;
-        this.form = Arrays.copyOf(other.form, other.form.length);
-        this.symbol = other.symbol;
-        this.isLoaded = other.isLoaded;
-    }
 
     /**
      * Возвращает ширину посылки, вычисляемую как длина первой строки массива формы.

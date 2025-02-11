@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
-import ru.hoff.edu.service.DataConverter;
+import ru.hoff.edu.service.ParcelMapper;
 import ru.hoff.edu.service.ParcelService;
 import ru.hoff.edu.service.strategy.LoadStrategy;
 
@@ -22,7 +22,7 @@ import java.util.List;
 public class EasyLoadStrategy implements LoadStrategy {
 
     private final ParcelService parcelService;
-    private final DataConverter dataConverter;
+    private final ParcelMapper parcelMapper;
 
     /**
      * Загружает посылки в грузовики по простой стратегии.
@@ -58,11 +58,11 @@ public class EasyLoadStrategy implements LoadStrategy {
                     parcelService.placeParcelInTruck(truck, parcel);
                     trucksResult.add(truck);
                     parcel.setIsLoaded(true);
-                    log.info("Package {} loaded", dataConverter.parcelToString(parcel));
+                    log.info("Package {} loaded", parcelMapper.parcelToString(parcel));
                     break;
                 }
 
-                throw new IllegalArgumentException("Parcel " + dataConverter.parcelToString(parcel) + " was not loaded in truck " + truck.getHeight() + "x" + truck.getWidth());
+                throw new IllegalArgumentException("Parcel " + parcelMapper.parcelToString(parcel) + " was not loaded in truck " + truck.getHeight() + "x" + truck.getWidth());
             }
         }
 

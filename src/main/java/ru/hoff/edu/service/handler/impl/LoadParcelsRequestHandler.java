@@ -7,8 +7,10 @@ import org.springframework.stereotype.Component;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
 import ru.hoff.edu.model.dto.response.LoadParcelsResponseDto;
+import ru.hoff.edu.model.enums.ChequeType;
 import ru.hoff.edu.model.enums.FileType;
 import ru.hoff.edu.service.FileExtensionParser;
+import ru.hoff.edu.service.OutboxWriter;
 import ru.hoff.edu.service.ParcelService;
 import ru.hoff.edu.service.ReportWriter;
 import ru.hoff.edu.service.TruckCreator;
@@ -37,6 +39,7 @@ public class LoadParcelsRequestHandler implements RequestHandler {
     private final TruckCreator truckCreator;
     private final FileReaderFactory fileReaderFactory;
     private final FileExtensionParser fileExtensionParser;
+    private final OutboxWriter outboxWriter;
 
     @Override
     public Object handle(Request request) {
@@ -73,6 +76,8 @@ public class LoadParcelsRequestHandler implements RequestHandler {
 
         LoadStrategy strategy = loadStrategyFactory.createStrategy(loadRequest.algorithmType());
         List<Truck> loadResult = strategy.loadParcels(parcels, trucks);
+
+        outboxWriter.write(loadRequest.userId(), loadResult, ChequeType.LOAD);
 
         ReportWriter reportWriter = reportWriterFactory.createReportWriter(loadRequest.resultOutType());
         String result = reportWriter.write(loadResult, loadRequest.pathToResultFile());

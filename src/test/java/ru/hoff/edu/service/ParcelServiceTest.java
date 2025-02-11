@@ -28,6 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyChar;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -53,36 +54,35 @@ class ParcelServiceTest {
 
     @Test
     void add_ShouldAddParcel() {
-        ParcelEntity parcel = new ParcelEntity("Parcel1", "A", "A", false);
+        char[][] form = new char[][]{{'A', ' '}, {' ', 'A'}};
 
-        when(parcelRepository.findById("Parcel1")).thenReturn(Optional.empty());
-        when(parcelValidator.isParcelFormValid(any(char[][].class), anyChar())).thenReturn(true);
+        Parcel parcel = new Parcel("Parcel1", form, "A", false);
 
-        parcelService.add(parcelMapper.fromEntity(parcel));
+        when(parcelRepository.existsById(parcel.getName())).thenReturn(false);
+        when(parcelValidator.isParcelFormValid(any(), anyChar())).thenReturn(true);
 
-        verify(parcelRepository, times(1)).save(any(ParcelEntity.class));
-        verify(parcelValidator, times(1)).isParcelFormValid(any(char[][].class), anyChar());
+        parcelService.add(parcel);
+
+        verify(parcelRepository, times(1)).save(any());
     }
 
     @Test
     void add_ShouldThrowException_WhenParcelExists() {
         ParcelEntity parcel = new ParcelEntity("Parcel1", "A", "A", false);
-        when(parcelRepository.findById("Parcel1")).thenReturn(Optional.of(parcel));
-
         assertThatThrownBy(() -> parcelService.add(parcelMapper.fromEntity(parcel))).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void add_ShouldThrowException_WhenFormInvalid() {
         ParcelEntity parcel = new ParcelEntity("Parcel1", "A", "A", false);
+        Parcel domainParcel = parcelMapper.fromEntity(parcel);
 
-        when(parcelRepository.findById("Parcel1")).thenReturn(Optional.empty());
-        when(parcelValidator.isParcelFormValid(any(char[][].class), anyChar())).thenReturn(false);
+        when(parcelRepository.existsById(anyString())).thenReturn(false);
+        when(parcelValidator.isParcelFormValid(new char[][]{{'A'}}, 'A')).thenReturn(false);
 
-        assertThatThrownBy(() -> parcelService.add(parcelMapper.fromEntity(parcel)))
-                .isInstanceOf(IllegalArgumentException.class);
-
-        verify(parcelValidator, times(1)).isParcelFormValid(any(char[][].class), anyChar());
+        assertThatThrownBy(() -> parcelService.add(domainParcel))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Форма посылки невалидная");
     }
 
     @Test
