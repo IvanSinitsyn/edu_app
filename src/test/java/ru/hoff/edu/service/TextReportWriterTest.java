@@ -1,23 +1,27 @@
 package ru.hoff.edu.service;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ExtendWith(MockitoExtension.class)
 class TextReportWriterTest {
 
+    @InjectMocks
     private TextReportWriter reportWriter;
 
-    @BeforeEach
-    void setUp() {
-        reportWriter = new TextReportWriter();
-    }
+    @Mock
+    private ParcelMapper parcelMapper;
 
     @Test
     void write_shouldReturnFormattedReport_whenTrucksAndParcelsAreValid() {
@@ -61,34 +65,23 @@ class TextReportWriterTest {
         trucks.add(truck1);
         trucks.add(truck2);
 
-        String expectedReport = """
-                Кузов:
-                6x6
-                [XX    , XX    ,       ,       ,       ,       ]
-                Parcel1
-                [XX,  X]
-                Parcel2
-                [X , XX]
-                ---------------
-                6x6
-                [XXX   ,  X    ,       ,       ,       ,       ]
-                Parcel3
-                [XXX,  X ]
-                ---------------
-                """;
+        String expectedReport = "Кузов:" + System.lineSeparator() + "6x6" + System.lineSeparator() + "[XX    , XX    ,       ,       ,       ,       ]" + System.lineSeparator() +
+                "Parcel1" + System.lineSeparator() + "[XX,  X]" + System.lineSeparator() + "Parcel2" + System.lineSeparator() + "[X , XX]" + System.lineSeparator() +
+                "---------------" + System.lineSeparator() + "6x6" + System.lineSeparator() + "[XXX   ,  X    ,       ,       ,       ,       ]" + System.lineSeparator() +
+                "Parcel3" + System.lineSeparator() + "[XXX,  X ]" + System.lineSeparator() + "---------------";
 
         // Act
         String actualReport = reportWriter.write(trucks);
 
         // Assert
-        assertEquals(expectedReport, actualReport);
+        assertThat(actualReport).isEqualTo(expectedReport);
     }
 
     @Test
     void write_shouldReturnEmptyReport_whenTruckListIsEmpty() {
         // Arrange
         List<Truck> trucks = new ArrayList<>();
-        String expectedReport = "Кузов:\n";
+        String expectedReport = "Кузов:" + System.lineSeparator();
 
         // Act
         String actualReport = reportWriter.write(trucks);

@@ -1,3 +1,13 @@
-telegram-bot-configuration:
-  bot-name: "SiivEduAppBot"
-  bot-token: ""
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:7777/parcels_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+server:
+  port: 9992
+
+springdoc:
+  swagger-ui:
+    enabled: true

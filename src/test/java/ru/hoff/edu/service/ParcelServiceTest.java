@@ -2,14 +2,21 @@ package ru.hoff.edu.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
+import ru.hoff.edu.model.entity.ParcelEntity;
 import ru.hoff.edu.repository.ParcelRepository;
+import ru.hoff.edu.service.exception.ParcelNotFoundException;
 import ru.hoff.edu.validation.ParcelValidator;
 
 import java.util.Arrays;
@@ -17,22 +24,25 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyChar;
-import static org.mockito.Mockito.mockStatic;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class ParcelServiceTest {
 
     @Mock
     private ParcelRepository parcelRepository;
+
+    private final ParcelMapper parcelMapper = Mappers.getMapper(ParcelMapper.class);
+
+    @Mock
+    private ParcelValidator parcelValidator;
 
     @InjectMocks
     private ParcelService parcelService;
@@ -44,100 +54,92 @@ class ParcelServiceTest {
 
     @Test
     void add_ShouldAddParcel() {
-        Parcel parcel = new Parcel("Parcel1", new char[][]{{'A'}}, "A", false);
+        char[][] form = new char[][]{{'A', ' '}, {' ', 'A'}};
 
-        when(parcelRepository.findParcelByName("Parcel1")).thenReturn(Optional.empty());
+        Parcel parcel = new Parcel("Parcel1", form, "A", false);
 
-        try (MockedStatic<ParcelValidator> mockedValidator = Mockito.mockStatic(ParcelValidator.class)) {
-            mockedValidator.when(() -> ParcelValidator.isParcelFormValid(any(char[][].class), anyChar()))
-                    .thenReturn(true);
+        when(parcelRepository.existsById(parcel.getName())).thenReturn(false);
+        when(parcelValidator.isParcelFormValid(any(), anyChar())).thenReturn(true);
 
-            parcelService.add(parcel);
+        parcelService.add(parcel);
 
-            verify(parcelRepository, times(1)).addParcel(parcel);
-
-            mockedValidator.verify(() -> ParcelValidator.isParcelFormValid(any(char[][].class), anyChar()));
-        }
+        verify(parcelRepository, times(1)).save(any());
     }
 
     @Test
     void add_ShouldThrowException_WhenParcelExists() {
-        Parcel parcel = new Parcel("Parcel1", new char[][]{{'A'}}, "A", false);
-        when(parcelRepository.findParcelByName("Parcel1")).thenReturn(Optional.of(parcel));
-
-        assertThrows(IllegalArgumentException.class, () -> parcelService.add(parcel));
+        ParcelEntity parcel = new ParcelEntity("Parcel1", "A", "A", false);
+        assertThatThrownBy(() -> parcelService.add(parcelMapper.fromEntity(parcel))).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    void add_ShouldThrowsException_WhenFormInvalid() {
-        Parcel parcel = new Parcel("Parcel1", new char[][]{{'A'}}, "A", false);
+    void add_ShouldThrowException_WhenFormInvalid() {
+        ParcelEntity parcel = new ParcelEntity("Parcel1", "A", "A", false);
+        Parcel domainParcel = parcelMapper.fromEntity(parcel);
 
-        when(parcelRepository.findParcelByName("Parcel1")).thenReturn(Optional.empty());
+        when(parcelRepository.existsById(anyString())).thenReturn(false);
+        when(parcelValidator.isParcelFormValid(new char[][]{{'A'}}, 'A')).thenReturn(false);
 
-        try (MockedStatic<ParcelValidator> mockedValidator = mockStatic(ParcelValidator.class)) {
-            mockedValidator.when(() -> ParcelValidator.isParcelFormValid(any(char[][].class), anyChar()))
-                    .thenReturn(false);
-
-            assertThrows(IllegalArgumentException.class, () -> parcelService.add(parcel));
-
-            mockedValidator.verify(() -> ParcelValidator.isParcelFormValid(any(char[][].class), anyChar()));
-        }
+        assertThatThrownBy(() -> parcelService.add(domainParcel))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Форма посылки невалидная");
     }
 
     @Test
     void findAll_ShouldReturnAllParcels() {
-        Parcel parcel1 = new Parcel("Parcel1", new char[][]{{'A'}}, "A", false);
-        Parcel parcel2 = new Parcel("Parcel2", new char[][]{{'B'}}, "B", false);
-        when(parcelRepository.findAllParcels()).thenReturn(Arrays.asList(parcel1, parcel2));
+        ParcelEntity parcel1 = new ParcelEntity("Parcel1", "A", "A", false);
+        ParcelEntity parcel2 = new ParcelEntity("Parcel2", "A", "B", false);
+        List<ParcelEntity> parcelEntities = Arrays.asList(parcel1, parcel2);
 
-        List<Parcel> parcels = parcelService.findAll();
+        Page<ParcelEntity> parcelEntityPage = new PageImpl<>(parcelEntities, PageRequest.of(0, 2), parcelEntities.size());
 
-        assertEquals(2, parcels.size());
-        verify(parcelRepository, times(1)).findAllParcels();
+        when(parcelRepository.findAll(any(Pageable.class))).thenReturn(parcelEntityPage);
+
+        Page<Parcel> parcels = parcelService.findAll(0, 2);
+
+        assertThat(parcels.getTotalElements()).isEqualTo(2);
+        assertThat(parcels.getContent().size()).isEqualTo(2);
+        verify(parcelRepository, times(1)).findAll(any(Pageable.class));
     }
 
     @Test
     void findByName_ShouldFindParcelByName() {
-        Parcel parcel = new Parcel("Parcel1", new char[][]{{'A'}}, "A", false);
-        when(parcelRepository.findParcelByName("Parcel1")).thenReturn(Optional.of(parcel));
+        ParcelEntity parcel = new ParcelEntity("Parcel1", "A", "A", false);
+        when(parcelRepository.findById("Parcel1")).thenReturn(Optional.of(parcel));
 
-        Optional<Parcel> foundParcel = parcelService.findByName("Parcel1");
+        Parcel foundParcel = parcelService.findByName("Parcel1");
 
-        assertTrue(foundParcel.isPresent());
-        assertEquals("Parcel1", foundParcel.get().getName());
-        verify(parcelRepository, times(1)).findParcelByName("Parcel1");
+        assertThat(foundParcel).isNotNull();
+        assertThat(foundParcel.getName()).isEqualTo("Parcel1");
+        verify(parcelRepository, times(1)).findById("Parcel1");
     }
 
     @Test
     void deleteParcel_ShouldDeleteParcel() {
         parcelService.delete("Parcel1");
 
-        verify(parcelRepository, times(1)).deleteParcel("Parcel1");
+        verify(parcelRepository, times(1)).deleteById("Parcel1");
     }
 
     @Test
     void edit_ShouldThrowsException_WhenParcelNotFound() {
-        when(parcelRepository.findParcelByName("Parcel1")).thenReturn(Optional.empty());
+        when(parcelRepository.findById("Parcel1")).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> parcelService.edit("Parcel1", "NewParcel", new char[][]{{'B'}}, "B"));
+        assertThatThrownBy(() -> parcelService.edit("Parcel1", "NewParcel", new char[][]{{'B'}}, "B")).isInstanceOf(ParcelNotFoundException.class);
     }
 
     @Test
-    void edit_ShouldThrowsException_WhenFormInvalid() {
-        Parcel parcel = new Parcel("Parcel1", new char[][]{{'A'}}, "A", false);
+    void edit_ShouldThrowException_WhenFormInvalid() {
+        ParcelEntity parcel = new ParcelEntity("Parcel1", "A", "A", false);
 
-        when(parcelRepository.findParcelByName("Parcel1")).thenReturn(Optional.of(parcel));
+        when(parcelRepository.findById("Parcel1")).thenReturn(Optional.of(parcel));
+        when(parcelValidator.isParcelFormValid(any(char[][].class), anyChar())).thenReturn(false);
 
-        try (MockedStatic<ParcelValidator> mockedValidator = Mockito.mockStatic(ParcelValidator.class)) {
-            mockedValidator.when(() -> ParcelValidator.isParcelFormValid(any(char[][].class), anyChar()))
-                    .thenReturn(false);
+        assertThatThrownBy(() ->
+                parcelService.edit("Parcel1", "NewParcel", new char[][]{{'B'}}, "B"))
+                .isInstanceOf(IllegalArgumentException.class);
 
-            assertThrows(IllegalArgumentException.class, () ->
-                    parcelService.edit("Parcel1", "NewParcel", new char[][]{{'B'}}, "B")
-            );
-
-            mockedValidator.verify(() -> ParcelValidator.isParcelFormValid(any(char[][].class), anyChar()));
-        }
+        verify(parcelValidator, times(1)).isParcelFormValid(any(char[][].class), anyChar());
     }
 
     @Test
@@ -145,12 +147,10 @@ class ParcelServiceTest {
         Parcel parcel = new Parcel("Parcel1", new char[][]{{'A'}}, "A", false);
         Truck truck = new Truck();
 
-        ParcelService parcelService = new ParcelService(parcelRepository);
-
         Truck suitableTruck = parcelService.findSuitableTruck(Collections.singletonList(truck), parcel);
 
-        assertNotNull(suitableTruck);
-        assertEquals(truck, suitableTruck);
+        assertThat(suitableTruck).isNotNull();
+        assertThat(suitableTruck).isEqualTo(truck);
     }
 
     @Test
@@ -160,7 +160,7 @@ class ParcelServiceTest {
 
         boolean result = parcelService.tryPlacePackageInTruck(truck, parcel);
 
-        assertTrue(result);
+        assertThat(result).isTrue();
     }
 
     @Test
@@ -170,6 +170,6 @@ class ParcelServiceTest {
 
         parcelService.placeParcelInTruck(truck, parcel);
 
-        assertFalse(truck.isEmpty());
+        assertThat(truck.isEmpty()).isFalse();
     }
 }
