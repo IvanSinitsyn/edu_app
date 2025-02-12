@@ -1,10 +1,9 @@
-package ru.hoff.edu.service;
+package ru.hoff.edu.service.core;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -16,7 +15,6 @@ import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
 import ru.hoff.edu.model.entity.ParcelEntity;
 import ru.hoff.edu.repository.ParcelRepository;
-import ru.hoff.edu.service.core.ParcelService;
 import ru.hoff.edu.service.exception.ParcelNotFoundException;
 import ru.hoff.edu.service.mapper.ParcelMapper;
 import ru.hoff.edu.validation.ParcelValidator;
@@ -29,7 +27,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyChar;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -43,25 +40,22 @@ class ParcelServiceTest {
 
     private final ParcelMapper parcelMapper = Mappers.getMapper(ParcelMapper.class);
 
-    @Mock
-    private ParcelValidator parcelValidator;
-
-    @InjectMocks
     private ParcelService parcelService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        ParcelValidator parcelValidator = new ParcelValidator();
+        parcelService = new ParcelService(parcelRepository, parcelMapper, parcelValidator);
     }
 
     @Test
     void add_ShouldAddParcel() {
-        char[][] form = new char[][]{{'A', ' '}, {' ', 'A'}};
+        char[][] form = new char[][]{{'A', 'A'}, {'A', 'A'}};
 
         Parcel parcel = new Parcel("Parcel1", form, "A", false);
 
         when(parcelRepository.existsById(parcel.getName())).thenReturn(false);
-        when(parcelValidator.isParcelFormValid(any(), anyChar())).thenReturn(true);
 
         parcelService.add(parcel);
 
@@ -71,18 +65,19 @@ class ParcelServiceTest {
     @Test
     void add_ShouldThrowException_WhenParcelExists() {
         ParcelEntity parcel = new ParcelEntity("Parcel1", "A", "A", false);
+        when(parcelRepository.existsById(parcel.getName())).thenReturn(true);
         assertThatThrownBy(() -> parcelService.add(parcelMapper.fromEntity(parcel))).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void add_ShouldThrowException_WhenFormInvalid() {
-        ParcelEntity parcel = new ParcelEntity("Parcel1", "A", "A", false);
-        Parcel domainParcel = parcelMapper.fromEntity(parcel);
+        char[][] form = new char[][]{{'A', ' '}, {' ', 'A'}};
+
+        Parcel parcel = new Parcel("Parcel1", form, "A", false);
 
         when(parcelRepository.existsById(anyString())).thenReturn(false);
-        when(parcelValidator.isParcelFormValid(new char[][]{{'A'}}, 'A')).thenReturn(false);
 
-        assertThatThrownBy(() -> parcelService.add(domainParcel))
+        assertThatThrownBy(() -> parcelService.add(parcel))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Форма посылки невалидная");
     }
@@ -90,7 +85,7 @@ class ParcelServiceTest {
     @Test
     void findAll_ShouldReturnAllParcels() {
         ParcelEntity parcel1 = new ParcelEntity("Parcel1", "A", "A", false);
-        ParcelEntity parcel2 = new ParcelEntity("Parcel2", "A", "B", false);
+        ParcelEntity parcel2 = new ParcelEntity("Parcel2", "B", "B", false);
         List<ParcelEntity> parcelEntities = Arrays.asList(parcel1, parcel2);
 
         Page<ParcelEntity> parcelEntityPage = new PageImpl<>(parcelEntities, PageRequest.of(0, 2), parcelEntities.size());
@@ -135,13 +130,10 @@ class ParcelServiceTest {
         ParcelEntity parcel = new ParcelEntity("Parcel1", "A", "A", false);
 
         when(parcelRepository.findById("Parcel1")).thenReturn(Optional.of(parcel));
-        when(parcelValidator.isParcelFormValid(any(char[][].class), anyChar())).thenReturn(false);
 
         assertThatThrownBy(() ->
-                parcelService.edit("Parcel1", "NewParcel", new char[][]{{'B'}}, "B"))
+                parcelService.edit("Parcel1", "NewParcel", new char[][]{{'A', ' '}, {' ', 'A'}}, "A"))
                 .isInstanceOf(IllegalArgumentException.class);
-
-        verify(parcelValidator, times(1)).isParcelFormValid(any(char[][].class), anyChar());
     }
 
     @Test
@@ -174,4 +166,6 @@ class ParcelServiceTest {
 
         assertThat(truck.isEmpty()).isFalse();
     }
+
+
 }

@@ -62,7 +62,7 @@ public class EasyLoadStrategy implements LoadStrategy {
                     break;
                 }
 
-                throw new IllegalArgumentException("Parcel " + parcelMapper.parcelToString(parcel) + " was not loaded in truck " + truck.getHeight() + "x" + truck.getWidth());
+                throw new IllegalArgumentException("Parcel " + parcel.getName() + " was not loaded in truck " + truck.getHeight() + "x" + truck.getWidth());
             }
         }
 

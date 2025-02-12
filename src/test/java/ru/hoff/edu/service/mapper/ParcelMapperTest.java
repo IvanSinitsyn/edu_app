@@ -1,4 +1,4 @@
-package ru.hoff.edu.service;
+package ru.hoff.edu.service.mapper;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -6,7 +6,6 @@ import org.mapstruct.factory.Mappers;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.model.dto.ParcelDto;
 import ru.hoff.edu.model.entity.ParcelEntity;
-import ru.hoff.edu.service.mapper.ParcelMapper;
 
 import java.util.List;
 

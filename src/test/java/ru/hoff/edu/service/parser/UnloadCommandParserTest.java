@@ -12,7 +12,7 @@ public class UnloadCommandParserTest {
     @Test
     void parseCommand_shouldReturnUnloadParcelsCommandDto() {
         CommandParser parser = new UnloadCommandParser();
-        Request unloadDto = parser.parse("/unload --infile \"input.txt\" --outfile \"output.txt\" --withcount");
+        Request unloadDto = parser.parse("/unload --user-id \"(.*?)\" --infile \"input.txt\" --outfile \"output.txt\" --withcount");
         assertThat(unloadDto).isInstanceOf(UnloadParcelsRequestDto.class);
     }
 
@@ -20,7 +20,7 @@ public class UnloadCommandParserTest {
     void parseUnloadCommand_shouldReturnUnloadParcelsCommandDto() {
         CommandParser parser = new UnloadCommandParser();
 
-        String command = "/unload --infile \"input.txt\" --outfile \"output.txt\" --withcount";
+        String command = "/unload --user-id \"(.*?)\" --infile \"input.txt\" --outfile \"output.txt\" --withcount";
 
         UnloadParcelsRequestDto dto = (UnloadParcelsRequestDto) parser.parse(command);
 

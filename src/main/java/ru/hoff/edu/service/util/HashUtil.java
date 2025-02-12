@@ -33,7 +33,7 @@ public class HashUtil {
         try {
             return objectMapper.writeValueAsString(dto);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("JSON serialization error", e);
+            throw new RuntimeException("Ошибка при сериализации", e);
         }
     }
 }

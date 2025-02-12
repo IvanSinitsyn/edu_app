@@ -7,6 +7,7 @@ import ru.hoff.edu.model.TruckData;
 import ru.hoff.edu.service.exception.JsonFileReaderException;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -19,10 +20,17 @@ public class TruckDataParser {
 
     public List<TruckData> parse(String filePath) {
         File file = new File(filePath);
+
         try {
+            if (!file.exists()) {
+                throw new FileNotFoundException("Файл не найден: " + filePath);
+            }
+
             return Arrays.asList(objectMapper.readValue(file, TruckData[].class));
+
         } catch (IOException e) {
-            throw new JsonFileReaderException("Ошибка при чтении JSON файла", e);
+            throw new JsonFileReaderException("Ошибка при чтении JSON файла: " + filePath, e);
         }
     }
+
 }

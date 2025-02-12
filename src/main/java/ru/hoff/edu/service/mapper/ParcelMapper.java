@@ -1,7 +1,6 @@
 package ru.hoff.edu.service.mapper;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.model.dto.ParcelDto;
 import ru.hoff.edu.model.entity.ParcelEntity;
@@ -10,20 +9,35 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring", uses = ParcelMapper.class)
+@Mapper(componentModel = "spring")
 public interface ParcelMapper {
 
-    @Mapping(target = "form", source = "form")
-    ParcelEntity toEntity(Parcel parcel);
+    default ParcelEntity toEntity(Parcel parcel) {
+        ParcelEntity parcelEntity = new ParcelEntity();
+        parcelEntity.setForm(convertArrayToString(parcel.getForm()));
+        parcelEntity.setName(parcel.getName());
+        parcelEntity.setSymbol(parcel.getSymbol());
+        parcelEntity.setLoaded(parcel.getIsLoaded());
+        return parcelEntity;
+    }
 
-    @Mapping(target = "form", source = "form")
-    Parcel fromEntity(ParcelEntity parcelEntity);
+    default Parcel fromEntity(ParcelEntity parcelEntity) {
+        Parcel parcel = new Parcel();
+        parcel.setName(parcelEntity.getName());
+        parcel.setSymbol(parcelEntity.getSymbol());
+        parcel.setIsLoaded(parcelEntity.isLoaded());
+        parcel.setForm(convertStringToForm(parcelEntity.getForm()));
+        return parcel;
+    }
 
-    @Mapping(target = "name", source = "name")
-    @Mapping(target = "symbol", source = "symbol")
-    @Mapping(target = "isLoaded", source = "isLoaded")
-    @Mapping(target = "form", expression = "java(cloneCharMatrix(parcel.getForm()))")
-    ParcelDto toDto(Parcel parcel);
+    default ParcelDto toDto(Parcel parcel) {
+        return ParcelDto.builder()
+                .name(parcel.getName())
+                .symbol(parcel.getSymbol())
+                .isLoaded(parcel.getIsLoaded())
+                .form(cloneCharMatrix(parcel.getForm()))
+                .build();
+    }
 
     List<ParcelDto> toDtoList(List<Parcel> parcels);
 
