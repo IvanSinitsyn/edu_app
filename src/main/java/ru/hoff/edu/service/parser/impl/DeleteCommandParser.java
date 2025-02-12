@@ -1,9 +1,9 @@
 package ru.hoff.edu.service.parser.impl;
 
 import org.springframework.stereotype.Component;
+import ru.hoff.edu.service.mediator.request.Request;
+import ru.hoff.edu.service.mediator.request.impl.DeleteParcelRequest;
 import ru.hoff.edu.service.parser.CommandParser;
-import ru.hoff.edu.service.request.Request;
-import ru.hoff.edu.service.request.impl.DeleteParcelRequest;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

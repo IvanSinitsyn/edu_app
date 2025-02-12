@@ -23,7 +23,7 @@ object Version {
     const val h2 = "2.3.232"
     const val springShellStarter = "3.4.0"
     const val springBootStarterActuator = "3.4.1"
-    const val kafka = "3.2.1"
+    const val kafka = "4.2.0"
     const val assertj = "3.24.2"
     const val jacksonCore = "2.14.1"
     const val jaxbApi = "2.3.1"
@@ -57,7 +57,8 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-core:${Version.jacksonCore}")
     implementation("org.springframework.shell:spring-shell-starter:${Version.springShellStarter}")
     implementation("org.springframework.boot:spring-boot-starter-actuator:${Version.springBootStarterActuator}")
-    implementation("org.springframework.kafka:spring-kafka:${Version.kafka}")
+    implementation("org.springframework.cloud:spring-cloud-starter-stream-kafka:${Version.kafka}")
+    implementation("org.springframework.cloud:spring-cloud-starter-config:${Version.kafka}")
 
 
     compileOnly("org.projectlombok:lombok:${Version.lombokVersion}")

@@ -1,7 +1,7 @@
 package ru.hoff.edu.service.parser;
 
 import org.springframework.stereotype.Component;
-import ru.hoff.edu.service.request.Request;
+import ru.hoff.edu.service.mediator.request.Request;
 
 /**
  * Интерфейс для парсеров команд.

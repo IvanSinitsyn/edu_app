@@ -5,6 +5,7 @@ create table public.cheques
     date         date           not null,
     trucks_count int            not null,
     parcel_count int            not null,
+    type varchar(20) not null,
     cost         numeric(19, 4) not null
 );
 

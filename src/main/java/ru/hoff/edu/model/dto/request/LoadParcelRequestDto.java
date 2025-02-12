@@ -1,12 +1,15 @@
 package ru.hoff.edu.model.dto.request;
 
+import ru.hoff.edu.model.enums.AlgorithmType;
+import ru.hoff.edu.model.enums.ResultOutType;
+
 public record LoadParcelRequestDto(
         String userId,
-        String algorithmType,
+        AlgorithmType algorithmType,
         String parcelIds,
         String pathToParcelsFile,
         String trucksDescriptions,
-        String resultOutType,
+        ResultOutType resultOutType,
         String pathToResultFile) {
 
 }

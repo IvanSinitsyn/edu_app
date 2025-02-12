@@ -4,10 +4,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,24 +13,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.hoff.edu.model.enums.Status;
 
-import java.util.UUID;
-
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "inbox", uniqueConstraints = @UniqueConstraint(columnNames = {"topic", "partition", "offset"}))
+@Table(name = "inbox")
 public class InboxEntity {
 
     @Id
-    @GeneratedValue
-    private UUID id;
-
-    private String topic;
-    private int partition;
-    private long offset;
+    private String hash;
 
     @Column(columnDefinition = "jsonb")
     private String payload;

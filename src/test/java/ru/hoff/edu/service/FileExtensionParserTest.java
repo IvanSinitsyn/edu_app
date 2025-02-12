@@ -1,6 +1,7 @@
 package ru.hoff.edu.service;
 
 import org.junit.jupiter.api.Test;
+import ru.hoff.edu.service.parser.FileExtensionParser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

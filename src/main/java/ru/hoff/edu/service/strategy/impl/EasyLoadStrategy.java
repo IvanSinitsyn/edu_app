@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
-import ru.hoff.edu.service.ParcelMapper;
-import ru.hoff.edu.service.ParcelService;
+import ru.hoff.edu.service.core.ParcelService;
+import ru.hoff.edu.service.mapper.ParcelMapper;
 import ru.hoff.edu.service.strategy.LoadStrategy;
 
 import java.util.ArrayList;

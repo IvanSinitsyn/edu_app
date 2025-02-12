@@ -1,7 +1,10 @@
 CREATE TABLE outbox
 (
-    id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    hash       varchar(255) primary key,
     payload    JSONB NOT NULL,
-    created_at TIMESTAMP        DEFAULT now(),
-    status     VARCHAR(20)      DEFAULT 'NEW'
+    status     VARCHAR(20) DEFAULT 'NEW',
+    created_at TIMESTAMP   DEFAULT now()
 );
+
+alter table public.outbox
+    owner to postgres;

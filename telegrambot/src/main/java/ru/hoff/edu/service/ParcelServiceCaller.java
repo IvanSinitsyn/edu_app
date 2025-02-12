@@ -1,7 +1,6 @@
 package ru.hoff.edu.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.hoff.edu.model.dto.request.CreateParcelRequestDto;
 import ru.hoff.edu.model.dto.request.DeleteParcelRequestDto;
@@ -10,12 +9,14 @@ import ru.hoff.edu.model.dto.request.FindAllParcelsRequestDto;
 import ru.hoff.edu.model.dto.request.FindParcelByIdRequestDto;
 import ru.hoff.edu.model.dto.request.LoadParcelRequestDto;
 import ru.hoff.edu.model.dto.request.UnloadParcelsRequestDto;
+import ru.hoff.edu.model.dto.response.BaseResponseDto;
 import ru.hoff.edu.model.dto.response.CreateParcelResponseDto;
 import ru.hoff.edu.model.dto.response.DeleteParcelResponseDto;
 import ru.hoff.edu.model.dto.response.EditParcelResponseDto;
 import ru.hoff.edu.model.dto.response.FindAllParcelsResponseDto;
 import ru.hoff.edu.model.dto.response.FindParcelByIdResponseDto;
 import ru.hoff.edu.model.dto.response.LoadParcelsResponseDto;
+import ru.hoff.edu.model.dto.response.UnloadParcelsResponseDto;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +24,7 @@ public class ParcelServiceCaller {
 
     private final ParcelServiceClient parcelServiceClient;
 
-    public Object call(Request request) {
+    public BaseResponseDto call(Request request) {
         if (request instanceof CreateParcelRequestDto) {
             return createParcel(request);
         }
@@ -84,7 +85,7 @@ public class ParcelServiceCaller {
         return parcelServiceClient.loadParcels(loadRequest);
     }
 
-    private ResponseEntity<?> unloadParcels(Request request) {
+    private UnloadParcelsResponseDto unloadParcels(Request request) {
         UnloadParcelsRequestDto unloadRequest = (UnloadParcelsRequestDto) request;
         return parcelServiceClient.unloadParcels(unloadRequest);
     }

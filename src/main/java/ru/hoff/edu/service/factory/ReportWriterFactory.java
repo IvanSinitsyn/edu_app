@@ -3,7 +3,7 @@ package ru.hoff.edu.service.factory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.hoff.edu.model.enums.ResultOutType;
-import ru.hoff.edu.service.ReportWriter;
+import ru.hoff.edu.service.reportwriter.ReportWriter;
 
 import java.util.Map;
 

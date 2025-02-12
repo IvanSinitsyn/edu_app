@@ -32,28 +32,4 @@ public class ParcelEntity {
     public void setForm(String form) {
         this.form = form;
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSymbol() {
-        return symbol;
-    }
-
-    public void setSymbol(String symbol) {
-        this.symbol = symbol;
-    }
-
-    public boolean getIsLoaded() {
-        return isLoaded;
-    }
-
-    public void setIsLoaded(boolean isLoaded) {
-        this.isLoaded = isLoaded;
-    }
 }

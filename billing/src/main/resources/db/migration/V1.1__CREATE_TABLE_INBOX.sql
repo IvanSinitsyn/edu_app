@@ -1,13 +1,9 @@
 create table public.inbox
 (
-    id         uuid primary key,
-    topic      varchar(255)         default gen_random_uuid() not null,
-    partition  int         not null,
-    "offset"   bigint      not null,
+    hash       varchar(255) primary key,
     payload    jsonb       not null,
     status     varchar(20) NOT NULL DEFAULT 'NEW',
-    created_at TIMESTAMP            DEFAULT now(),
-    UNIQUE (topic, partition, "offset")
+    created_at TIMESTAMP DEFAULT now()
 );
 
 alter table public.inbox

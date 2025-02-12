@@ -7,6 +7,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
+import ru.hoff.edu.service.mapper.ParcelMapper;
+import ru.hoff.edu.service.reportwriter.TextReportWriter;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -6,5 +6,6 @@ import ru.hoff.edu.model.dto.ParcelDto;
 import java.util.List;
 
 @Builder
-public record FindAllParcelsResponseDto(List<ParcelDto> parcels, int totalPages, long totalElements) {
+public record FindAllParcelsResponseDto(List<ParcelDto> parcels, int totalPages,
+                                        long totalElements) implements BaseResponseDto {
 }

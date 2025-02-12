@@ -15,7 +15,7 @@ object Version {
     const val mokitoInline = "2.7.21"
     const val postgresql = "42.6.0"
     const val flyway = "11.2.0"
-    const val kafka = "3.2.1"
+    const val kafka = "4.2.0"
     const val caffeine = "3.1.8"
     const val jacksonCore = "2.14.1"
     const val jaxbApi = "2.3.1"
@@ -45,7 +45,10 @@ dependencies {
     implementation("org.flywaydb:flyway-core:${Version.flyway}")
     implementation("org.flywaydb:flyway-database-postgresql:${Version.flyway}")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:${Version.springVersion}")
-    implementation("org.springframework.kafka:spring-kafka:${Version.kafka}")
+    implementation("org.springframework.cloud:spring-cloud-starter-stream-kafka:${Version.kafka}")
+    implementation("org.springframework.cloud:spring-cloud-starter-config:${Version.kafka}")
+    implementation("org.springframework.integration:spring-integration-java-dsl:1.2.3.RELEASE")
+    implementation("org.springframework.integration:spring-integration-core:6.4.1")
     implementation("org.glassfish.jaxb:jaxb-runtime:${Version.jaxbRuntime}")
     implementation("javax.xml.bind:jaxb-api:${Version.jaxbApi}")
     implementation("com.fasterxml.jackson.core:jackson-core:${Version.jacksonCore}")

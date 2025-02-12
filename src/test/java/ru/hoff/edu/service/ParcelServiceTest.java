@@ -16,7 +16,9 @@ import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
 import ru.hoff.edu.model.entity.ParcelEntity;
 import ru.hoff.edu.repository.ParcelRepository;
+import ru.hoff.edu.service.core.ParcelService;
 import ru.hoff.edu.service.exception.ParcelNotFoundException;
+import ru.hoff.edu.service.mapper.ParcelMapper;
 import ru.hoff.edu.validation.ParcelValidator;
 
 import java.util.Arrays;

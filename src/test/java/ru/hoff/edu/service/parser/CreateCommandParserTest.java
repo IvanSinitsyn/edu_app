@@ -1,9 +1,9 @@
 package ru.hoff.edu.service.parser;
 
 import org.junit.jupiter.api.Test;
+import ru.hoff.edu.service.mediator.request.Request;
+import ru.hoff.edu.service.mediator.request.impl.CreateParcelRequest;
 import ru.hoff.edu.service.parser.impl.CreateCommandParser;
-import ru.hoff.edu.service.request.Request;
-import ru.hoff.edu.service.request.impl.CreateParcelRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;

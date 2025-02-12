@@ -53,51 +53,51 @@ services:
       KAFKA_CLUSTERS_0_NAME: Kafka
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
 
-  billing:
-    build:
-      context: ./billing
-      dockerfile: Dockerfile
-    container_name: billing
-    ports:
-      - "9993:8080"
-    networks:
-      - app-network
-    depends_on:
-      - edu_app
-
-  consoleapp:
-    build:
-      context: ./consoleapp
-      dockerfile: Dockerfile
-    container_name: consoleapp
-    ports:
-      - "9991:8081"
-    networks:
-      - app-network
-    depends_on:
-      - edu_app
-
-  telegrambot:
-    build:
-      context: ./telegrambot
-      dockerfile: Dockerfile
-    container_name: telegrambot
-    ports:
-      - "9990:8082"
-    networks:
-      - app-network
-    depends_on:
-      - edu_app
-
-  edu_app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: edu_app
-    ports:
-      - "9992:8083"
-    networks:
-      - app-network
+#  billing:
+#    build:
+#      context: ./billing
+#      dockerfile: Dockerfile
+#    container_name: billing
+#    ports:
+#      - "9993:8080"
+#    networks:
+#      - app-network
+#    depends_on:
+#      - edu_app
+#
+#  consoleapp:
+#    build:
+#      context: ./consoleapp
+#      dockerfile: Dockerfile
+#    container_name: consoleapp
+#    ports:
+#      - "9991:8081"
+#    networks:
+#      - app-network
+#    depends_on:
+#      - edu_app
+#
+#  telegrambot:
+#    build:
+#      context: ./telegrambot
+#      dockerfile: Dockerfile
+#    container_name: telegrambot
+#    ports:
+#      - "9990:8082"
+#    networks:
+#      - app-network
+#    depends_on:
+#      - edu_app
+#
+#  edu_app:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    container_name: edu_app
+#    ports:
+#      - "9992:8083"
+#    networks:
+#      - app-network
 
 volumes:
   postgres_data:

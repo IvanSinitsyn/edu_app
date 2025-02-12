@@ -6,6 +6,7 @@ import org.mapstruct.factory.Mappers;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.model.dto.ParcelDto;
 import ru.hoff.edu.model.entity.ParcelEntity;
+import ru.hoff.edu.service.mapper.ParcelMapper;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class ParcelMapperTest {
         assertThat(entity).isNotNull();
         assertThat(entity.getName()).isEqualTo(parcel.getName());
         assertThat(entity.getSymbol()).isEqualTo(parcel.getSymbol());
-        assertThat(entity.getIsLoaded()).isEqualTo(parcel.getIsLoaded());
+        assertThat(entity.isLoaded()).isEqualTo(parcel.getIsLoaded());
         assertThat(entity.getForm()).isEqualTo(parcelMapper.convertArrayToString(parcel.getForm()));
     }
 
@@ -40,7 +41,7 @@ public class ParcelMapperTest {
         assertThat(parcel).isNotNull();
         assertThat(parcel.getName()).isEqualTo(entity.getName());
         assertThat(parcel.getSymbol()).isEqualTo(entity.getSymbol());
-        assertThat(parcel.getIsLoaded()).isEqualTo(entity.getIsLoaded());
+        assertThat(parcel.getIsLoaded()).isEqualTo(entity.isLoaded());
         assertThat(parcel.getForm()).isDeepEqualTo(parcelMapper.convertStringToForm(entity.getForm()));
     }
 

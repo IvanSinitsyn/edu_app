@@ -1,6 +1,5 @@
 package ru.hoff.edu.service;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +17,7 @@ import ru.hoff.edu.model.dto.response.EditParcelResponseDto;
 import ru.hoff.edu.model.dto.response.FindAllParcelsResponseDto;
 import ru.hoff.edu.model.dto.response.FindParcelByIdResponseDto;
 import ru.hoff.edu.model.dto.response.LoadParcelsResponseDto;
+import ru.hoff.edu.model.dto.response.UnloadParcelsResponseDto;
 
 public interface ParcelServiceClient {
 
@@ -40,5 +40,5 @@ public interface ParcelServiceClient {
     LoadParcelsResponseDto loadParcels(@RequestBody LoadParcelRequestDto loadParcelRequestDto);
 
     @PostExchange("/api/v1/parcels/unload")
-    ResponseEntity<?> unloadParcels(@RequestBody UnloadParcelsRequestDto unloadParcelsRequest);
+    UnloadParcelsResponseDto unloadParcels(@RequestBody UnloadParcelsRequestDto unloadParcelsRequest);
 }

@@ -1,14 +1,17 @@
 package ru.hoff.edu.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import ru.hoff.edu.model.Cheque;
 import ru.hoff.edu.repository.ChequeRepository;
+import ru.hoff.edu.service.mapper.ChequeMapper;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BillingService {

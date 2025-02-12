@@ -5,12 +5,12 @@ import org.springframework.stereotype.Component;
 import ru.hoff.edu.model.enums.AlgorithmType;
 import ru.hoff.edu.model.enums.FileType;
 import ru.hoff.edu.model.enums.ResultOutType;
-import ru.hoff.edu.service.FileExtensionParser;
 import ru.hoff.edu.service.factory.FileReaderFactory;
 import ru.hoff.edu.service.filereader.InputFileReader;
+import ru.hoff.edu.service.mediator.request.Request;
+import ru.hoff.edu.service.mediator.request.impl.LoadParcelsRequest;
 import ru.hoff.edu.service.parser.CommandParser;
-import ru.hoff.edu.service.request.Request;
-import ru.hoff.edu.service.request.impl.LoadParcelsRequest;
+import ru.hoff.edu.service.parser.FileExtensionParser;
 
 import java.util.Arrays;
 import java.util.List;
