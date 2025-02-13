@@ -9,13 +9,13 @@ import ru.hoff.edu.model.dto.request.FindAllParcelsRequestDto;
 import ru.hoff.edu.model.dto.request.FindParcelByIdRequestDto;
 import ru.hoff.edu.model.dto.request.LoadParcelRequestDto;
 import ru.hoff.edu.model.dto.request.UnloadParcelsRequestDto;
-import ru.hoff.edu.model.dto.response.BaseResponseDto;
 import ru.hoff.edu.model.dto.response.CreateParcelResponseDto;
 import ru.hoff.edu.model.dto.response.DeleteParcelResponseDto;
 import ru.hoff.edu.model.dto.response.EditParcelResponseDto;
 import ru.hoff.edu.model.dto.response.FindAllParcelsResponseDto;
 import ru.hoff.edu.model.dto.response.FindParcelByIdResponseDto;
 import ru.hoff.edu.model.dto.response.LoadParcelsResponseDto;
+import ru.hoff.edu.model.dto.response.ResponseDto;
 import ru.hoff.edu.model.dto.response.UnloadParcelsResponseDto;
 
 @Service
@@ -24,7 +24,7 @@ public class ParcelServiceCaller {
 
     private final ParcelServiceClient parcelServiceClient;
 
-    public BaseResponseDto call(Request request) {
+    public ResponseDto call(Request request) {
         if (request instanceof CreateParcelRequestDto) {
             return createParcel(request);
         }

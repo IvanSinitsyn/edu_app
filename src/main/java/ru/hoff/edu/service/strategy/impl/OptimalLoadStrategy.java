@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
-import ru.hoff.edu.service.core.ParcelService;
+import ru.hoff.edu.service.core.TruckService;
 import ru.hoff.edu.service.mapper.ParcelMapper;
 import ru.hoff.edu.service.strategy.LoadStrategy;
 
@@ -21,8 +21,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OptimalLoadStrategy implements LoadStrategy {
 
-    private final ParcelService parcelService;
     private final ParcelMapper parcelMapper;
+    private final TruckService truckService;
 
     /**
      * Загружает посылки в грузовики по оптимальной стратегии.
@@ -57,8 +57,8 @@ public class OptimalLoadStrategy implements LoadStrategy {
 
                 log.info("Trying to load package {} into truck {}", parcelMapper.parcelToString(parcel), truckIndex);
 
-                if (parcelService.tryPlacePackageInTruck(currentTruck, parcel)) {
-                    parcelService.placeParcelInTruck(currentTruck, parcel);
+                if (truckService.tryPlacePackageInTruck(currentTruck, parcel)) {
+                    truckService.placeParcelInTruck(currentTruck, parcel);
                     parcel.setIsLoaded(true);
                     loaded = true;
                     log.info("Package {} loaded into truck {}", parcelMapper.parcelToString(parcel), truckIndex);
@@ -93,8 +93,8 @@ public class OptimalLoadStrategy implements LoadStrategy {
 
                 log.info("Trying to load package {} into truck {}", parcelMapper.parcelToString(parcel), truckIndex);
 
-                if (parcelService.tryPlacePackageInTruck(currentTruck, parcel)) {
-                    parcelService.placeParcelInTruck(currentTruck, parcel);
+                if (truckService.tryPlacePackageInTruck(currentTruck, parcel)) {
+                    truckService.placeParcelInTruck(currentTruck, parcel);
                     parcel.setIsLoaded(true);
                     loaded = true;
                     log.info("Package {} loaded into truck {}", parcelMapper.parcelToString(parcel), truckIndex);
@@ -106,8 +106,8 @@ public class OptimalLoadStrategy implements LoadStrategy {
 
             if (!loaded) {
                 Truck newTruck = new Truck();
-                if (parcelService.tryPlacePackageInTruck(newTruck, parcel)) {
-                    parcelService.placeParcelInTruck(newTruck, parcel);
+                if (truckService.tryPlacePackageInTruck(newTruck, parcel)) {
+                    truckService.placeParcelInTruck(newTruck, parcel);
                     parcel.setIsLoaded(true);
                     trucks.add(newTruck);
                     log.info("Package {} loaded into new truck {}", parcelMapper.parcelToString(parcel), trucks.size());

@@ -5,12 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
-import ru.hoff.edu.service.core.ParcelService;
+import ru.hoff.edu.service.core.TruckService;
 import ru.hoff.edu.service.mapper.ParcelMapper;
 import ru.hoff.edu.service.strategy.LoadStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Класс, реализующий стратегию равномерной загрузки посылок в грузовики.
@@ -21,8 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EqualLoadStrategy implements LoadStrategy {
 
-    private final ParcelService parcelService;
     private final ParcelMapper parcelMapper;
+    private final TruckService truckService;
 
     /**
      * Загружает посылки в грузовики по стратегии равномерной загрузки.
@@ -47,9 +48,9 @@ public class EqualLoadStrategy implements LoadStrategy {
         for (Parcel parcel : parcels) {
             log.info("Loading package {}", parcelMapper.parcelToString(parcel));
 
-            Truck suitableTruck = parcelService.findSuitableTruck(trucks, parcel);
-            if (suitableTruck != null) {
-                parcelService.placeParcelInTruck(suitableTruck, parcel);
+            Optional<Truck> suitableTruck = truckService.findSuitableTruck(trucks, parcel);
+            if (suitableTruck.isPresent()) {
+                truckService.placeParcelInTruck(suitableTruck.get(), parcel);
                 parcel.setIsLoaded(true);
                 log.info("Package {} loaded", parcelMapper.parcelToString(parcel));
             } else {
@@ -69,13 +70,13 @@ public class EqualLoadStrategy implements LoadStrategy {
         for (Parcel parcel : parcels) {
             log.info("Loading package {}", parcelMapper.parcelToString(parcel));
 
-            Truck suitableTruck = parcelService.findSuitableTruck(trucks, parcel);
-            if (suitableTruck != null) {
-                parcelService.placeParcelInTruck(suitableTruck, parcel);
+            Optional<Truck> suitableTruck = truckService.findSuitableTruck(trucks, parcel);
+            if (suitableTruck.isPresent()) {
+                truckService.placeParcelInTruck(suitableTruck.get(), parcel);
             } else {
                 Truck newTruck = new Truck();
                 trucks.add(newTruck);
-                parcelService.placeParcelInTruck(newTruck, parcel);
+                truckService.placeParcelInTruck(newTruck, parcel);
             }
 
             parcel.setIsLoaded(true);

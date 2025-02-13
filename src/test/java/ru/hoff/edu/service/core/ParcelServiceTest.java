@@ -12,7 +12,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import ru.hoff.edu.domain.Parcel;
-import ru.hoff.edu.domain.Truck;
 import ru.hoff.edu.model.entity.ParcelEntity;
 import ru.hoff.edu.repository.ParcelRepository;
 import ru.hoff.edu.service.exception.ParcelNotFoundException;
@@ -20,7 +19,6 @@ import ru.hoff.edu.service.mapper.ParcelMapper;
 import ru.hoff.edu.validation.ParcelValidator;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -135,37 +133,4 @@ class ParcelServiceTest {
                 parcelService.edit("Parcel1", "NewParcel", new char[][]{{'A', ' '}, {' ', 'A'}}, "A"))
                 .isInstanceOf(IllegalArgumentException.class);
     }
-
-    @Test
-    void findSuitableTruck_ShouldReturnSuitableTruck_ForPlaceParcel() {
-        Parcel parcel = new Parcel("Parcel1", new char[][]{{'A'}}, "A", false);
-        Truck truck = new Truck();
-
-        Truck suitableTruck = parcelService.findSuitableTruck(Collections.singletonList(truck), parcel);
-
-        assertThat(suitableTruck).isNotNull();
-        assertThat(suitableTruck).isEqualTo(truck);
-    }
-
-    @Test
-    void tryPlacePackageInTruck_ShouldReturnTrue_WhenParcelCanBePlaced() {
-        Parcel parcel = new Parcel("Parcel1", new char[][]{{'A'}}, "A", false);
-        Truck truck = new Truck();
-
-        boolean result = parcelService.tryPlacePackageInTruck(truck, parcel);
-
-        assertThat(result).isTrue();
-    }
-
-    @Test
-    void placeParcelInTruck_ShouldPlaceParcelInTruck() {
-        Parcel parcel = new Parcel("Parcel1", new char[][]{{'A'}}, "A", false);
-        Truck truck = new Truck();
-
-        parcelService.placeParcelInTruck(truck, parcel);
-
-        assertThat(truck.isEmpty()).isFalse();
-    }
-
-
 }

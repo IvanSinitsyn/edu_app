@@ -3,8 +3,8 @@ package ru.hoff.edu.service.mediator.handler.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.hoff.edu.domain.Parcel;
-import ru.hoff.edu.model.dto.response.BaseResponseDto;
 import ru.hoff.edu.model.dto.response.CreateParcelResponseDto;
+import ru.hoff.edu.model.dto.response.ResponseDto;
 import ru.hoff.edu.service.core.ParcelService;
 import ru.hoff.edu.service.mapper.ParcelMapper;
 import ru.hoff.edu.service.mediator.handler.RequestHandler;
@@ -19,7 +19,7 @@ public class CreateParcelRequestHandler implements RequestHandler {
     private final ParcelMapper parcelMapper;
 
     @Override
-    public BaseResponseDto handle(Request request) {
+    public ResponseDto handle(Request request) {
         CreateParcelRequest createRequest = (CreateParcelRequest) request;
         Parcel parcel = Parcel.builder()
                 .name(createRequest.name())

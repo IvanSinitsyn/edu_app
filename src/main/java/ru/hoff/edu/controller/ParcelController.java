@@ -4,9 +4,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.hoff.edu.model.dto.request.EditParcelRequestDto;
 import ru.hoff.edu.model.dto.request.LoadParcelRequestDto;
+import ru.hoff.edu.model.dto.response.ResponseDto;
 import ru.hoff.edu.service.mapper.LoadParcelRequestMapper;
 import ru.hoff.edu.service.mediator.Mediator;
 import ru.hoff.edu.service.mediator.request.impl.CreateParcelRequest;
@@ -38,11 +39,17 @@ import ru.hoff.edu.service.mediator.request.impl.UnloadParcelsRequestDto;
 @RestController
 @RequestMapping("api/v1/parcels")
 @Tag(name = "Parcel API", description = "API для управления посылками")
-@RequiredArgsConstructor
 public class ParcelController {
 
     private final Mediator mediator;
     private final LoadParcelRequestMapper mapper;
+
+    @Autowired
+    public ParcelController(Mediator mediator,
+                            @Qualifier("loadParcelRequestMapperImpl") LoadParcelRequestMapper mapper) {
+        this.mediator = mediator;
+        this.mapper = mapper;
+    }
 
     /**
      * Создает новую посылку.
@@ -57,10 +64,10 @@ public class ParcelController {
     @Operation(summary = "Создание новой посылки")
     @ApiResponse(responseCode = "201", description = "Посылка создана")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> createParcel(
+    public ResponseDto createParcel(
             @Parameter(description = "Данные для создания посылки", required = true)
             @RequestBody CreateParcelRequest createParcelRequest) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(mediator.send(createParcelRequest));
+        return mediator.send(createParcelRequest);
     }
 
     /**
@@ -75,19 +82,18 @@ public class ParcelController {
     @PutMapping("/{id}")
     @Operation(summary = "Изменение существующей посылки")
     @ApiResponse(responseCode = "200", description = "Посылка изменена")
-    public ResponseEntity<?> editParcel(
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseDto editParcel(
             @Parameter(description = "Id изменяемой посылки", required = true)
             @PathVariable(name = "id") String id,
             @Parameter(description = "Данные для изменения посылки", required = true)
             @RequestBody EditParcelRequestDto editParcelRequestDto) {
-        return ResponseEntity.status(HttpStatus.OK).body(mediator.send(
+        return mediator.send(
                 new EditParcelRequest(
                         id,
                         editParcelRequestDto.name(),
                         editParcelRequestDto.form(),
-                        editParcelRequestDto.symbol()
-                )
-        ));
+                        editParcelRequestDto.symbol()));
     }
 
     /**
@@ -102,10 +108,11 @@ public class ParcelController {
     @Operation(summary = "Поиск посылки по Id(имени)")
     @ApiResponse(responseCode = "200", description = "Посылка найдена")
     @ApiResponse(responseCode = "404", description = "Посылка не найдена")
-    public ResponseEntity<?> findParcelById(
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseDto findParcelById(
             @Parameter(description = "Id для поиска посылки", required = true)
             @PathVariable(name = "id") String id) {
-        return ResponseEntity.status(HttpStatus.OK).body(mediator.send(new FindParcelByIdRequest(id)));
+        return mediator.send(new FindParcelByIdRequest(id));
     }
 
     /**
@@ -117,10 +124,11 @@ public class ParcelController {
     @GetMapping("")
     @Operation(summary = "Получение всех посылок")
     @ApiResponse(responseCode = "200", description = "Посылки получены")
-    public ResponseEntity<?> fetchAllParcels(
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseDto fetchAllParcels(
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size) {
-        return ResponseEntity.status(HttpStatus.OK).body(mediator.send(new FindAllParcelsRequest(page, size)));
+        return mediator.send(new FindAllParcelsRequest(page, size));
     }
 
     /**
@@ -134,10 +142,11 @@ public class ParcelController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Удаление посылки по Id(имени)")
     @ApiResponse(responseCode = "200", description = "Посылка удалена")
-    public ResponseEntity<?> delete(
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseDto delete(
             @Parameter(description = "Id посылки для удаления", required = true)
             @PathVariable(name = "id") String id) {
-        return ResponseEntity.status(HttpStatus.OK).body(mediator.send(new DeleteParcelRequest(id)));
+        return mediator.send(new DeleteParcelRequest(id));
     }
 
     /**
@@ -155,10 +164,11 @@ public class ParcelController {
             summary = "Загружает посылки в грузовики",
             description = "Эта команда загружает посылки в грузовики в соответствии с указанным алгоритмом. Посылки могут быть переданы в виде текста или считаны из файла.")
     @ApiResponse(responseCode = "200", description = "Посылки погружены")
-    public ResponseEntity<?> loadParcels(
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseDto loadParcels(
             @Parameter(description = "DTO для загрузки посылок", required = true)
             @RequestBody LoadParcelRequestDto loadParcelRequestDto) {
-        return ResponseEntity.status(HttpStatus.OK).body(mediator.send(mapper.toRequest(loadParcelRequestDto)));
+        return mediator.send(mapper.toRequest(loadParcelRequestDto));
     }
 
 
@@ -174,9 +184,10 @@ public class ParcelController {
     @PostMapping("/unload")
     @Operation(summary = "Выгружает посылки из файла.", description = "Выгружает посылки из указанного файла и сохраняет результат в другой файл.")
     @ApiResponse(responseCode = "200", description = "Посылки выгружены")
-    public ResponseEntity<?> unloadParcels(
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseDto unloadParcels(
             @Parameter(description = "DTO для разгрузки посылок.", required = true)
             @RequestBody UnloadParcelsRequestDto unloadParcelsRequestDto) {
-        return ResponseEntity.status(HttpStatus.OK).body(mediator.send(unloadParcelsRequestDto));
+        return mediator.send(unloadParcelsRequestDto);
     }
 }

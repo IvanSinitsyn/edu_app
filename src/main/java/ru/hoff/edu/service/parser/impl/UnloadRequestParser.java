@@ -3,7 +3,7 @@ package ru.hoff.edu.service.parser.impl;
 import org.springframework.stereotype.Component;
 import ru.hoff.edu.service.mediator.request.Request;
 import ru.hoff.edu.service.mediator.request.impl.UnloadParcelsRequestDto;
-import ru.hoff.edu.service.parser.CommandParser;
+import ru.hoff.edu.service.parser.RequestParser;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  * Разбирает строку команды и преобразует её в DTO для выгрузки данных.
  */
 @Component
-public class UnloadCommandParser implements CommandParser {
+public class UnloadRequestParser implements RequestParser {
 
     private static final int USER_NAME = 1;
     private static final int IN_FILE_GROUP = 2;

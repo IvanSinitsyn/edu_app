@@ -2,12 +2,13 @@ package ru.hoff.edu.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import ru.hoff.edu.config.TelegramBotProperties;
+import ru.hoff.edu.model.dto.response.ResponseDto;
 import ru.hoff.edu.model.enums.CommandType;
 import ru.hoff.edu.service.ParcelServiceCaller;
 import ru.hoff.edu.service.Request;
@@ -23,10 +24,7 @@ import ru.hoff.edu.service.factory.CommandParserFactory;
 public class TelegramController extends TelegramLongPollingBot {
 
     private final ParcelServiceCaller parcelServiceCaller;
-    @Value("${tg-bot-configuration.botName}")
-    private String botName;
-    @Value("${tg-bot-configuration.botToken}")
-    private String botToken;
+    private final TelegramBotProperties telegramBotProperties;
     private final CommandParserFactory commandParserFactory;
 
     /**
@@ -36,7 +34,7 @@ public class TelegramController extends TelegramLongPollingBot {
      */
     @Override
     public String getBotUsername() {
-        return botName;
+        return telegramBotProperties.getBotName();
     }
 
     /**
@@ -46,7 +44,7 @@ public class TelegramController extends TelegramLongPollingBot {
      */
     @Override
     public String getBotToken() {
-        return botToken;
+        return telegramBotProperties.getBotToken();
     }
 
     /**
@@ -65,8 +63,8 @@ public class TelegramController extends TelegramLongPollingBot {
 
         Request request = commandParserFactory.createCommandParser(CommandType.fromString(userMessage.split(" ")[0])).parse(userMessage);
         try {
-            Object response = parcelServiceCaller.call(request);
-            sendMessage(chatId, response.toString());
+            ResponseDto response = parcelServiceCaller.call(request);
+            sendMessage(chatId, response.execute());
         } catch (Exception ex) {
             sendMessage(chatId, ex.getMessage());
         }

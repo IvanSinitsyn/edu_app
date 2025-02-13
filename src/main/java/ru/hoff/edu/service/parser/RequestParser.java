@@ -8,7 +8,7 @@ import ru.hoff.edu.service.mediator.request.Request;
  * Определяет метод для разбора строки команды и преобразования её в DTO (Data Transfer Object).
  */
 @Component
-public interface CommandParser {
+public interface RequestParser {
 
     /**
      * Разбирает строку команды и преобразует её в объект DTO.

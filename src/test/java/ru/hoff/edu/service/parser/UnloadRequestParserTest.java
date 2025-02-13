@@ -3,22 +3,22 @@ package ru.hoff.edu.service.parser;
 import org.junit.jupiter.api.Test;
 import ru.hoff.edu.service.mediator.request.Request;
 import ru.hoff.edu.service.mediator.request.impl.UnloadParcelsRequestDto;
-import ru.hoff.edu.service.parser.impl.UnloadCommandParser;
+import ru.hoff.edu.service.parser.impl.UnloadRequestParser;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UnloadCommandParserTest {
+public class UnloadRequestParserTest {
 
     @Test
     void parseCommand_shouldReturnUnloadParcelsCommandDto() {
-        CommandParser parser = new UnloadCommandParser();
+        RequestParser parser = new UnloadRequestParser();
         Request unloadDto = parser.parse("/unload --user-id \"(.*?)\" --infile \"input.txt\" --outfile \"output.txt\" --withcount");
         assertThat(unloadDto).isInstanceOf(UnloadParcelsRequestDto.class);
     }
 
     @Test
     void parseUnloadCommand_shouldReturnUnloadParcelsCommandDto() {
-        CommandParser parser = new UnloadCommandParser();
+        RequestParser parser = new UnloadRequestParser();
 
         String command = "/unload --user-id \"(.*?)\" --infile \"input.txt\" --outfile \"output.txt\" --withcount";
 

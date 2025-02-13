@@ -8,7 +8,7 @@ import ru.hoff.edu.service.mediator.request.impl.LoadParcelsRequest;
 import java.util.Arrays;
 import java.util.List;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface LoadParcelRequestMapper {
 
     @Mapping(target = "parcelIds", expression = "java(stringToList(dto.parcelIds(), \",\"))")

@@ -1,5 +1,5 @@
 plugins {
-    id("org.springframework.boot") version "3.2.11"
+    id("org.springframework.boot") version "3.4.2"
     id("java")
 }
 
@@ -7,7 +7,7 @@ group = "ru.hoff"
 version = "1.0-SNAPSHOT"
 
 object Version {
-    const val springVersion = "3.2.11"
+    const val springVersion = "3.4.2"
     const val lombokVersion = "1.18.36"
     const val slf4jVersion = "2.0.6"
     const val logbackVersion = "1.4.11"
@@ -19,15 +19,14 @@ object Version {
     const val postgresql = "42.6.0"
     const val flyway = "11.2.0"
     const val swagger = "2.8.3"
-    const val jpa = "3.4.2"
     const val h2 = "2.3.232"
-    const val springShellStarter = "3.4.0"
-    const val springBootStarterActuator = "3.4.1"
     const val kafka = "4.2.0"
     const val assertj = "3.24.2"
     const val jacksonCore = "2.14.1"
     const val jaxbApi = "2.3.1"
     const val jaxbRuntime = "2.3.3"
+    const val starterTest = "3.4.2"
+    const val shellStarter = "3.4.0"
 }
 
 repositories {
@@ -51,12 +50,12 @@ dependencies {
     implementation("org.flywaydb:flyway-core:${Version.flyway}")
     implementation("org.flywaydb:flyway-database-postgresql:${Version.flyway}")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:${Version.swagger}")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa:${Version.jpa}")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa:${Version.springVersion}")
     implementation("org.glassfish.jaxb:jaxb-runtime:${Version.jaxbRuntime}")
     implementation("javax.xml.bind:jaxb-api:${Version.jaxbApi}")
     implementation("com.fasterxml.jackson.core:jackson-core:${Version.jacksonCore}")
-    implementation("org.springframework.shell:spring-shell-starter:${Version.springShellStarter}")
-    implementation("org.springframework.boot:spring-boot-starter-actuator:${Version.springBootStarterActuator}")
+    implementation("org.springframework.shell:spring-shell-starter:${Version.shellStarter}")
+    implementation("org.springframework.boot:spring-boot-starter-actuator:${Version.springVersion}")
     implementation("org.springframework.cloud:spring-cloud-starter-stream-kafka:${Version.kafka}")
     implementation("org.springframework.cloud:spring-cloud-starter-config:${Version.kafka}")
 
@@ -71,7 +70,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:${Version.junitVersion}")
     testImplementation("org.mockito:mockito-core:${Version.mockitoVersion}")
     testImplementation("org.mockito:mockito-inline:${Version.mokitoInline}")
-    testImplementation("org.springframework.boot:spring-boot-starter-test:${Version.springVersion}")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:${Version.starterTest}")
     testImplementation("com.h2database:h2:${Version.h2}")
     testImplementation("org.assertj:assertj-core:${Version.assertj}")
 }

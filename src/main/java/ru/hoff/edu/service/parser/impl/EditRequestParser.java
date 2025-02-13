@@ -3,7 +3,7 @@ package ru.hoff.edu.service.parser.impl;
 import org.springframework.stereotype.Component;
 import ru.hoff.edu.service.mediator.request.Request;
 import ru.hoff.edu.service.mediator.request.impl.EditParcelRequest;
-import ru.hoff.edu.service.parser.CommandParser;
+import ru.hoff.edu.service.parser.RequestParser;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  * Разбирает строку команды и преобразует её в DTO для редактирования посылки.
  */
 @Component
-public class EditCommandParser implements CommandParser {
+public class EditRequestParser implements RequestParser {
 
     private static final int ID_GROUP = 1;
     private static final int NAME_GROUP = 2;

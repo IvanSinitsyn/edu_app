@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
-import ru.hoff.edu.service.core.ParcelService;
+import ru.hoff.edu.service.core.TruckService;
 import ru.hoff.edu.service.mapper.ParcelMapper;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 public class EasyLoadStrategyTest {
 
     @Mock
-    private ParcelService parcelService;
+    private TruckService truckService;
 
     @Mock
     private ParcelMapper parcelMapper;
@@ -49,8 +49,8 @@ public class EasyLoadStrategyTest {
 
     @Test
     void loadParcels_shouldLoadParcelsIntoTrucks_whenValidInput() {
-        when(parcelService.tryPlacePackageInTruck(any(Truck.class), any(Parcel.class))).thenReturn(true);
-        doNothing().when(parcelService).placeParcelInTruck(any(Truck.class), any(Parcel.class));
+        when(truckService.tryPlacePackageInTruck(any(Truck.class), any(Parcel.class))).thenReturn(true);
+        doNothing().when(truckService).placeParcelInTruck(any(Truck.class), any(Parcel.class));
         when(parcelMapper.parcelToString(any(Parcel.class))).thenReturn("mockParcel");
 
         List<Truck> result = easyLoadStrategy.loadParcels(parcels, trucks);
@@ -72,7 +72,7 @@ public class EasyLoadStrategyTest {
 
     @Test
     void loadParcels_shouldThrowException_whenParcelCannotBeLoaded() {
-        when(parcelService.tryPlacePackageInTruck(any(Truck.class), any(Parcel.class))).thenReturn(false);
+        when(truckService.tryPlacePackageInTruck(any(Truck.class), any(Parcel.class))).thenReturn(false);
 
         assertThatThrownBy(() -> easyLoadStrategy.loadParcels(parcels, trucks))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -82,7 +82,7 @@ public class EasyLoadStrategyTest {
     @Test
     void loadParcels_shouldHandleEmptyTrucksList() {
         List<Truck> emptyTrucks = new ArrayList<>();
-        when(parcelService.tryPlacePackageInTruck(any(Truck.class), any(Parcel.class))).thenReturn(true);
+        when(truckService.tryPlacePackageInTruck(any(Truck.class), any(Parcel.class))).thenReturn(true);
 
         List<Truck> result = easyLoadStrategy.loadParcels(parcels, emptyTrucks);
 
@@ -91,8 +91,8 @@ public class EasyLoadStrategyTest {
 
     @Test
     void loadParcels_shouldLoadParcelsIntoCreatedTrucks_whenTrucksListIsEmpty() {
-        when(parcelService.tryPlacePackageInTruck(any(Truck.class), any(Parcel.class))).thenReturn(true);
-        doNothing().when(parcelService).placeParcelInTruck(any(Truck.class), any(Parcel.class));
+        when(truckService.tryPlacePackageInTruck(any(Truck.class), any(Parcel.class))).thenReturn(true);
+        doNothing().when(truckService).placeParcelInTruck(any(Truck.class), any(Parcel.class));
         when(parcelMapper.parcelToString(any(Parcel.class))).thenReturn("mockParcel");
 
         List<Truck> result = easyLoadStrategy.loadParcels(parcels, new ArrayList<>());

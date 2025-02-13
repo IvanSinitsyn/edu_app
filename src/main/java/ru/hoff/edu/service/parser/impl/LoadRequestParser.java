@@ -9,8 +9,8 @@ import ru.hoff.edu.service.factory.FileReaderFactory;
 import ru.hoff.edu.service.filereader.InputFileReader;
 import ru.hoff.edu.service.mediator.request.Request;
 import ru.hoff.edu.service.mediator.request.impl.LoadParcelsRequest;
-import ru.hoff.edu.service.parser.CommandParser;
 import ru.hoff.edu.service.parser.FileExtensionParser;
+import ru.hoff.edu.service.parser.RequestParser;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
  */
 @Component
 @RequiredArgsConstructor
-public class LoadCommandParser implements CommandParser {
+public class LoadRequestParser implements RequestParser {
 
     private static final int USER_ID_GROUP = 2;
     private static final int PARCEL_FILE_GROUP = 3;

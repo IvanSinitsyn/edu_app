@@ -6,7 +6,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
-import ru.hoff.edu.service.core.ParcelService;
+import ru.hoff.edu.service.core.TruckService;
 import ru.hoff.edu.service.mapper.ParcelMapper;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 public class OptimalLoadStrategyTest {
 
     @Mock
-    private ParcelService parcelService;
+    private TruckService truckService;
 
     @Mock
     private ParcelMapper parcelMapper;
@@ -40,7 +40,7 @@ public class OptimalLoadStrategyTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        optimalLoadStrategy = new OptimalLoadStrategy(parcelService, parcelMapper);
+        optimalLoadStrategy = new OptimalLoadStrategy(parcelMapper, truckService);
     }
 
     @Test
@@ -50,14 +50,14 @@ public class OptimalLoadStrategyTest {
 
         when(parcel.getIsLoaded()).thenReturn(false);
         when(parcelMapper.parcelToString(parcel)).thenReturn("Parcel1");
-        when(parcelService.tryPlacePackageInTruck(truck, parcel)).thenReturn(true);
-        doNothing().when(parcelService).placeParcelInTruck(any(Truck.class), any(Parcel.class));
+        when(truckService.tryPlacePackageInTruck(truck, parcel)).thenReturn(true);
+        doNothing().when(truckService).placeParcelInTruck(any(Truck.class), any(Parcel.class));
 
         List<Truck> result = optimalLoadStrategy.loadParcels(parcels, trucks);
 
         assertThat(result).isNotEmpty();
         assertThat(result).hasSize(1);
-        verify(parcelService, times(2)).placeParcelInTruck(any(Truck.class), any(Parcel.class));
+        verify(truckService, times(2)).placeParcelInTruck(any(Truck.class), any(Parcel.class));
     }
 
     @Test
@@ -66,15 +66,15 @@ public class OptimalLoadStrategyTest {
 
         when(parcel.getIsLoaded()).thenReturn(false);
         when(parcelMapper.parcelToString(parcel)).thenReturn("Parcel1");
-        when(parcelService.tryPlacePackageInTruck(any(Truck.class), any(Parcel.class)))
+        when(truckService.tryPlacePackageInTruck(any(Truck.class), any(Parcel.class)))
                 .thenReturn(true);
-        doNothing().when(parcelService).placeParcelInTruck(any(Truck.class), any(Parcel.class));
+        doNothing().when(truckService).placeParcelInTruck(any(Truck.class), any(Parcel.class));
 
         List<Truck> result = optimalLoadStrategy.loadParcels(parcels, null);
 
         assertThat(result).isNotEmpty();
         assertThat(result).hasSize(1);
-        verify(parcelService, times(2)).placeParcelInTruck(any(Truck.class), any(Parcel.class));
+        verify(truckService, times(2)).placeParcelInTruck(any(Truck.class), any(Parcel.class));
     }
 
     @Test
@@ -84,7 +84,7 @@ public class OptimalLoadStrategyTest {
 
         when(parcel.getIsLoaded()).thenReturn(false);
         when(parcelMapper.parcelToString(parcel)).thenReturn("Parcel1");
-        when(parcelService.tryPlacePackageInTruck(any(Truck.class), any(Parcel.class)))
+        when(truckService.tryPlacePackageInTruck(any(Truck.class), any(Parcel.class)))
                 .thenReturn(false);
         when(truck.showTruckSize()).thenReturn("TruckSize1");
 

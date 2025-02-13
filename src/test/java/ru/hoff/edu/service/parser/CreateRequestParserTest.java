@@ -3,23 +3,23 @@ package ru.hoff.edu.service.parser;
 import org.junit.jupiter.api.Test;
 import ru.hoff.edu.service.mediator.request.Request;
 import ru.hoff.edu.service.mediator.request.impl.CreateParcelRequest;
-import ru.hoff.edu.service.parser.impl.CreateCommandParser;
+import ru.hoff.edu.service.parser.impl.CreateRequestParser;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-public class CreateCommandParserTest {
+public class CreateRequestParserTest {
 
     @Test
     void parseCommand_shouldReturnCreateParcelCommandDto() {
-        CommandParser parser = new CreateCommandParser();
+        RequestParser parser = new CreateRequestParser();
         Request createDto = parser.parse("/create --name \"Test\" --form \"Rectangle\" --symbol \"X\"");
         assertInstanceOf(CreateParcelRequest.class, createDto);
     }
 
     @Test
     void parseCreateParcelCommand_shouldReturnCreateParcelCommandDto() {
-        CommandParser parser = new CreateCommandParser();
+        RequestParser parser = new CreateRequestParser();
 
         String command = "/create --name \"Parcel1\" --form \"Rectangle\" --symbol \"X\"";
 

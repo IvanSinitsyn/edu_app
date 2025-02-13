@@ -6,8 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
-import ru.hoff.edu.model.dto.response.BaseResponseDto;
 import ru.hoff.edu.model.dto.response.LoadParcelsResponseDto;
+import ru.hoff.edu.model.dto.response.ResponseDto;
 import ru.hoff.edu.model.enums.ChequeType;
 import ru.hoff.edu.model.enums.FileType;
 import ru.hoff.edu.service.core.ParcelService;
@@ -43,7 +43,7 @@ public class LoadParcelsRequestHandler implements RequestHandler {
     private final OutboxWriter outboxWriter;
 
     @Override
-    public BaseResponseDto handle(Request request) {
+    public ResponseDto handle(Request request) {
         LoadParcelsRequest loadRequest = (LoadParcelsRequest) request;
 
         List<String> parcelIds;

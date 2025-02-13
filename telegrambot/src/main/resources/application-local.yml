@@ -1,6 +1,6 @@
 tg-bot-configuration:
   botName: "SiivEduAppBot"
-  bot-token: "${BOT_TOKEN}"
+  botToken: "${BOT_TOKEN}"
 
 services:
   url:

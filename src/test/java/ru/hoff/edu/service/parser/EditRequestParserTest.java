@@ -3,23 +3,23 @@ package ru.hoff.edu.service.parser;
 import org.junit.jupiter.api.Test;
 import ru.hoff.edu.service.mediator.request.Request;
 import ru.hoff.edu.service.mediator.request.impl.EditParcelRequest;
-import ru.hoff.edu.service.parser.impl.EditCommandParser;
+import ru.hoff.edu.service.parser.impl.EditRequestParser;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-public class EditCommandParserTest {
+public class EditRequestParserTest {
 
     @Test
     void parseCommand_shouldReturnEditParcelCommandDto() {
-        CommandParser parser = new EditCommandParser();
+        RequestParser parser = new EditRequestParser();
         Request editDto = parser.parse("/edit --id \"1\" --name \"NewName\" --form \"Circle\" --symbol \"O\"");
         assertInstanceOf(EditParcelRequest.class, editDto);
     }
 
     @Test
     void parseEditParcelCommand_shouldReturnEditParcelCommandDto() {
-        CommandParser parser = new EditCommandParser();
+        RequestParser parser = new EditRequestParser();
 
         String command = "/edit --id \"1\" --name \"NewName\" --form \"Circle\" --symbol \"O\"";
 

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import ru.hoff.edu.domain.Parcel;
 import ru.hoff.edu.domain.Truck;
 import ru.hoff.edu.model.TruckData;
-import ru.hoff.edu.model.dto.response.BaseResponseDto;
+import ru.hoff.edu.model.dto.response.ResponseDto;
 import ru.hoff.edu.model.dto.response.UnloadParcelsResponseDto;
 import ru.hoff.edu.model.enums.ChequeType;
 import ru.hoff.edu.service.core.ParcelCounter;
@@ -30,7 +30,7 @@ public class UnloadParcelsRequestHandler implements RequestHandler {
     private final OutboxWriter outboxWriter;
 
     @Override
-    public BaseResponseDto handle(Request request) {
+    public ResponseDto handle(Request request) {
         UnloadParcelsRequestDto requestDto = (UnloadParcelsRequestDto) request;
         List<TruckData> trucksData = truckDataParser.parse(requestDto.inFileName());
         List<String> allParcelNames = trucksData.stream()
