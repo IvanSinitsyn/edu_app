@@ -1,6 +1,5 @@
 package ru.hoff.edu.validation;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -62,9 +61,9 @@ class ParcelValidatorTest {
 
     @ParameterizedTest
     @MethodSource("provideFormsForValidation")
-    public void isParcelFormValid_CheckValidationResult(@NotNull TestCase testCase) {
+    public void isParcelFormValid_CheckValidationResult(TestCase testCase) {
         // Act
-        boolean result = ParcelValidator.isParcelFormValid(testCase.form, '#');
+        boolean result = new ParcelValidator().isParcelFormValid(testCase.form, '#');
 
         // Assert
         Assertions.assertEquals(testCase.expectedResult, result);

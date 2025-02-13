@@ -1,0 +1,37 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:8888/cheques_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  cloud:
+    config:
+      enabled: false
+    function:
+      definition: handleLoadCalculation
+    stream:
+      kafka:
+        binder:
+          brokers: localhost:9093
+          auto-create-topics: true
+          auto-add-partitions: true
+        bindings:
+          calculate-cheque-topic:
+            consumer:
+              start-offset: earliest
+      bindings:
+        calculate-cheque-topic:
+          destination: calculate-cheque-topic
+          content-type: application/json
+          group: billing
+          consumer:
+            max-attempts: 1
+  kafka:
+    bootstrap-servers: localhost:9093
+
+server:
+  port: 9993
+
+cheque:
+  load-cost: 80
+  unload-cost: 50

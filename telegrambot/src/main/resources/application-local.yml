@@ -1,0 +1,10 @@
+tg-bot-configuration:
+  botName: "SiivEduAppBot"
+  botToken: "${BOT_TOKEN}"
+
+services:
+  url:
+    parcel-service: ${PARCEL_SERVICE_URL:http://localhost:9992}
+
+server:
+  port: 9990

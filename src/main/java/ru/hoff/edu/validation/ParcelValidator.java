@@ -1,59 +1,75 @@
 package ru.hoff.edu.validation;
 
+import org.springframework.stereotype.Component;
+
+/**
+ * Класс ParcelValidator предоставляет методы для проверки валидности формы посылки (Parcel).
+ * Основная задача класса — убедиться, что символы в форме посылки расположены корректно,
+ * без нарушения правил соседства (например, отсутствия ортогональных соседей для символов,
+ * находящихся по диагонали друг от друга).
+ */
+@Component
 public class ParcelValidator {
 
-    public static boolean isParcelFormValid(char[][] form, char symbol) {
+    private static final int DIAGONAL_DIRECTIONS = 4;
+    private static final int BACK_OFFSET = -1;
+    private static final int FORWARD_OFFSET = 1;
+    private static final int NO_OFFSET = 0;
+
+
+    public boolean isParcelFormValid(char[][] form, char symbol) {
         int rows = form.length;
         int cols = form[0].length;
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                if (form[i][j] == symbol) {
-                    if (isInvalidDiagonal(form, i, j, symbol)) {
-                        return false;
-                    }
+                if (form[i][j] == symbol && isInvalidDiagonal(form, i, j, symbol)) {
+                    return false;
                 }
             }
         }
         return true;
     }
 
-    private static boolean isInvalidDiagonal(char[][] form, int row, int col, char symbol) {
+    private boolean isInvalidDiagonal(char[][] form, int row, int col, char symbol) {
         int rows = form.length;
         int cols = form[0].length;
 
-        int[] rowDir = {-1, -1, 1, 1};
-        int[] colDir = {-1, 1, -1, 1};
+        int[] rowOffsets = {BACK_OFFSET, BACK_OFFSET, FORWARD_OFFSET, FORWARD_OFFSET};
+        int[] colOffsets = {BACK_OFFSET, FORWARD_OFFSET, BACK_OFFSET, FORWARD_OFFSET};
 
-        for (int d = 0; d < 4; d++) {
-            int diagRow = row + rowDir[d];
-            int diagCol = col + colDir[d];
+        for (int direction = 0; direction < DIAGONAL_DIRECTIONS; direction++) {
+            int diagonalRow = row + rowOffsets[direction];
+            int diagonalCol = col + colOffsets[direction];
 
-            if (diagRow >= 0 && diagRow < rows && diagCol >= 0 && diagCol < cols &&
-                    form[diagRow][diagCol] == symbol) {
+            boolean isWithinBounds = diagonalRow >= 0 && diagonalRow < rows &&
+                    diagonalCol >= 0 && diagonalCol < cols;
 
-                if (!hasOrthogonalNeighbor(form, diagRow, diagCol, symbol)) {
-                    return true;
-                }
+            if (isWithinBounds &&
+                    form[diagonalRow][diagonalCol] == symbol &&
+                    !hasOrthogonalNeighbor(form, diagonalRow, diagonalCol, symbol)) {
+                return true;
             }
         }
 
         return false;
     }
 
-    private static boolean hasOrthogonalNeighbor(char[][] form, int row, int col, char symbol) {
+    private boolean hasOrthogonalNeighbor(char[][] form, int row, int col, char symbol) {
         int rows = form.length;
         int cols = form[0].length;
 
-        int[] rowDir = {-1, 1, 0, 0};
-        int[] colDir = {0, 0, -1, 1};
+        int[] rowOffsets = {BACK_OFFSET, FORWARD_OFFSET, NO_OFFSET, NO_OFFSET};
+        int[] colOffsets = {NO_OFFSET, NO_OFFSET, BACK_OFFSET, FORWARD_OFFSET};
 
-        for (int d = 0; d < 4; d++) {
-            int neighborRow = row + rowDir[d];
-            int neighborCol = col + colDir[d];
+        for (int direction = 0; direction < DIAGONAL_DIRECTIONS; direction++) {
+            int neighborRow = row + rowOffsets[direction];
+            int neighborCol = col + colOffsets[direction];
 
-            if (neighborRow >= 0 && neighborRow < rows && neighborCol >= 0 && neighborCol < cols &&
-                    form[neighborRow][neighborCol] == symbol) {
+            boolean isWithinBounds = neighborRow >= 0 && neighborRow < rows &&
+                    neighborCol >= 0 && neighborCol < cols;
+
+            if (isWithinBounds && form[neighborRow][neighborCol] == symbol) {
                 return true;
             }
         }

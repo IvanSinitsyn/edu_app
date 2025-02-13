@@ -2,31 +2,45 @@ package ru.hoff.edu.repository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.hoff.edu.domain.Parcel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import ru.hoff.edu.model.entity.ParcelEntity;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class ParcelRepositoryTest {
 
+    @Autowired
     private ParcelRepository parcelRepository;
 
     @BeforeEach
     void setUp() {
-        parcelRepository = new ParcelRepository();
+        parcelRepository.saveAll(List.of(
+                new ParcelEntity("1", "1", "1", false),
+                new ParcelEntity("2", "22", "2", false),
+                new ParcelEntity("3", "333", "3", false),
+                new ParcelEntity("4", "4444", "4", false),
+                new ParcelEntity("5", "55555", "5", false),
+                new ParcelEntity("6", "666\n666\n666", "6", false),
+                new ParcelEntity("7", "7777\n777", "7", false),
+                new ParcelEntity("8", "8888\n8888", "8", false),
+                new ParcelEntity("9", "999\n999\n999", "9", false)
+        ));
     }
 
     @Test
     void initializeParcels_shouldContainInitialParcels() {
-        // Act
-        List<Parcel> parcels = parcelRepository.findAllParcels();
+        List<ParcelEntity> parcels = parcelRepository.findAll();
 
-        // Assert
         assertEquals(9, parcels.size());
         assertTrue(parcels.stream().anyMatch(parcel -> parcel.getName().equals("1")));
         assertTrue(parcels.stream().anyMatch(parcel -> parcel.getName().equals("5")));
@@ -35,89 +49,63 @@ class ParcelRepositoryTest {
 
     @Test
     void addParcel_shouldAddParcelToRepository() {
-        // Arrange
-        Parcel newParcel = new Parcel(
+        ParcelEntity newParcel = new ParcelEntity(
                 "TestParcel",
-                new char[][]{{'T', 'E'}, {'S', 'T'}},
+                "TE\nST",
                 "T",
                 false
         );
 
-        // Act
-        parcelRepository.addParcel(newParcel);
-        List<Parcel> parcels = parcelRepository.findAllParcels();
+        parcelRepository.save(newParcel);
+        List<ParcelEntity> parcels = parcelRepository.findAll();
 
-        // Assert
         assertEquals(10, parcels.size());
-        assertTrue(parcels.contains(newParcel));
+        assertTrue(parcels.stream().anyMatch(p -> p.getName().equals("TestParcel")));
     }
 
     @Test
     void edit_shouldReplaceParcelWithNewOne() {
-        // Arrange
-        String parcelId = "3";
-        char[][] newForm = {{'N', 'E', 'W'}, {'F', 'O', 'R'}, {'M', '3', ' '}};
-        String newName = "NewParcel";
-        String newSymbol = "N";
+        Optional<ParcelEntity> parcel = parcelRepository.findById("3");
+        parcel.get().setName("UpdatedParcel");
+        parcel.get().setForm("XY\nZ ");
+        ParcelEntity parcelEntity = parcelRepository.save(parcel.get());
 
-        // Act
-        Parcel updatedParcel = parcelRepository.edit(parcelId, newName, newForm, newSymbol);
-
-        // Assert
-        List<Parcel> parcels = parcelRepository.findAllParcels();
-        assertEquals(9, parcels.size()); // Количество должно оставаться прежним
-        assertFalse(parcels.stream().anyMatch(parcel -> parcel.getName().equals(parcelId)));
-        assertTrue(parcels.contains(updatedParcel));
-        assertEquals("NewParcel", updatedParcel.getName());
-        assertArrayEquals(newForm, updatedParcel.getForm());
+        assertThat(parcelEntity).isNotNull();
+        assertEquals("XY\nZ ", parcelEntity.getForm());
     }
 
     @Test
     void deleteParcel_shouldRemoveParcelFromRepository() {
-        // Arrange
-        String parcelName = "4";
+        ParcelEntity parcel = parcelRepository.findById("4").orElse(null);
+        assertThat(parcel).isNotNull();
 
-        // Act
-        parcelRepository.deleteParcel(parcelName);
-        List<Parcel> parcels = parcelRepository.findAllParcels();
+        parcelRepository.delete(parcel);
+        List<ParcelEntity> parcels = parcelRepository.findAll();
 
-        // Assert
         assertEquals(8, parcels.size());
-        assertFalse(parcels.stream().anyMatch(parcel -> parcel.getName().equals(parcelName)));
+        assertFalse(parcels.stream().anyMatch(p -> p.getName().equals("4")));
     }
 
     @Test
-    void findAllParcels_shouldReturnAllParcels() {
-        // Act
-        List<Parcel> parcels = parcelRepository.findAllParcels();
-
-        // Assert
+    void findAll_shouldReturnAllParcels() {
+        List<ParcelEntity> parcels = parcelRepository.findAll();
         assertEquals(9, parcels.size());
     }
 
     @Test
     void findParcelByName_shouldReturnParcel_whenParcelExists() {
-        // Arrange
-        String parcelName = "6";
-
-        // Act
-        Optional<Parcel> foundParcel = parcelRepository.findParcelByName(parcelName);
-
-        // Assert
-        assertTrue(foundParcel.isPresent());
-        assertEquals(parcelName, foundParcel.get().getName());
+        ParcelEntity parcel = parcelRepository.findById("6").orElse(null);
+        assertThat(parcel).isNotNull();
+        assertEquals("6", parcel.getName());
     }
 
     @Test
     void findParcelByName_shouldReturnEmpty_whenParcelDoesNotExist() {
-        // Arrange
         String parcelName = "NonExistentParcel";
 
-        // Act
-        Optional<Parcel> foundParcel = parcelRepository.findParcelByName(parcelName);
+        ParcelEntity foundParcel = parcelRepository.findById(parcelName).orElse(null);
 
-        // Assert
-        assertFalse(foundParcel.isPresent());
+        assertThat(foundParcel).isNull();
     }
 }
 
